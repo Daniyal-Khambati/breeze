@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanderlist — rank your adventures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f5f2;
+  --surface: #ffffff;
+  --surface-2: #f1eee8;
+  --text: #1c1b19;
+  --text-secondary: #6b6862;
+  --text-muted: #9c988f;
+  --border: #e7e3db;
+  --primary: #22a06b;
+  --primary-dark: #157a51;
+  --accent1: #22a06b;
+  --accent2: #2e7d9e;
+  --grad: linear-gradient(135deg, #22a06b 0%, #2e7d9e 100%);
+  --danger: #d9534f;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 2px 14px rgba(30,30,20,0.06);
+  --font: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161a;
+    --surface: #1d2025;
+    --surface-2: #262a30;
+    --text: #f2f1ee;
+    --text-secondary: #a7a49c;
+    --text-muted: #78766f;
+    --border: #30343b;
+    --shadow: 0 2px 14px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161a;
+  --surface: #1d2025;
+  --surface-2: #262a30;
+  --text: #f2f1ee;
+  --text-secondary: #a7a49c;
+  --text-muted: #78766f;
+  --border: #30343b;
+  --shadow: 0 2px 14px rgba(0,0,0,0.35);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font); -webkit-font-smoothing: antialiased;
+}
+body { min-height: 100vh; }
+#app { max-width: 560px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 76px; }
+img { max-width: 100%; display: block; }
+button { font-family: var(--font); cursor: pointer; }
+input, textarea, select { font-family: var(--font); }
+.hidden { display: none !important; }
+
+/* Top bar */
+.topbar {
+  position: sticky; top: 0; z-index: 20; background: var(--bg);
+  padding: 18px 20px 12px; display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; }
+.brand .mark {
+  width: 30px; height: 30px; border-radius: 9px; background: var(--grad);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.brand-sub { font-size: 12px; color: var(--text-muted); margin-top: -2px; }
+.avatar-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: none; color: #fff;
+  font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center;
+}
+
+/* Onboarding */
+.onboard-wrap {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 32px; text-align: center;
+}
+.onboard-mark {
+  width: 72px; height: 72px; border-radius: 22px; background: var(--grad);
+  display: flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 20px;
+}
+.onboard-wrap h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px; }
+.onboard-wrap p { color: var(--text-secondary); font-size: 15px; line-height: 1.5; margin: 0 0 28px; max-width: 340px; }
+.onboard-form { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px; }
+
+.field-input {
+  width: 100%; padding: 14px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text); font-size: 15px; outline: none;
+}
+.field-input:focus { border-color: var(--primary); }
+textarea.field-input { resize: none; font-size: 15px; }
+
+.btn-primary {
+  background: var(--grad); color: #fff; border: none; padding: 14px 20px; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 15px; width: 100%; box-shadow: var(--shadow);
+}
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; }
+.btn-secondary {
+  background: var(--surface); color: var(--text); border: 1.5px solid var(--border);
+  padding: 12px 18px; border-radius: var(--radius-sm); font-weight: 600; font-size: 14px;
+}
+.btn-ghost {
+  background: transparent; border: none; color: var(--text-secondary); font-size: 13px; font-weight: 600;
+  text-decoration: underline; padding: 6px;
+}
+
+/* Main content */
+.screen { flex: 1; padding: 4px 20px 20px; }
+.screen-title { font-size: 22px; font-weight: 800; margin: 4px 0 4px; }
+.screen-sub { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 18px; }
+
+.chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0; padding: 8px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--surface); font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap;
+}
+.chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* Activity card */
+.card {
+  background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border);
+  margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow);
+}
+.card-photo { width: 100%; aspect-ratio: 16/10; object-fit: cover; background: var(--surface-2); }
+.card-body { padding: 14px 16px 16px; }
+.card-user-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.mini-avatar {
+  width: 30px; height: 30px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 12px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.card-user-name { font-weight: 700; font-size: 13.5px; }
+.card-time { font-size: 11.5px; color: var(--text-muted); }
+.card-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.card-title { font-size: 17px; font-weight: 700; }
+.card-loc { font-size: 12.5px; color: var(--text-secondary); margin-bottom: 8px; }
+.card-review { font-size: 14px; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; }
+.rank-badge {
+  font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 12px;
+  background: var(--surface-2); color: var(--text-secondary);
+}
+.save-btn {
+  background: none; border: none; font-size: 20px; padding: 4px; color: var(--text-muted);
+}
+.save-btn.saved { color: var(--accent1); }
+.type-tag { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; margin: 0; }
+
+/* Log form */
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 7px; display: block; }
+.type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.type-opt {
+  padding: 12px 4px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface);
+  display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--text-secondary);
+}
+.type-opt.active { border-color: var(--primary); background: var(--surface-2); color: var(--text); }
+.type-opt .emoji { font-size: 22px; }
+.photo-upload {
+  border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 20px; text-align: center;
+  color: var(--text-muted); font-size: 13px; position: relative; cursor: pointer;
+}
+.photo-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.photo-preview { width: 100%; border-radius: var(--radius-sm); margin-top: 10px; max-height: 200px; object-fit: cover; }
+
+/* Comparison modal */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.overlay.center { align-items: center; padding: 20px; }
+.modal {
+  background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 20px 28px; width: 100%; max-width: 560px;
+  max-height: 88vh; overflow-y: auto;
+}
+.overlay.center .modal { border-radius: 22px; }
+.modal-title { font-size: 18px; font-weight: 800; margin: 0 0 4px; text-align: center; }
+.modal-sub { font-size: 13px; color: var(--text-secondary); text-align: center; margin: 0 0 22px; }
+.vs-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.vs-card {
+  flex: 1; border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 14px 10px; text-align: center;
+  background: var(--surface-2); display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.vs-card:active { border-color: var(--primary); transform: scale(0.97); }
+.vs-card .emoji { font-size: 26px; }
+.vs-card .name { font-weight: 700; font-size: 13.5px; }
+.vs-card .loc { font-size: 11px; color: var(--text-muted); }
+.vs-divider { font-size: 12px; color: var(--text-muted); text-align: center; margin: 2px 0 12px; font-weight: 700; }
+.progress-bar { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; margin-bottom: 18px; }
+.progress-fill { height: 100%; background: var(--grad); transition: width 0.25s ease; }
+
+/* Ranking list */
+.rank-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px;
+}
+.rank-num {
+  width: 30px; height: 30px; border-radius: 50%; background: var(--surface-2); color: var(--text-secondary);
+  font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.rank-num.top { background: var(--grad); color: #fff; }
+.rank-info { flex: 1; min-width: 0; }
+.rank-info .t { font-weight: 700; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-info .l { font-size: 12px; color: var(--text-muted); }
+
+/* Bottom nav */
+.bottomnav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
+  background: var(--surface); border-top: 1px solid var(--border);
+  display: flex; justify-content: center;
+}
+.bottomnav-inner { max-width: 560px; width: 100%; display: flex; }
+.navbtn {
+  flex: 1; background: none; border: none; padding: 10px 4px 8px; display: flex; flex-direction: column;
+  align-items: center; gap: 3px; color: var(--text-muted); font-size: 10.5px; font-weight: 700;
+}
+.navbtn .ic { font-size: 21px; }
+.navbtn.active { color: var(--primary); }
+
+.fab-log {
+  position: fixed; bottom: 78px; right: calc(50% - 280px + 20px); z-index: 25;
+  width: 56px; height: 56px; border-radius: 50%; background: var(--grad); border: none;
+  color: #fff; font-size: 26px; box-shadow: 0 4px 16px rgba(34,160,107,0.4); display: flex;
+  align-items: center; justify-content: center;
+}
+@media (max-width: 599px) { .fab-log { right: 20px; } }
+
+.toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg);
+  padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; z-index: 200; opacity: 0;
+  transition: opacity 0.2s ease; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+.stat-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.stat-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; text-align: center; }
+.stat-card .n { font-size: 22px; font-weight: 800; }
+.stat-card .l { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
+.error-text { color: var(--danger); font-size: 12.5px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const TYPES = [
+  { id: 'hike', label: 'Hike', emoji: '🥾' },
+  { id: 'lookout', label: 'Lookout', emoji: '🌄' },
+  { id: 'walk', label: 'Walk', emoji: '🚶' },
+  { id: 'kayak', label: 'Kayak', emoji: '🛶' },
+  { id: 'camp', label: 'Camp', emoji: '🏕️' },
+  { id: 'bike', label: 'Bike', emoji: '🚴' },
+  { id: 'swim', label: 'Swim', emoji: '🏊' },
+  { id: 'other', label: 'Other', emoji: '✨' },
+];
+const COLORS = ['#22a06b','#2e7d9e','#c2683a','#8b5fbf','#c94f7c','#4a8fc4','#d99a2b','#5aa66b'];
+
+function typeInfo(id) { return TYPES.find(t => t.id === id) || TYPES[TYPES.length - 1]; }
+function colorForId(id) {
+  let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return COLORS[h % COLORS.length];
+}
+function initials(name) {
+  return (name || '?').trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('');
+}
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+function escapeHtml(str) {
+  const d = document.createElement('div'); d.textContent = str == null ? '' : String(str); return d.innerHTML;
+}
+function uid() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+}
+
+let db = null, assets = null;
+let currentUser = null; // {id, name, color, rankedList, bucketList}
+let activitiesMap = {};   // id -> activity data
+let activitiesOrder = []; // ids sorted by timestamp desc
+let usersMap = {};        // id -> {name,color}
+let currentTab = 'feed';
+let feedFilter = 'all';
+let pendingPhoto = null; // {file, previewUrl}
+let unsubFns = [];
+
+const app = document.getElementById('app');
+
+function toast(msg) {
+  let el = document.getElementById('toastEl');
+  if (!el) { el = document.createElement('div'); el.id = 'toastEl'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+async function init() {
+  try {
+    db = await claude.use('db');
+  } catch (e) { db = null; }
+  try {
+    assets = await claude.use('assets');
+  } catch (e) { assets = null; }
+
+  let userId = null;
+  try { userId = localStorage.getItem('wl_user_id'); } catch (e) {}
+
+  if (!db) {
+    renderNoDb();
+    return;
+  }
+
+  if (userId) {
+    try {
+      const doc = await db.doc('users/' + userId).get();
+      if (doc && doc.exists !== false && (doc.data ? doc.data() : doc)) {
+        currentUser = normalizeUser(userId, doc.data ? doc.data() : doc);
+      }
+    } catch (e) {}
+  }
+
+  if (!currentUser) {
+    renderOnboarding();
+  } else {
+    subscribeAll();
+    renderShell();
+  }
+}
+
+function normalizeUser(id, data) {
+  return {
+    id,
+    name: data.name || 'Explorer',
+    color: data.color || colorForId(id),
+    rankedList: Array.isArray(data.rankedList) ? data.rankedList : [],
+    bucketList: Array.isArray(data.bucketList) ? data.bucketList : [],
+  };
+}
+
+function renderNoDb() {
+  app.innerHTML = `
+    <div class="onboard-wrap">
+      <div class="onboard-mark">🏔️</div>
+      <h1>Wanderlist</h1>
+      <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
+    </div>`;
+}
+
+function renderOnboarding() {
+  app.innerHTML = `
+    <div class="onboard-wrap">
+      <div class="onboard-mark">🏔️</div>
+      <h1>Wanderlist</h1>
+      <p>Rank your hikes, lookouts, kayak trips and more against each other — and see what your friends have been up to.</p>
+      <div class="onboard-form">
+        <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
+        <div class="error-text hidden" id="nameError">Enter a name to continue</div>
+        <button class="btn-primary" id="startBtn">Get started</button>
+      </div>
+    </div>`;
+  const input = document.getElementById('nameInput');
+  const err = document.getElementById('nameError');
+  const go = async () => {
+    const name = input.value.trim();
+    if (!name) { err.classList.remove('hidden'); return; }
+    err.classList.add('hidden');
+    const id = uid();
+    const color = colorForId(id);
+    const data = { name, color, rankedList: [], bucketList: [], createdAt: Date.now() };
+    try {
+      await db.doc('users/' + id).set(data);
+    } catch (e) { toast('Could not create profile — try again'); return; }
+    try { localStorage.setItem('wl_user_id', id); } catch (e) {}
+    currentUser = normalizeUser(id, data);
+    subscribeAll();
+    renderShell();
+  };
+  document.getElementById('startBtn').addEventListener('click', go);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+  input.focus();
+}
+
+function subscribeAll() {
+  try {
+    const userUnsub = db.doc('users/' + currentUser.id).onSnapshot((snap) => {
+      const data = snap && snap.data ? snap.data() : snap;
+      if (data) {
+        currentUser = normalizeUser(currentUser.id, data);
+        if (currentTab === 'rankings' || currentTab === 'saved') renderScreen();
+        else updateFeedRankBadges();
+      }
+    });
+    if (userUnsub) unsubFns.push(userUnsub);
+  } catch (e) {}
+
+  try {
+    const q = db.collection('activities').orderBy('timestamp', 'desc').limit(200);
+    const actUnsub = q.onSnapshot((snap) => {
+      const docs = snap && snap.docs ? snap.docs : [];
+      activitiesMap = {};
+      activitiesOrder = [];
+      docs.forEach(d => {
+        const data = d.data ? d.data() : d;
+        const id = d.id || data.id;
+        activitiesMap[id] = { id, ...data };
+        activitiesOrder.push(id);
+        if (data.userId && !usersMap[data.userId]) {
+          usersMap[data.userId] = { name: data.userName, color: data.userColor };
+        }
+      });
+      if (currentTab === 'feed' || currentTab === 'saved' || currentTab === 'rankings') renderScreen();
+    });
+    if (actUnsub) unsubFns.push(actUnsub);
+  } catch (e) {}
+}
+
+function renderShell() {
+  app.innerHTML = `
+    <div class="topbar">
+      <div>
+        <div class="brand"><span class="mark">🏔️</span>Wanderlist</div>
+        <div class="brand-sub" id="memberCount"></div>
+      </div>
+      <button class="avatar-btn" id="meBtn" style="background:${currentUser.color}">${escapeHtml(initials(currentUser.name))}</button>
+    </div>
+    <div id="screenHost" class="screen"></div>
+    <button class="fab-log" id="fabLog" title="Log an activity">+</button>
+    <div class="bottomnav">
+      <div class="bottomnav-inner">
+        <button class="navbtn" data-tab="feed"><span class="ic">🏠</span>Feed</button>
+        <button class="navbtn" data-tab="rankings"><span class="ic">🏆</span>My ranks</button>
+        <button class="navbtn" data-tab="saved"><span class="ic">🔖</span>Saved</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('fabLog').addEventListener('click', openLogModal);
+  document.getElementById('meBtn').addEventListener('click', showSwitchAccount);
+  document.querySelectorAll('.navbtn').forEach(b => b.addEventListener('click', () => { currentTab = b.dataset.tab; renderScreen(); }));
+  currentTab = 'feed';
+  renderScreen();
+}
+
+function showSwitchAccount() {
+  if (confirm('Switch to a different name on this device? This will not delete your saved data, just log this browser out.')) {
+    try { localStorage.removeItem('wl_user_id'); } catch (e) {}
+    unsubFns.forEach(fn => { try { fn(); } catch (e) {} });
+    unsubFns = [];
+    currentUser = null;
+    renderOnboarding();
+  }
+}
+
+function renderScreen() {
+  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === currentTab));
+  const host = document.getElementById('screenHost');
+  const memberCountEl = document.getElementById('memberCount');
+  if (memberCountEl) memberCountEl.textContent = 'Ranking your adventures';
+  if (!host) return;
+  if (currentTab === 'feed') renderFeed(host);
+  else if (currentTab === 'rankings') renderRankings(host);
+  else if (currentTab === 'saved') renderSaved(host);
+}
+
+function updateFeedRankBadges() {
+  document.querySelectorAll('[data-rank-owner]').forEach(el => {
+    const ownerId = el.getAttribute('data-rank-owner');
+    const actId = el.getAttribute('data-rank-act');
+    el.textContent = rankBadgeText(ownerId, actId);
+  });
+}
+
+function rankBadgeText(ownerId, actId) {
+  const owner = ownerId === currentUser.id ? currentUser : usersMap[ownerId];
+  const list = (ownerId === currentUser.id) ? currentUser.rankedList : null;
+  if (!list) return '';
+  const idx = list.indexOf(actId);
+  if (idx === -1) return '';
+  return '#' + (idx + 1) + ' of ' + list.length;
+}
+
+function renderFeed(host) {
+  const filtered = activitiesOrder.filter(id => feedFilter === 'all' || activitiesMap[id].type === feedFilter);
+  const chips = ['<button class="chip ' + (feedFilter==='all'?'active':'') + '" data-f="all">All</button>']
+    .concat(TYPES.map(t => `<button class="chip ${feedFilter===t.id?'active':''}" data-f="${t.id}">${t.emoji} ${t.label}</button>`)).join('');
+
+  let cardsHtml = '';
+  if (filtered.length === 0) {
+    cardsHtml = `<div class="empty-state"><div class="emoji">🌲</div><p>No activities yet — be the first to log one and start the leaderboard.</p></div>`;
+  } else {
+    cardsHtml = filtered.map(id => activityCardHtml(activitiesMap[id])).join('');
+  }
+
+  host.innerHTML = `
+    <h1 class="screen-title">Feed</h1>
+    <p class="screen-sub">What your friends have been up to</p>
+    <div class="chip-row">${chips}</div>
+    <div id="feedCards">${cardsHtml}</div>
+  `;
+  host.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { feedFilter = c.dataset.f; renderScreen(); }));
+  host.querySelectorAll('.save-btn').forEach(b => b.addEventListener('click', () => toggleSave(b.dataset.act)));
+}
+
+function activityCardHtml(a) {
+  const ti = typeInfo(a.type);
+  const isMine = a.userId === currentUser.id;
+  const rankTxt = isMine ? rankBadgeText(a.userId, a.id) : '';
+  const saved = currentUser.bucketList.includes(a.id);
+  const photo = a.photoUrl ? `<img class="card-photo" src="${escapeHtml(a.photoUrl)}" alt="">` : '';
+  return `
+    <div class="card">
+      ${photo}
+      <div class="card-body">
+        <div class="card-user-row">
+          <div class="mini-avatar" style="background:${a.userColor || colorForId(a.userId||'x')}">${escapeHtml(initials(a.userName))}</div>
+          <div style="flex:1">
+            <div class="card-user-name">${escapeHtml(a.userName)}</div>
+            <div class="card-time">${timeAgo(a.timestamp || Date.now())}</div>
+          </div>
+          <span class="type-tag" style="background:${ti.bg||'var(--surface-2)'};color:var(--text-secondary)">${ti.emoji} ${ti.label}</span>
+        </div>
+        <div class="card-title-row"><div class="card-title">${escapeHtml(a.title)}</div></div>
+        <div class="card-loc">📍 ${escapeHtml(a.location || 'Unspecified')}</div>
+        ${a.review ? `<div class="card-review">${escapeHtml(a.review)}</div>` : ''}
+        <div class="card-footer">
+          <span class="rank-badge" data-rank-owner="${a.userId}" data-rank-act="${a.id}">${rankTxt || (isMine ? '' : 'Friend pick')}</span>
+          <button class="save-btn ${saved?'saved':''}" data-act="${a.id}" title="Save to bucket list">${saved ? '🔖' : '🏷️'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function toggleSave(actId) {
+  if (!currentUser.bucketList.includes(actId)) {
+    if (activitiesMap[actId] && activitiesMap[actId].userId === currentUser.id) { toast("That's your own activity"); return; }
+  }
+  const list = currentUser.bucketList.slice();
+  const idx = list.indexOf(actId);
+  if (idx === -1) { list.push(actId); toast('Saved to your bucket list'); }
+  else { list.splice(idx, 1); toast('Removed from bucket list'); }
+  currentUser.bucketList = list;
+  try { await db.doc('users/' + currentUser.id).update({ bucketList: list }); } catch (e) { toast('Could not save — try again'); }
+  renderScreen();
+}
+
+function renderRankings(host) {
+  const list = currentUser.rankedList.filter(id => activitiesMap[id]);
+  const stat1 = list.length;
+  const types = new Set(list.map(id => activitiesMap[id].type));
+  host.innerHTML = `
+    <h1 class="screen-title">My rankings</h1>
+    <p class="screen-sub">Your adventures, best to worst</p>
+    <div class="stat-row">
+      <div class="stat-card"><div class="n">${stat1}</div><div class="l">LOGGED</div></div>
+      <div class="stat-card"><div class="n">${types.size}</div><div class="l">TYPES TRIED</div></div>
+    </div>
+    <div id="rankList">
+      ${list.length === 0
+        ? `<div class="empty-state"><div class="emoji">🏆</div><p>Log your first activity to start building your ranked list.</p></div>`
+        : list.map((id, i) => rankRowHtml(activitiesMap[id], i)).join('')}
+    </div>
+  `;
+}
+
+function rankRowHtml(a, i) {
+  const ti = typeInfo(a.type);
+  return `
+    <div class="rank-row">
+      <div class="rank-num ${i===0?'top':''}">${i+1}</div>
+      <div class="rank-info">
+        <div class="t">${ti.emoji} ${escapeHtml(a.title)}</div>
+        <div class="l">${escapeHtml(a.location || '')}</div>
+      </div>
+    </div>`;
+}
+
+function renderSaved(host) {
+  const list = currentUser.bucketList.filter(id => activitiesMap[id]);
+  host.innerHTML = `
+    <h1 class="screen-title">Saved</h1>
+    <p class="screen-sub">Places friends ranked highly that you want to try</p>
+    <div>
+      ${list.length === 0
+        ? `<div class="empty-state"><div class="emoji">🔖</div><p>Tag activities from the feed to build your want-to-go list.</p></div>`
+        : list.map(id => activityCardHtml(activitiesMap[id])).join('')}
+    </div>
+  `;
+  host.querySelectorAll('.save-btn').forEach(b => b.addEventListener('click', () => toggleSave(b.dataset.act)));
+}
+
+/* ---------- Log activity flow ---------- */
+let logState = { type: 'hike', title: '', location: '', review: '' };
+
+function openLogModal() {
+  logState = { type: 'hike', title: '', location: '', review: '' };
+  pendingPhoto = null;
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.id = 'logOverlay';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">Log an activity</div>
+      <div class="modal-sub">Add it, then rank it against your others</div>
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <div class="type-grid" id="typeGrid">
+          ${TYPES.map(t => `<button class="type-opt ${t.id==='hike'?'active':''}" data-type="${t.id}"><span class="emoji">${t.emoji}</span>${t.label}</button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input class="field-input" id="titleInput" placeholder="e.g. Buttermilk Falls sunrise hike" maxlength="60">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input class="field-input" id="locInput" placeholder="e.g. Ithaca, NY" maxlength="60">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quick review (optional)</label>
+        <textarea class="field-input" id="reviewInput" rows="3" placeholder="How was it? Worth the hype?" maxlength="280"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Photo (optional)</label>
+        <div class="photo-upload" id="photoUpload">
+          <input type="file" accept="image/*" id="photoInput">
+          <span id="photoUploadLabel">Tap to add a photo</span>
+        </div>
+        <img class="photo-preview hidden" id="photoPreview">
+      </div>
+      <div class="error-text hidden" id="logError">Add a title to continue</div>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button class="btn-secondary" id="cancelLog" style="flex:1">Cancel</button>
+        <button class="btn-primary" id="nextLog" style="flex:2">Next: rank it</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById('typeGrid').addEventListener('click', (e) => {
+    const btn = e.target.closest('.type-opt'); if (!btn) return;
+    logState.type = btn.dataset.type;
+    document.querySelectorAll('#typeGrid .type-opt').forEach(b => b.classList.toggle('active', b === btn));
+  });
+  const photoInput = document.getElementById('photoInput');
+  if (!assets) {
+    document.getElementById('photoUploadLabel').textContent = 'Photo upload unavailable in this view';
+    photoInput.disabled = true;
+  } else {
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      pendingPhoto = file;
+      const url = URL.createObjectURL(file);
+      const preview = document.getElementById('photoPreview');
+      preview.src = url; preview.classList.remove('hidden');
+      document.getElementById('photoUploadLabel').textContent = 'Photo selected — tap to change';
+    });
+  }
+  document.getElementById('cancelLog').addEventListener('click', () => overlay.remove());
+  document.getElementById('nextLog').addEventListener('click', () => {
+    const title = document.getElementById('titleInput').value.trim();
+    const err = document.getElementById('logError');
+    if (!title) { err.classList.remove('hidden'); return; }
+    err.classList.add('hidden');
+    logState.title = title;
+    logState.location = document.getElementById('locInput').value.trim();
+    logState.review = document.getElementById('reviewInput').value.trim();
+    overlay.remove();
+    startRankingFlow();
+  });
+}
+
+/* ---------- Comparative ranking flow ---------- */
+let rankSession = null;
+
+function startRankingFlow() {
+  const list = currentUser.rankedList.filter(id => activitiesMap[id]);
+  if (list.length === 0) {
+    finalizeNewActivity(0);
+    return;
+  }
+  rankSession = { lo: 0, hi: list.length, list, totalSteps: Math.ceil(Math.log2(list.length + 1)) || 1, step: 0 };
+  showComparisonStep();
+}
+
+function showComparisonStep() {
+  const { lo, hi, list } = rankSession;
+  if (lo >= hi) { finalizeNewActivity(lo); return; }
+  const mid = Math.floor((lo + hi) / 2);
+  const otherId = list[mid];
+  const other = activitiesMap[otherId];
+  const newTi = typeInfo(logState.type);
+  const otherTi = typeInfo(other.type);
+  rankSession.step++;
+  const pct = Math.min(100, Math.round((rankSession.step / (rankSession.totalSteps + 1)) * 100));
+
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay center';
+  overlay.id = 'rankOverlay';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">Which did you enjoy more?</div>
+      <div class="modal-sub">This places your new activity on your ranked list</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="vs-row">
+        <div class="vs-card" id="pickNew">
+          <span class="emoji">${newTi.emoji}</span>
+          <span class="name">${escapeHtml(logState.title)}</span>
+          <span class="loc">${escapeHtml(logState.location || 'New activity')}</span>
+        </div>
+        <div class="vs-card" id="pickOther">
+          <span class="emoji">${otherTi.emoji}</span>
+          <span class="name">${escapeHtml(other.title)}</span>
+          <span class="loc">${escapeHtml(other.location || '')}</span>
+        </div>
+      </div>
+      <div class="vs-divider">TAP THE ONE YOU LIKED BETTER</div>
+      <button class="btn-ghost" id="skipRank" style="display:block; margin: 4px auto 0;">Not sure — put it in the middle</button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById('pickNew').addEventListener('click', () => {
+    rankSession.hi = mid;
+    overlay.remove();
+    showComparisonStep();
+  });
+  document.getElementById('pickOther').addEventListener('click', () => {
+    rankSession.lo = mid + 1;
+    overlay.remove();
+    showComparisonStep();
+  });
+  document.getElementById('skipRank').addEventListener('click', () => {
+    overlay.remove();
+    finalizeNewActivity(mid);
+  });
+}
+
+async function finalizeNewActivity(insertIndex) {
+  const id = uid();
+  let photoUrl = null;
+  if (pendingPhoto && assets) {
+    try {
+      toast('Uploading photo…');
+      const res = await assets.upload(pendingPhoto);
+      photoUrl = res && res.url;
+    } catch (e) { /* continue without photo */ }
+  }
+  const data = {
+    userId: currentUser.id,
+    userName: currentUser.name,
+    userColor: currentUser.color,
+    type: logState.type,
+    title: logState.title,
+    location: logState.location,
+    review: logState.review,
+    photoUrl: photoUrl,
+    timestamp: Date.now(),
+  };
+  try {
+    await db.doc('activities/' + id).set(data);
+  } catch (e) { toast('Could not save activity — try again'); return; }
+
+  const newList = currentUser.rankedList.filter(x => activitiesMap[x]);
+  newList.splice(insertIndex, 0, id);
+  currentUser.rankedList = newList;
+  try { await db.doc('users/' + currentUser.id).update({ rankedList: newList }); } catch (e) {}
+
+  activitiesMap[id] = { id, ...data };
+  activitiesOrder.unshift(id);
+
+  toast('Added! Ranked #' + (insertIndex + 1) + ' of ' + newList.length);
+  currentTab = 'rankings';
+  renderScreen();
+}
+
+init();
+</script>
+</body>
+</html>
