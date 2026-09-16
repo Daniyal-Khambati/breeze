@@ -1,6 +1,6 @@
-# Wanderlist
+# Breeze
 
-Rank your hikes, lookouts, kayak trips and more against each other, and see what your friends have been up to.
+Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.
 
 Originally built as a Claude artifact: https://claude.ai/artifact/Lbh6W9M5uuuF6ncuWTCCsZ
 
