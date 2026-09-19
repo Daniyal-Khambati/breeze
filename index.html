@@ -121,17 +121,52 @@ textarea.field-input { resize: none; font-size: 14.5px; }
   font-family: var(--font-display); font-weight: 600; font-size: 25px; margin: 4px 0 4px;
   letter-spacing: -0.01em; text-wrap: balance;
 }
-.screen-sub { color: var(--text-secondary); font-size: 13px; margin: 0 0 18px; }
+.screen-sub { color: var(--text-secondary); font-size: 13px; margin: 0 0 16px; }
 
-.chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: none; }
-.chip-row::-webkit-scrollbar { display: none; }
-.chip {
-  flex-shrink: 0; display: flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px;
-  border: 1px solid var(--border); background: var(--surface); font-size: 12.5px; font-weight: 600;
-  color: var(--text-secondary); white-space: nowrap;
+/* Stories row */
+.stories-row { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 14px; margin-bottom: 4px; scrollbar-width: none; }
+.stories-row::-webkit-scrollbar { display: none; }
+.story-bubble {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; width: 62px;
+  background: none; border: none; padding: 0;
 }
-.chip svg { font-size: 13px; }
-.chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.story-ring {
+  width: 56px; height: 56px; border-radius: 50%; padding: 2.5px; display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--border);
+}
+.story-ring.unseen { border-color: var(--accent); }
+.story-ring.add { border: 2px dashed var(--border); background: var(--accent-soft); }
+.story-ring-inner {
+  width: 100%; height: 100%; border-radius: 50%; color: #fff; font-weight: 700; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+}
+.story-ring-inner.add-inner { background: none; color: var(--accent); font-size: 18px; }
+.story-bubble .label {
+  font-size: 10.5px; font-weight: 600; color: var(--text-secondary); max-width: 62px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Filter dropdown */
+.filter-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+.filter-dropdown { position: relative; }
+.filter-trigger {
+  display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 8px 12px; font-size: 12.5px; font-weight: 600; color: var(--text);
+}
+.filter-trigger svg:first-child { font-size: 13px; color: var(--text-secondary); }
+.filter-trigger svg:last-child { font-size: 13px; color: var(--text-muted); transition: transform 0.15s ease; }
+.filter-trigger.open svg:last-child { transform: rotate(180deg); }
+.filter-menu {
+  position: absolute; right: 0; top: calc(100% + 6px); background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: 6px; min-width: 172px; z-index: 15;
+  display: flex; flex-direction: column; gap: 1px; max-height: 320px; overflow-y: auto;
+}
+.filter-option {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px;
+  font-weight: 600; color: var(--text-secondary); background: none; border: none; width: 100%; text-align: left;
+}
+.filter-option svg { font-size: 15px; }
+.filter-option.active { background: var(--accent-soft); color: var(--accent-strong); }
 
 /* Activity card */
 .card {
@@ -171,12 +206,14 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 }
 .type-tag svg { font-size: 12.5px; }
 
-.empty-state { text-align: center; padding: 56px 20px; color: var(--text-muted); }
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
 .empty-state .icon-wrap {
   width: 44px; height: 44px; border-radius: 50%; background: var(--surface-2); color: var(--text-muted);
   display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 14px;
 }
-.empty-state p { font-size: 13.5px; margin: 0; max-width: 240px; margin-inline: auto; line-height: 1.5; }
+.empty-state p { font-size: 13.5px; margin: 0; max-width: 260px; margin-inline: auto; line-height: 1.5; }
+.empty-actions { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+.empty-actions .btn-primary, .empty-actions .btn-secondary { width: auto; padding-inline: 18px; }
 
 /* Log form */
 .form-group { margin-bottom: 16px; }
@@ -214,21 +251,53 @@ textarea.field-input { resize: none; font-size: 14.5px; }
   text-align: center; letter-spacing: -0.01em;
 }
 .modal-sub { font-size: 12.5px; color: var(--text-secondary); text-align: center; margin: 0 0 20px; }
-.vs-row { display: flex; gap: 10px; margin-bottom: 14px; }
-.vs-card {
-  flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 16px 10px; text-align: center;
-  background: var(--surface-2); display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--text);
+
+/* Friends sheet */
+.friend-code-box {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px;
 }
-.vs-card svg { font-size: 22px; color: var(--text-secondary); }
-.vs-card:active { border-color: var(--accent); background: var(--accent-soft); }
-.vs-card .name { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; }
-.vs-card .loc { font-size: 11px; color: var(--text-muted); }
-.vs-divider {
-  font-size: 10.5px; color: var(--text-muted); text-align: center; margin: 2px 0 14px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
+.friend-code-box .code { font-family: var(--font-mono); font-size: 18px; font-weight: 700; letter-spacing: 0.1em; color: var(--text); }
+.add-friend-row { display: flex; gap: 8px; }
+.add-friend-row .field-input { flex: 1; }
+.add-friend-row .btn-primary { width: auto; flex-shrink: 0; padding-inline: 18px; }
+.friend-row { display: flex; align-items: center; gap: 10px; padding: 8px 2px; }
+.friend-row .name { flex: 1; font-weight: 600; font-size: 13.5px; }
+
+/* Duel comparison */
+.duel-stack { position: relative; height: 220px; margin: 4px 0 18px; }
+.duel-card {
+  position: absolute; inset: 0; border-radius: var(--radius-lg); border: 1.5px solid var(--border);
+  background: var(--surface-2); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; padding: 20px; text-align: center;
 }
-.progress-bar { height: 3px; background: var(--surface-2); border-radius: 2px; overflow: hidden; margin-bottom: 18px; }
-.progress-fill { height: 100%; background: var(--accent); transition: width 0.25s ease; }
+.duel-card.back { transform: scale(0.94) translateY(12px); opacity: 0.75; z-index: 1; }
+.duel-card.front {
+  z-index: 2; background: var(--surface); box-shadow: var(--shadow-md); cursor: grab; user-select: none;
+  touch-action: pan-y; will-change: transform;
+}
+.duel-card.front:active { cursor: grabbing; }
+.duel-card svg { font-size: 26px; color: var(--text-secondary); }
+.duel-card .name { font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+.duel-card .loc { font-size: 11.5px; color: var(--text-muted); }
+.duel-stamp {
+  position: absolute; top: 14px; padding: 5px 11px; border-radius: 999px; font-size: 10.5px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0; border: 2px solid; pointer-events: none;
+}
+.duel-stamp.right { right: 14px; color: var(--accent-strong); border-color: var(--accent); transform: rotate(8deg); }
+.duel-stamp.left { left: 14px; color: var(--text-secondary); border-color: var(--text-muted); transform: rotate(-8deg); }
+.vs-pill {
+  position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); background: var(--surface);
+  border: 1.5px solid var(--border); color: var(--text-muted); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.08em; padding: 3px 9px; border-radius: 999px; z-index: 3;
+}
+.duel-actions { display: flex; align-items: center; justify-content: center; gap: 22px; margin-bottom: 6px; }
+.duel-btn {
+  width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center; color: var(--text-secondary);
+}
+.duel-btn svg { font-size: 19px; }
+.duel-btn.like { border-color: var(--accent); color: var(--accent); }
 
 /* Ranking list */
 .rank-row {
@@ -276,6 +345,35 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .stat-card .l { font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
 
 .error-text { color: var(--danger); font-size: 12px; margin-top: 5px; }
+
+/* Story viewer (deliberately dark, independent of the app's light theme) */
+.story-viewer {
+  position: fixed; inset: 0; z-index: 300; background: #14140f; display: flex; flex-direction: column;
+  padding-top: env(safe-area-inset-top, 0px); touch-action: none;
+}
+.story-progress-row { position: relative; z-index: 4; display: flex; gap: 4px; padding: 10px 12px 0; }
+.story-seg { flex: 1; height: 3px; background: rgba(255,255,255,0.28); border-radius: 2px; overflow: hidden; }
+.story-seg-fill { display: block; height: 100%; width: 0%; background: #fff; }
+.story-seg.done .story-seg-fill { width: 100%; }
+.story-seg.active .story-seg-fill { animation: storyFill 4.5s linear forwards; }
+@keyframes storyFill { from { width: 0%; } to { width: 100%; } }
+.story-header { position: relative; z-index: 4; display: flex; align-items: center; gap: 10px; padding: 10px 14px 12px; }
+.story-header-meta { min-width: 0; }
+.story-header-name { color: #fff; font-weight: 700; font-size: 13px; }
+.story-header-time { color: rgba(255,255,255,0.65); font-size: 11px; font-family: var(--font-mono); }
+.story-close { margin-left: auto; background: none; border: none; color: #fff; font-size: 20px; padding: 6px; }
+.story-content { flex: 1; position: relative; background-size: cover; background-position: center; display: flex; align-items: flex-end; overflow: hidden; }
+.story-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0) 55%); }
+.story-icon { position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%); font-size: 68px; color: rgba(255,255,255,0.85); }
+.story-caption { position: relative; z-index: 2; padding: 18px 18px calc(26px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 7px; color: #fff; }
+.story-caption .type-tag { background: rgba(255,255,255,0.18); color: #fff; align-self: flex-start; }
+.story-title { font-family: var(--font-display); font-weight: 600; font-size: 21px; }
+.story-loc { display: flex; gap: 5px; align-items: center; font-size: 12.5px; color: rgba(255,255,255,0.85); }
+.story-review { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.92); }
+.story-rank { align-self: flex-start; font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.16); padding: 4px 10px; border-radius: 999px; }
+.story-nav-zone { position: absolute; top: 0; bottom: 0; width: 40%; z-index: 3; background: transparent; border: none; padding: 0; }
+.story-nav-zone.left { left: 0; }
+.story-nav-zone.right { right: 0; width: 60%; }
 </style>
 </head>
 <body>
@@ -292,6 +390,10 @@ const ICONS = {
   savedFilled: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>',
   plus: svgIcon('<path d="M12 5v14M5 12h14"/>'),
   pin: svgIcon('<path d="M12 21s7-6.7 7-11.5A7 7 0 0 0 5 9.5C5 14.3 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/>'),
+  close: svgIcon('<path d="M6 6l12 12M18 6 6 18"/>'),
+  chevronDown: svgIcon('<path d="M6 9l6 6 6-6"/>'),
+  arrowLeft: svgIcon('<path d="M19 12H5M11 18l-6-6 6-6"/>'),
+  arrowRight: svgIcon('<path d="M5 12h14M13 6l6 6-6 6"/>'),
   hike: svgIcon('<path d="M3 19h18L14.5 7 11 13l-2-2.3L3 19z"/>'),
   lookout: svgIcon('<circle cx="12" cy="12" r="8.3"/><path d="M15 9l-1.8 4.2L9 15l1.8-4.2L15 9z"/>'),
   walk: svgIcon('<path d="M4 17c2.3-.8 2.9-3 4.9-3s2.6 2.2 4.9 2.2 2.6-2.2 4.9-3"/>'),
@@ -313,6 +415,7 @@ const TYPES = [
   { id: 'other', label: 'Other', icon: 'other' },
 ];
 const AVATAR_TONES = ['#c07d5f', '#5f7d54', '#5f7f91', '#b98b34', '#818c5a', '#a9727a'];
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
 function typeInfo(id) { return TYPES.find(t => t.id === id) || TYPES[TYPES.length - 1]; }
 function colorForId(id) {
@@ -336,12 +439,30 @@ function uid() {
   if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
   return 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
 }
+function generateCode() {
+  let s = '';
+  for (let i = 0; i < 6; i++) s += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+  return s;
+}
+async function generateUniqueCode() {
+  for (let i = 0; i < 5; i++) {
+    const code = generateCode();
+    try {
+      const snap = await db.collection('users').where('code', '==', code).limit(1).get();
+      if (!snap.docs.length) return code;
+    } catch (e) { return code; }
+  }
+  return generateCode();
+}
 
 let db = null, assets = null;
-let currentUser = null; // {id, name, color, rankedList, bucketList}
+let currentUser = null; // {id, name, color, code, rankedList, bucketList, friends}
 let activitiesMap = {};   // id -> activity data
 let activitiesOrder = []; // ids sorted by timestamp desc
-let usersMap = {};        // id -> {name,color}
+let usersMap = {};        // id -> {name,color} (lightweight cache from activity docs)
+let friendDocs = {};       // friendId -> normalized friend user doc
+let friendUnsubs = {};     // friendId -> unsubscribe fn
+let viewedStoryUsers = new Set();
 let currentTab = 'feed';
 let feedFilter = 'all';
 let pendingPhoto = null;
@@ -394,8 +515,10 @@ function normalizeUser(id, data) {
     id,
     name: data.name || 'Explorer',
     color: data.color || colorForId(id),
+    code: data.code || '',
     rankedList: Array.isArray(data.rankedList) ? data.rankedList : [],
     bucketList: Array.isArray(data.bucketList) ? data.bucketList : [],
+    friends: Array.isArray(data.friends) ? data.friends : [],
   };
 }
 
@@ -428,7 +551,8 @@ function renderOnboarding() {
     err.hidden = true;
     const id = uid();
     const color = colorForId(id);
-    const data = { name, color, rankedList: [], bucketList: [], createdAt: Date.now() };
+    const code = await generateUniqueCode();
+    const data = { name, color, code, rankedList: [], bucketList: [], friends: [], createdAt: Date.now() };
     try { await db.doc('users/' + id).set(data); } catch (e) { toast('Could not create profile — try again'); return; }
     try { localStorage.setItem('breeze_user_id', id); } catch (e) {}
     currentUser = normalizeUser(id, data);
@@ -440,13 +564,36 @@ function renderOnboarding() {
   input.focus();
 }
 
+function syncFriendSubscriptions() {
+  const friends = currentUser.friends || [];
+  friends.forEach(fid => {
+    if (friendUnsubs[fid]) return;
+    try {
+      friendUnsubs[fid] = db.doc('users/' + fid).onSnapshot((snap) => {
+        const data = snap && snap.data ? snap.data() : snap;
+        if (data) { friendDocs[fid] = normalizeUser(fid, data); renderScreen(); }
+      });
+    } catch (e) {}
+  });
+  Object.keys(friendUnsubs).forEach(fid => {
+    if (!friends.includes(fid)) {
+      try { friendUnsubs[fid](); } catch (e) {}
+      delete friendUnsubs[fid];
+      delete friendDocs[fid];
+    }
+  });
+}
+
 function subscribeAll() {
   try {
     const userUnsub = db.doc('users/' + currentUser.id).onSnapshot((snap) => {
       const data = snap && snap.data ? snap.data() : snap;
       if (data) {
+        const prevFriends = (currentUser.friends || []).join(',');
         currentUser = normalizeUser(currentUser.id, data);
-        if (currentTab === 'rankings' || currentTab === 'saved') renderScreen();
+        syncFriendSubscriptions();
+        const friendsChanged = prevFriends !== (currentUser.friends || []).join(',');
+        if (friendsChanged || currentTab === 'rankings' || currentTab === 'saved') renderScreen();
         else updateFeedRankBadges();
       }
     });
@@ -493,7 +640,7 @@ function renderShell() {
     </div>
   `;
   document.getElementById('logBtn').addEventListener('click', openLogModal);
-  document.getElementById('meBtn').addEventListener('click', showSwitchAccount);
+  document.getElementById('meBtn').addEventListener('click', openFriendsSheet);
   document.querySelectorAll('.navbtn').forEach(b => b.addEventListener('click', () => { currentTab = b.dataset.tab; renderScreen(); }));
   currentTab = 'feed';
   renderScreen();
@@ -504,6 +651,9 @@ function showSwitchAccount() {
     try { localStorage.removeItem('breeze_user_id'); localStorage.removeItem('wl_user_id'); } catch (e) {}
     unsubFns.forEach(fn => { try { fn(); } catch (e) {} });
     unsubFns = [];
+    Object.values(friendUnsubs).forEach(fn => { try { fn(); } catch (e) {} });
+    friendUnsubs = {};
+    friendDocs = {};
     currentUser = null;
     renderOnboarding();
   }
@@ -523,27 +673,319 @@ function updateFeedRankBadges() {
     const ownerId = el.getAttribute('data-rank-owner');
     const actId = el.getAttribute('data-rank-act');
     const txt = rankBadgeText(ownerId, actId);
-    el.textContent = txt;
+    el.textContent = txt || 'Friend pick';
     el.classList.toggle('empty', !txt);
   });
 }
 
 function rankBadgeText(ownerId, actId) {
-  const list = (ownerId === currentUser.id) ? currentUser.rankedList : null;
+  const list = ownerId === currentUser.id ? currentUser.rankedList : (friendDocs[ownerId] ? friendDocs[ownerId].rankedList : null);
   if (!list) return '';
   const idx = list.indexOf(actId);
   if (idx === -1) return '';
   return '#' + (idx + 1) + ' of ' + list.length;
 }
 
-function renderFeed(host) {
-  const filtered = activitiesOrder.filter(id => feedFilter === 'all' || activitiesMap[id].type === feedFilter);
-  const chips = ['<button class="chip ' + (feedFilter==='all'?'active':'') + '" data-f="all">All</button>']
-    .concat(TYPES.map(t => `<button class="chip ${feedFilter===t.id?'active':''}" data-f="${t.id}">${ICONS[t.icon]}${t.label}</button>`)).join('');
+function isVisibleActivity(a) {
+  return a.userId === currentUser.id || (currentUser.friends || []).includes(a.userId);
+}
 
-  let cardsHtml = '';
-  if (filtered.length === 0) {
-    cardsHtml = `<div class="empty-state"><div class="icon-wrap">${ICONS.home}</div><p>No activities yet — be the first to log one and start the leaderboard.</p></div>`;
+/* ---------- Stories ---------- */
+function storyGroupsForFeed() {
+  const groups = [];
+  const mine = activitiesOrder.filter(id => activitiesMap[id].userId === currentUser.id).map(id => activitiesMap[id]);
+  if (mine.length) groups.push({ id: currentUser.id, name: currentUser.name, color: currentUser.color, isSelf: true, items: mine });
+  (currentUser.friends || []).forEach(fid => {
+    const items = activitiesOrder.filter(id => activitiesMap[id].userId === fid).map(id => activitiesMap[id]);
+    if (!items.length) return;
+    const fd = friendDocs[fid];
+    const cached = usersMap[fid];
+    groups.push({
+      id: fid,
+      name: (fd && fd.name) || (cached && cached.name) || 'Friend',
+      color: (fd && fd.color) || (cached && cached.color) || colorForId(fid),
+      isSelf: false,
+      items,
+    });
+  });
+  const self = groups.filter(g => g.isSelf);
+  const rest = groups.filter(g => !g.isSelf).sort((a, b) => (b.items[0].timestamp || 0) - (a.items[0].timestamp || 0));
+  return self.concat(rest);
+}
+
+function renderStoriesRow() {
+  const groups = storyGroupsForFeed();
+  const addBubble = `
+    <button class="story-bubble" id="addFriendBubble">
+      <span class="story-ring add"><span class="story-ring-inner add-inner">${ICONS.plus}</span></span>
+      <span class="label">Add friend</span>
+    </button>`;
+  const bubbles = groups.map(g => {
+    const unseen = !g.isSelf && !viewedStoryUsers.has(g.id);
+    return `
+    <button class="story-bubble" data-story-user="${g.id}">
+      <span class="story-ring ${unseen ? 'unseen' : ''}">
+        <span class="story-ring-inner" style="background:${g.color}">${escapeHtml(initials(g.name))}</span>
+      </span>
+      <span class="label">${g.isSelf ? 'Your story' : escapeHtml(g.name.split(' ')[0])}</span>
+    </button>`;
+  }).join('');
+  return `<div class="stories-row">${addBubble}${bubbles}</div>`;
+}
+
+let storyState = null;
+
+function openStoryViewer(userId) {
+  const groups = storyGroupsForFeed();
+  const groupIndex = groups.findIndex(g => g.id === userId);
+  if (groupIndex === -1) return;
+  viewedStoryUsers.add(userId);
+  storyState = { groups, groupIndex, itemIndex: 0, timer: null };
+  renderStoryViewer();
+}
+
+function closeStoryViewer() {
+  if (storyState && storyState.timer) clearTimeout(storyState.timer);
+  const el = document.getElementById('storyViewer');
+  if (el) el.remove();
+  storyState = null;
+  renderScreen();
+}
+
+function storyNext() {
+  if (!storyState) return;
+  const group = storyState.groups[storyState.groupIndex];
+  if (storyState.itemIndex < group.items.length - 1) {
+    storyState.itemIndex++;
+    renderStoryViewer();
+  } else if (storyState.groupIndex < storyState.groups.length - 1) {
+    storyState.groupIndex++;
+    storyState.itemIndex = 0;
+    viewedStoryUsers.add(storyState.groups[storyState.groupIndex].id);
+    renderStoryViewer();
+  } else {
+    closeStoryViewer();
+  }
+}
+
+function storyPrev() {
+  if (!storyState) return;
+  if (storyState.itemIndex > 0) { storyState.itemIndex--; renderStoryViewer(); }
+  else if (storyState.groupIndex > 0) {
+    storyState.groupIndex--;
+    storyState.itemIndex = storyState.groups[storyState.groupIndex].items.length - 1;
+    renderStoryViewer();
+  }
+}
+
+function attachStorySwipeClose(el) {
+  let startY = 0, dragging = false, pid = null;
+  el.addEventListener('pointerdown', (e) => {
+    dragging = true; pid = e.pointerId; startY = e.clientY;
+    try { el.setPointerCapture(pid); } catch (err) {}
+    if (storyState && storyState.timer) clearTimeout(storyState.timer);
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dy = Math.max(0, e.clientY - startY);
+    el.style.transform = 'translateY(' + dy + 'px)';
+    el.style.opacity = String(1 - Math.min(0.6, dy / 400));
+  });
+  const end = (e) => {
+    if (!dragging) return;
+    dragging = false;
+    const dy = e.clientY - startY;
+    if (dy > 110) { closeStoryViewer(); return; }
+    el.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+    el.style.transform = ''; el.style.opacity = '';
+    setTimeout(() => { el.style.transition = ''; }, 210);
+    if (storyState) storyState.timer = setTimeout(storyNext, 4500);
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
+
+function renderStoryViewer() {
+  let el = document.getElementById('storyViewer');
+  let fresh = false;
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'storyViewer';
+    el.className = 'story-viewer';
+    document.body.appendChild(el);
+    fresh = true;
+  }
+  const group = storyState.groups[storyState.groupIndex];
+  const item = group.items[storyState.itemIndex];
+  const ti = typeInfo(item.type);
+  const rankTxt = rankBadgeText(item.userId, item.id);
+  const bgStyle = item.photoUrl ? `background-image:url('${escapeHtml(item.photoUrl)}')` : `background-color:${group.color}`;
+  const displayName = group.isSelf ? currentUser.name : group.name;
+
+  el.innerHTML = `
+    <div class="story-progress-row">
+      ${group.items.map((_, i) => `<span class="story-seg ${i < storyState.itemIndex ? 'done' : ''} ${i === storyState.itemIndex ? 'active' : ''}"><span class="story-seg-fill"></span></span>`).join('')}
+    </div>
+    <div class="story-header">
+      <div class="mini-avatar" style="background:${group.color}">${escapeHtml(initials(displayName))}</div>
+      <div class="story-header-meta">
+        <div class="story-header-name">${escapeHtml(displayName)}</div>
+        <div class="story-header-time">${timeAgo(item.timestamp || Date.now())}</div>
+      </div>
+      <button class="story-close" id="storyCloseBtn">${ICONS.close}</button>
+    </div>
+    <div class="story-content" style="${bgStyle}">
+      ${item.photoUrl ? '<div class="story-scrim"></div>' : `<div class="story-icon">${ICONS[ti.icon]}</div>`}
+      <div class="story-caption">
+        <span class="type-tag">${ICONS[ti.icon]}${ti.label}</span>
+        <div class="story-title">${escapeHtml(item.title)}</div>
+        <div class="story-loc">${ICONS.pin}${escapeHtml(item.location || '')}</div>
+        ${item.review ? `<div class="story-review">${escapeHtml(item.review)}</div>` : ''}
+        ${rankTxt ? `<div class="story-rank">${group.isSelf ? 'My' : 'Their'} ${rankTxt}</div>` : ''}
+      </div>
+    </div>
+    <button class="story-nav-zone left" id="storyPrevZone" aria-label="Previous"></button>
+    <button class="story-nav-zone right" id="storyNextZone" aria-label="Next"></button>
+  `;
+  document.getElementById('storyCloseBtn').addEventListener('click', closeStoryViewer);
+  document.getElementById('storyPrevZone').addEventListener('click', storyPrev);
+  document.getElementById('storyNextZone').addEventListener('click', storyNext);
+  if (fresh) attachStorySwipeClose(el);
+  if (storyState.timer) clearTimeout(storyState.timer);
+  storyState.timer = setTimeout(storyNext, 4500);
+}
+
+/* ---------- Friends sheet ---------- */
+function openFriendsSheet() {
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.id = 'friendsOverlay';
+  const friends = currentUser.friends || [];
+  const friendRows = friends.map(fid => {
+    const fd = friendDocs[fid];
+    const name = fd ? fd.name : 'Loading…';
+    const color = fd ? fd.color : '#cccccc';
+    return `
+    <div class="friend-row">
+      <div class="mini-avatar" style="background:${color}">${escapeHtml(initials(name))}</div>
+      <div class="name">${escapeHtml(name)}</div>
+      <button class="btn-ghost" data-remove-friend="${fid}">Remove</button>
+    </div>`;
+  }).join('');
+
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">Your circle</div>
+      <div class="modal-sub">Friends see your activities, and you see theirs</div>
+      <div class="form-group">
+        <label class="form-label">Your code</label>
+        <div class="friend-code-box">
+          <span class="code">${escapeHtml(currentUser.code || '——————')}</span>
+          <button class="btn-secondary" id="copyCodeBtn">Copy</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="friendCodeInput">Add a friend</label>
+        <div class="add-friend-row">
+          <input class="field-input" id="friendCodeInput" placeholder="Enter their code" maxlength="8" autocomplete="off" style="text-transform:uppercase;">
+          <button class="btn-primary" id="addFriendBtn">Add</button>
+        </div>
+        <div class="error-text hidden" id="friendError" hidden></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your friends (${friends.length})</label>
+        ${friendRows || `<p class="screen-sub" style="margin:0;">No friends yet — share your code or add someone by theirs.</p>`}
+      </div>
+      <button class="btn-ghost" id="switchAccountBtn" style="display:block; margin: 10px auto 0; color: var(--danger);">Switch account</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+  document.getElementById('copyCodeBtn').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(currentUser.code || ''); toast('Code copied'); }
+    catch (e) { toast('Could not copy — copy it manually'); }
+  });
+  const codeInput = document.getElementById('friendCodeInput');
+  document.getElementById('addFriendBtn').addEventListener('click', () => addFriendByCode(overlay));
+  codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addFriendByCode(overlay); });
+  overlay.querySelectorAll('[data-remove-friend]').forEach(btn => {
+    btn.addEventListener('click', () => removeFriend(btn.dataset.removeFriend, overlay));
+  });
+  document.getElementById('switchAccountBtn').addEventListener('click', () => { overlay.remove(); showSwitchAccount(); });
+}
+
+async function addFriendByCode(overlay) {
+  const input = document.getElementById('friendCodeInput');
+  const err = document.getElementById('friendError');
+  const code = input.value.trim().toUpperCase();
+  err.hidden = true;
+  if (!code) { err.textContent = 'Enter a code'; err.hidden = false; return; }
+  try {
+    const snap = await db.collection('users').where('code', '==', code).limit(1).get();
+    const docs = snap && snap.docs ? snap.docs : [];
+    if (!docs.length) { err.textContent = "No one found with that code"; err.hidden = false; return; }
+    const targetDoc = docs[0];
+    const targetId = targetDoc.id;
+    const targetData = targetDoc.data() || {};
+    if (targetId === currentUser.id) { err.textContent = "That's your own code"; err.hidden = false; return; }
+    if ((currentUser.friends || []).includes(targetId)) { err.textContent = 'Already friends'; err.hidden = false; return; }
+    const newMine = Array.from(new Set([...(currentUser.friends || []), targetId]));
+    const newTheirs = Array.from(new Set([...(Array.isArray(targetData.friends) ? targetData.friends : []), currentUser.id]));
+    await db.doc('users/' + currentUser.id).update({ friends: newMine });
+    await db.doc('users/' + targetId).update({ friends: newTheirs });
+    currentUser.friends = newMine;
+    syncFriendSubscriptions();
+    toast('Added ' + (targetData.name || 'friend'));
+    overlay.remove();
+    openFriendsSheet();
+  } catch (e) {
+    err.textContent = "Couldn't add that friend — try again";
+    err.hidden = false;
+  }
+}
+
+async function removeFriend(fid, overlay) {
+  const newMine = (currentUser.friends || []).filter(id => id !== fid);
+  currentUser.friends = newMine;
+  try { await db.doc('users/' + currentUser.id).update({ friends: newMine }); } catch (e) {}
+  try {
+    const fd = friendDocs[fid];
+    if (fd) {
+      const theirFriends = (fd.friends || []).filter(id => id !== currentUser.id);
+      await db.doc('users/' + fid).update({ friends: theirFriends });
+    }
+  } catch (e) {}
+  syncFriendSubscriptions();
+  overlay.remove();
+  openFriendsSheet();
+}
+
+/* ---------- Feed ---------- */
+function renderFeed(host) {
+  const visibleIds = activitiesOrder.filter(id => isVisibleActivity(activitiesMap[id]));
+  const filtered = visibleIds.filter(id => feedFilter === 'all' || activitiesMap[id].type === feedFilter);
+  const currentFilterInfo = feedFilter === 'all' ? null : typeInfo(feedFilter);
+
+  let cardsHtml;
+  if (visibleIds.length === 0) {
+    if ((currentUser.friends || []).length === 0) {
+      cardsHtml = `<div class="empty-state">
+        <div class="icon-wrap">${ICONS.home}</div>
+        <p>Add friends to see their adventures here — or log your own to get started.</p>
+        <div class="empty-actions">
+          <button class="btn-secondary" id="emptyAddFriend">Add a friend</button>
+          <button class="btn-primary" id="emptyLogActivity">Log an activity</button>
+        </div>
+      </div>`;
+    } else {
+      cardsHtml = `<div class="empty-state">
+        <div class="icon-wrap">${ICONS.home}</div>
+        <p>No activities yet — be the first in your circle to log one.</p>
+        <div class="empty-actions"><button class="btn-primary" id="emptyLogActivity">Log an activity</button></div>
+      </div>`;
+    }
+  } else if (filtered.length === 0) {
+    cardsHtml = `<div class="empty-state"><div class="icon-wrap">${ICONS[currentFilterInfo.icon]}</div><p>No ${currentFilterInfo.label.toLowerCase()} activities in your circle yet.</p></div>`;
   } else {
     cardsHtml = filtered.map(id => activityCardHtml(activitiesMap[id])).join('');
   }
@@ -551,17 +993,47 @@ function renderFeed(host) {
   host.innerHTML = `
     <h1 class="screen-title">Feed</h1>
     <p class="screen-sub">What your friends have been up to</p>
-    <div class="chip-row">${chips}</div>
+    ${renderStoriesRow()}
+    <div class="filter-row">
+      <div class="filter-dropdown">
+        <button class="filter-trigger" id="filterTrigger">${currentFilterInfo ? ICONS[currentFilterInfo.icon] : ''}${currentFilterInfo ? currentFilterInfo.label : 'All types'}${ICONS.chevronDown}</button>
+        <div class="filter-menu" id="filterMenu" hidden>
+          <button class="filter-option ${feedFilter === 'all' ? 'active' : ''}" data-f="all">All types</button>
+          ${TYPES.map(t => `<button class="filter-option ${feedFilter === t.id ? 'active' : ''}" data-f="${t.id}">${ICONS[t.icon]}${t.label}</button>`).join('')}
+        </div>
+      </div>
+    </div>
     <div id="feedCards">${cardsHtml}</div>
   `;
-  host.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { feedFilter = c.dataset.f; renderScreen(); }));
+
+  const trigger = document.getElementById('filterTrigger');
+  const menu = document.getElementById('filterMenu');
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const opening = menu.hidden;
+    menu.hidden = !menu.hidden;
+    trigger.classList.toggle('open', opening);
+    if (opening) {
+      const onDocClick = () => { menu.hidden = true; trigger.classList.remove('open'); document.removeEventListener('click', onDocClick); };
+      document.addEventListener('click', onDocClick);
+    }
+  });
+  menu.querySelectorAll('.filter-option').forEach(btn => btn.addEventListener('click', () => { feedFilter = btn.dataset.f; renderScreen(); }));
+
   host.querySelectorAll('.save-btn').forEach(b => b.addEventListener('click', () => toggleSave(b.dataset.act)));
+  const addFriendBubble = document.getElementById('addFriendBubble');
+  if (addFriendBubble) addFriendBubble.addEventListener('click', openFriendsSheet);
+  host.querySelectorAll('[data-story-user]').forEach(b => b.addEventListener('click', () => openStoryViewer(b.dataset.storyUser)));
+  const emptyAddFriend = document.getElementById('emptyAddFriend');
+  if (emptyAddFriend) emptyAddFriend.addEventListener('click', openFriendsSheet);
+  const emptyLogActivity = document.getElementById('emptyLogActivity');
+  if (emptyLogActivity) emptyLogActivity.addEventListener('click', openLogModal);
 }
 
 function activityCardHtml(a) {
   const ti = typeInfo(a.type);
   const isMine = a.userId === currentUser.id;
-  const rankTxt = isMine ? rankBadgeText(a.userId, a.id) : '';
+  const rankTxt = rankBadgeText(a.userId, a.id);
   const saved = currentUser.bucketList.includes(a.id);
   const photo = a.photoUrl ? `<img class="card-photo" src="${escapeHtml(a.photoUrl)}" alt="">` : '';
   return `
@@ -729,7 +1201,7 @@ function openLogModal() {
   });
 }
 
-/* ---------- Comparative ranking flow ---------- */
+/* ---------- Comparative ranking flow (swipeable duel) ---------- */
 let rankSession = null;
 
 function startRankingFlow() {
@@ -756,27 +1228,81 @@ function showComparisonStep() {
   overlay.innerHTML = `
     <div class="modal">
       <div class="modal-title">Which did you enjoy more?</div>
-      <div class="modal-sub">This places your new activity on your ranked list</div>
+      <div class="modal-sub">Drag the card toward the one you liked more</div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-      <div class="vs-row">
-        <div class="vs-card" id="pickNew">
-          ${ICONS[newTi.icon]}
-          <span class="name">${escapeHtml(logState.title)}</span>
-          <span class="loc">${escapeHtml(logState.location || 'New activity')}</span>
-        </div>
-        <div class="vs-card" id="pickOther">
+      <div class="duel-stack" id="duelStack">
+        <div class="duel-card back">
           ${ICONS[otherTi.icon]}
           <span class="name">${escapeHtml(other.title)}</span>
           <span class="loc">${escapeHtml(other.location || '')}</span>
         </div>
+        <div class="duel-card front" id="duelFront">
+          <div class="duel-stamp right" id="stampRight">Prefer this</div>
+          <div class="duel-stamp left" id="stampLeft">Prefer that</div>
+          ${ICONS[newTi.icon]}
+          <span class="name">${escapeHtml(logState.title)}</span>
+          <span class="loc">${escapeHtml(logState.location || 'New activity')}</span>
+        </div>
+        <span class="vs-pill">VS</span>
       </div>
-      <div class="vs-divider">Tap the one you liked better</div>
+      <div class="duel-actions">
+        <button class="duel-btn" id="duelLeftBtn" title="Prefer ${escapeHtml(other.title)}">${ICONS.arrowLeft}</button>
+        <button class="duel-btn like" id="duelRightBtn" title="Prefer ${escapeHtml(logState.title)}">${ICONS.arrowRight}</button>
+      </div>
       <button class="btn-ghost" id="skipRank" style="display:block; margin: 4px auto 0;">Not sure — put it in the middle</button>
     </div>`;
   document.body.appendChild(overlay);
 
-  document.getElementById('pickNew').addEventListener('click', () => { rankSession.hi = mid; overlay.remove(); showComparisonStep(); });
-  document.getElementById('pickOther').addEventListener('click', () => { rankSession.lo = mid + 1; overlay.remove(); showComparisonStep(); });
+  const front = document.getElementById('duelFront');
+  const stampRight = document.getElementById('stampRight');
+  const stampLeft = document.getElementById('stampLeft');
+  const threshold = 90;
+  let dx = 0, dragging = false, pointerId = null, startX = 0, settled = false;
+
+  function setTransform(x, animate) {
+    front.style.transition = animate ? 'transform 0.25s ease' : 'none';
+    front.style.transform = 'translateX(' + x + 'px) rotate(' + (x / 18) + 'deg)';
+    const p = Math.max(-1, Math.min(1, x / threshold));
+    stampRight.style.opacity = String(Math.max(0, p));
+    stampLeft.style.opacity = String(Math.max(0, -p));
+  }
+
+  function commit(direction) {
+    if (settled) return;
+    settled = true;
+    front.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+    front.style.transform = 'translateX(' + (direction * 500) + 'px) rotate(' + (direction * 20) + 'deg)';
+    front.style.opacity = '0';
+    setTimeout(() => {
+      overlay.remove();
+      if (direction > 0) { rankSession.hi = mid; } else { rankSession.lo = mid + 1; }
+      showComparisonStep();
+    }, 180);
+  }
+
+  front.addEventListener('pointerdown', (e) => {
+    if (settled) return;
+    dragging = true; pointerId = e.pointerId; startX = e.clientX;
+    try { front.setPointerCapture(pointerId); } catch (err) {}
+  });
+  front.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    dx = e.clientX - startX;
+    setTransform(dx, false);
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    if (dx > threshold) commit(1);
+    else if (dx < -threshold) commit(-1);
+    else setTransform(0, true);
+    dx = 0;
+  }
+  front.addEventListener('pointerup', endDrag);
+  front.addEventListener('pointercancel', endDrag);
+
+  document.getElementById('duelLeftBtn').addEventListener('click', () => commit(-1));
+  document.getElementById('duelRightBtn').addEventListener('click', () => commit(1));
   document.getElementById('skipRank').addEventListener('click', () => { overlay.remove(); finalizeNewActivity(mid); });
 }
 

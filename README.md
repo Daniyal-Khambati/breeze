@@ -7,8 +7,10 @@ Originally built as a Claude artifact: https://claude.ai/artifact/Lbh6W9M5uuuF6n
 ## Features
 
 - Log activities (hikes, lookouts, walks, kayaking, camping, biking, swimming, and more) with a title, location, review, and optional photo
-- Rank each new activity against your existing ones with a quick head-to-head comparison flow
-- Browse a feed of activities logged by friends, filterable by type
+- Rank each new activity by swiping (or tapping) through a head-to-head comparison against your existing ones
+- A friend circle: share a short code to add friends, and only see activities from people in your circle
+- A stories row at the top of the Feed — tap a friend's avatar for a full-screen, auto-advancing recap of their recent activities
+- Browse the feed filtered by activity type via a compact dropdown
 - Save activities from the feed to a personal bucket list
 
 ## Running it
