@@ -61,14 +61,26 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-/* Top bar */
+/* Top bar — a full illustrated banner that scrolls away with the page,
+   not a sticky sliver. Brand and actions sit inside it, top-aligned. */
 .topbar {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; overflow: hidden; isolation: isolate;
+  position: relative; overflow: hidden; isolation: isolate;
+  aspect-ratio: 16 / 9; width: 100%;
   background: var(--bg);
-  padding: 18px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 .topbar-scene { position: absolute; inset: 0; z-index: -1; }
 .topbar-scene svg { display: block; width: 100%; height: 100%; }
+.topbar-bar {
+  position: relative; z-index: 1;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 20px 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+/* Summit already shows the full illustration in its own mountain widget, so
+   the shared masthead collapses to a plain bar there instead of repeating it. */
+.topbar.topbar--compact { aspect-ratio: auto; }
+.topbar--compact .topbar-scene { display: none; }
+.topbar--compact .topbar-bar { padding-bottom: 14px; }
+.topbar--compact .brand { color: var(--accent); text-shadow: none; }
 .brand {
   font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: 22px;
   letter-spacing: -0.01em; color: var(--on-accent);
@@ -365,8 +377,6 @@ textarea.field-input { resize: none; font-size: 14.5px; }
   padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex; justify-content: center;
 }
-.bottomnav-ridge { position: absolute; left: 0; right: 0; top: -15px; height: 15px; overflow: hidden; pointer-events: none; }
-.bottomnav-ridge svg { display: block; width: 100%; height: 100%; }
 .bottomnav-inner { max-width: 480px; width: 100%; display: flex; }
 .navbtn {
   flex: 1; background: none; border: none; padding: 11px 4px 9px; display: flex; flex-direction: column;
@@ -672,14 +682,19 @@ function buildHikerSilhouette(x, y, scale) {
   <g transform="translate(${x},${y}) scale(${scale})">
     <path d="M1.8 2L5 2L7.6 24L4.3 25L0.4 3.5Z" fill="${FIGURE_COLOR}"/>
     <path d="M-2 2L-4.8 2L-6.8 21L-4.4 21.8L-0.6 3.2Z" fill="${FIGURE_COLOR}"/>
+    <path d="M2.8 24.3L7.9 23.4L9 26.2L2.4 27Z" fill="${FIGURE_COLOR}"/>
+    <path d="M-4.6 21.2L-7 20.8L-8.2 23.4L-4.1 24.2Z" fill="${FIGURE_COLOR}"/>
     <path d="M6.3 -13.4C8.6 -11.4 10.3 -8.2 10.9 -4.6L12.9 -5.3C12.2 -9.3 10 -13 7.3 -15.4Z" fill="${FIGURE_COLOR}"/>
     <path d="M-6.3 -13C-8.7 -11.2 -10.5 -8.4 -11.3 -5.2L-13.3 -5.9C-12.4 -9.7 -10.1 -13.2 -7.3 -15.2Z" fill="${FIGURE_COLOR}"/>
     <line x1="12.9" y1="-5.3" x2="16.8" y2="25" stroke="${FIGURE_COLOR}" stroke-width="1.15" stroke-linecap="round"/>
     <line x1="-13.3" y1="-5.9" x2="-17" y2="19" stroke="${FIGURE_COLOR}" stroke-width="1.15" stroke-linecap="round"/>
+    <circle cx="12.9" cy="-5.3" r="1.1" fill="${FIGURE_COLOR}"/>
+    <circle cx="-13.3" cy="-5.9" r="1.1" fill="${FIGURE_COLOR}"/>
     <path d="M-6.8 -14.6C-8.2 -8.2 -7.8 -1.4 -5.4 3.2C-1.8 4.6 1.8 4.6 5.4 3.2C7.8 -1.4 8.2 -8.2 6.8 -14.6C4.4 -17.6 -4.4 -17.6 -6.8 -14.6Z" fill="${PACK_COLOR}"/>
     <path d="M-4.6 -16.2C-2 -18.4 2 -18.4 4.6 -16.2L3.6 -13.4L-3.6 -13.4Z" fill="${PACK_COLOR}"/>
     <path d="M-6.8 -14.6C-6 -12 -5.8 -6 -6.6 0L-8 -0.6C-7.4 -6.4 -7.6 -11 -6.8 -14.6Z" fill="${PACK_SHADOW}"/>
-    <ellipse cx="0" cy="-21" rx="3.3" ry="3.7" fill="${FIGURE_COLOR}"/>
+    <path d="M-3.6 -20C-3.9 -22.6 -1.4 -25 1 -24.6C3.4 -24.2 5 -21.7 4.6 -19.2C3.4 -20.6 1.3 -21.5 -0.6 -21.4C-1.8 -21.3 -2.8 -20.8 -3.6 -20Z" fill="${FIGURE_COLOR}"/>
+    <ellipse cx="0" cy="-20.6" rx="3.4" ry="3.9" fill="${FIGURE_COLOR}"/>
   </g>`;
 }
 
@@ -820,36 +835,6 @@ function buildHeroScene() {
   </svg>`;
 }
 
-/* Persistent sunset-ridge strip painted behind the top bar on every screen. */
-function buildTopbarScene() {
-  const c = SEASONS[getSeason()];
-  return `
-  <svg viewBox="0 0 400 100" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-    <defs>
-      ${skyGradientDefs(c, 'topSky')}
-      ${ridgeGradientDefs(c, 'topRidge', c.far, c.near)}
-    </defs>
-    <rect x="0" y="0" width="400" height="100" fill="url(#topSky)"/>
-    ${buildClouds(c, [[70, 20, 0.6], [270, 14, 0.5]])}
-    <path d="M0,78 C40,55 70,68 100,50 C140,28 170,60 210,45 C250,30 280,58 320,42 C350,30 375,50 400,40 L400,100 L0,100 Z" fill="url(#topRidge)"/>
-    <g fill="${c.tree}">
-      <path d="M18,100 C18,100 8,80 20,74 C32,80 22,100 22,100 Z"/>
-      <path d="M382,100 C382,100 370,76 384,70 C398,76 386,100 386,100 Z"/>
-    </g>
-  </svg>`;
-}
-
-/* Thin decorative ridgeline along the top edge of the bottom nav, with a
-   tiny hiker on it — the same illustrated world bookending every screen. */
-function buildBottomRidge() {
-  const c = SEASONS[getSeason()];
-  return `
-  <svg viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,34 L0,20 C30,10 60,24 95,13 C130,2 165,20 200,11 C235,3 270,21 305,12 C340,5 370,18 400,9 L400,34 Z" fill="${c.tree}"/>
-    ${buildHikerSilhouette(198, 12, 0.34)}
-  </svg>`;
-}
-
 function renderNoDb() {
   app.innerHTML = `
     <div class="onboard-wrap">
@@ -956,16 +941,17 @@ function subscribeAll() {
 function renderShell() {
   app.innerHTML = `
     <div class="topbar">
-      <div class="topbar-scene">${buildTopbarScene()}</div>
-      <div class="brand">Breeze</div>
-      <div class="topbar-actions">
-        <button class="log-btn" id="logBtn">${ICONS.plus}Log</button>
-        <button class="avatar-btn" id="meBtn" style="background:${currentUser.color}">${escapeHtml(initials(currentUser.name))}</button>
+      <div class="topbar-scene">${buildHeroScene()}</div>
+      <div class="topbar-bar">
+        <div class="brand">Breeze</div>
+        <div class="topbar-actions">
+          <button class="log-btn" id="logBtn">${ICONS.plus}Log</button>
+          <button class="avatar-btn" id="meBtn" style="background:${currentUser.color}">${escapeHtml(initials(currentUser.name))}</button>
+        </div>
       </div>
     </div>
     <div id="screenHost" class="screen"></div>
     <div class="bottomnav">
-      <div class="bottomnav-ridge">${buildBottomRidge()}</div>
       <div class="bottomnav-inner">
         <button class="navbtn" data-tab="feed">${ICONS.home}Feed</button>
         <button class="navbtn" data-tab="rankings">${ICONS.ranks}My ranks</button>
@@ -996,6 +982,11 @@ function showSwitchAccount() {
 
 function renderScreen() {
   document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === currentTab));
+  const topbar = document.querySelector('.topbar');
+  // Summit already carries its own full mountain illustration below — showing
+  // the shared masthead scene right above it would just repeat the same
+  // artwork twice in a row, so that tab gets the compact plain bar instead.
+  if (topbar) topbar.classList.toggle('topbar--compact', currentTab === 'summit');
   const host = document.getElementById('screenHost');
   if (!host) return;
   if (currentTab === 'feed') renderFeed(host);
