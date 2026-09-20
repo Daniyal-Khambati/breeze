@@ -12,6 +12,7 @@ Originally built as a Claude artifact: https://claude.ai/artifact/Lbh6W9M5uuuF6n
 - A stories row at the top of the Feed — tap a friend's avatar for a full-screen, auto-advancing recap of their recent activities
 - Browse the feed filtered by activity type via a compact dropdown
 - Save activities from the feed to a personal bucket list
+- **Summit tab**: a gamified, season-themed mountain scene. Set a home region and a figure climbs the mountain as you log and photograph its destinations. A handful of well-known outdoor regions (Finger Lakes NY, Adirondacks, Colorado Front Range, Pacific Northwest) ship with a starter destination list, clearly marked "Suggested" until real logged activity overtakes it; any other region falls back to generic prompts rather than invented place names. A scope toggle broadens the list to everywhere logged, and "Check another region" lets you preview a different region without changing your own.
 
 ## Running it
 
