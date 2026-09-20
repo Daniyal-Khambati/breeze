@@ -349,6 +349,10 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .rank-info .t-wrap { min-width: 0; }
 .rank-info .t { font-family: var(--font-display); font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rank-info .l { font-size: 11.5px; color: var(--text-muted); }
+.rank-stars { display: flex; align-items: center; gap: 1px; flex-shrink: 0; margin-left: 8px; font-size: 13px; }
+.star { position: relative; display: inline-flex; color: var(--border); }
+.star.full { color: var(--gold); }
+.star-fill-half { position: absolute; inset: 0; width: 50%; overflow: hidden; color: var(--gold); }
 
 /* Bottom nav */
 .bottomnav {
@@ -429,6 +433,8 @@ const ICONS = {
   arrowLeft: svgIcon('<path d="M19 12H5M11 18l-6-6 6-6"/>'),
   arrowRight: svgIcon('<path d="M5 12h14M13 6l6 6-6 6"/>'),
   check: svgIcon('<path d="M5 13l4 4L19 7"/>'),
+  star: svgIcon('<path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6-4.4-4.2 6-.8L12 3.5z"/>'),
+  starFilled: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6-4.4-4.2 6-.8L12 3.5z"/></svg>',
   globe: svgIcon('<circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c2.6 2.4 2.6 14.2 0 16.6M12 3.7c-2.6 2.4-2.6 14.2 0 16.6"/>'),
   hike: svgIcon('<path d="M3 19h18L14.5 7 11 13l-2-2.3L3 19z"/>'),
   lookout: svgIcon('<circle cx="12" cy="12" r="8.3"/><path d="M15 9l-1.8 4.2L9 15l1.8-4.2L15 9z"/>'),
@@ -1476,13 +1482,35 @@ function renderRankings(host) {
     <div id="rankList">
       ${list.length === 0
         ? `<div class="empty-state"><div class="icon-wrap">${ICONS.ranks}</div><p>Log your first activity to start building your ranked list.</p></div>`
-        : list.map((id, i) => rankRowHtml(activitiesMap[id], i)).join('')}
+        : list.map((id, i) => rankRowHtml(activitiesMap[id], i, list.length)).join('')}
     </div>
   `;
 }
 
-function rankRowHtml(a, i) {
+/* Star rating is derived purely from position in the ranked list (best = index 0),
+   never stored — so it always reflects the current order and list length,
+   recalculating automatically whenever an activity is added, re-ranked, or removed. */
+function computeStarRating(index, total) {
+  if (total <= 1) return 5;
+  const raw = 5 - 4 * (index / (total - 1)); // linear: rank #1 -> 5 stars, last place -> 1 star
+  return Math.round(raw * 2) / 2; // snap to the nearest half-star
+}
+
+function starRatingHtml(rating) {
+  const full = Math.floor(rating);
+  const half = rating - full >= 0.5 ? 1 : 0;
+  const empty = 5 - full - half;
+  let html = `<span class="rank-stars" title="${rating.toFixed(1)} / 5">`;
+  for (let i = 0; i < full; i++) html += `<span class="star full">${ICONS.starFilled}</span>`;
+  if (half) html += `<span class="star half">${ICONS.star}<span class="star-fill-half">${ICONS.starFilled}</span></span>`;
+  for (let i = 0; i < empty; i++) html += `<span class="star empty">${ICONS.star}</span>`;
+  html += '</span>';
+  return html;
+}
+
+function rankRowHtml(a, i, total) {
   const ti = typeInfo(a.type);
+  const rating = computeStarRating(i, total);
   return `
     <div class="rank-row">
       <div class="rank-num ${i===0?'top':''}">${i+1}</div>
@@ -1493,6 +1521,7 @@ function rankRowHtml(a, i) {
           <div class="l">${escapeHtml(a.location || '')}</div>
         </div>
       </div>
+      ${starRatingHtml(rating)}
     </div>`;
 }
 

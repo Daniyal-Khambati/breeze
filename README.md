@@ -7,7 +7,7 @@ Originally built as a Claude artifact: https://claude.ai/artifact/Lbh6W9M5uuuF6n
 ## Features
 
 - Log activities (hikes, lookouts, walks, kayaking, camping, biking, swimming, and more) with a title, location, review, and optional photo
-- Rank each new activity by swiping (or tapping) through a head-to-head comparison against your existing ones
+- Rank each new activity by swiping (or tapping) through a head-to-head comparison against your existing ones. Each ranked activity shows a 1–5 star rating derived from its position in your list (best = 5 stars, last place = 1 star), recalculated live as your rankings change
 - A friend circle: share a short code to add friends, and only see activities from people in your circle
 - A stories row at the top of the Feed — tap a friend's avatar for a full-screen, auto-advancing recap of their recent activities
 - Browse the feed filtered by activity type via a compact dropdown
