@@ -2,7 +2,7 @@
 
 Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.
 
-Visual style: a retro national-park-poster look — warm oat/rust/teal palette, a painted sunset sky with clouds and shaded twin peaks, and a filled hiker silhouette (hood, backpack, boots, trekking poles — not a stick figure). Every tab (Feed, My ranks, Saved) opens with a large illustrated banner of the scene that scrolls away as you read into the list below it, like a masthead rather than a sticky sliver. The Summit tab shows its own purpose-built version of the same scene (tied to your climb progress) instead of repeating the generic banner.
+Visual style: a painted mountain-overlook scene — layered, atmospheric-perspective ridgelines, a glowing sunset sky with soft clouds, a two-tone sunlit/shadow snow peak, a winding valley river, and a filled hiker silhouette (hood, backpack, boots, trekking poles — not a stick figure) — rendered once as a fixed, full-viewport backdrop behind the entire app, not a header banner. Every screen's cards, chips, and bars sit on top of it as frosted glass panels, so the scene stays visible through and around the content on every tab. The Summit tab additionally shows its own purpose-built version of the scene as a progress widget, tied to how far you've climbed toward your region's destinations.
 
 Originally built as a Claude artifact: https://claude.ai/artifact/Lbh6W9M5uuuF6ncuWTCCsZ
 
