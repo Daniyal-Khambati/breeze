@@ -63,24 +63,29 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
 
 /* Top bar */
 .topbar {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg);
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; overflow: hidden; isolation: isolate;
+  background: var(--bg);
   padding: 18px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
+.topbar-scene { position: absolute; inset: 0; z-index: -1; }
+.topbar-scene svg { display: block; width: 100%; height: 100%; }
 .brand {
   font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: 22px;
-  letter-spacing: -0.01em; color: var(--accent);
+  letter-spacing: -0.01em; color: var(--on-accent);
+  text-shadow: 0 1px 2px rgba(30, 20, 12, 0.55), 0 0 12px rgba(30, 20, 12, 0.25);
 }
 .topbar-actions { display: flex; align-items: center; gap: 10px; }
 .log-btn {
   display: flex; align-items: center; gap: 6px; background: var(--accent); color: var(--on-accent);
   border: none; padding: 8px 14px 8px 11px; border-radius: 999px; font-weight: 700; font-size: 13px;
+  box-shadow: 0 1px 4px rgba(30, 20, 12, 0.35);
 }
 .log-btn svg { font-size: 15px; }
 .log-btn:active { background: var(--accent-strong); }
 .avatar-btn {
   width: 34px; height: 34px; border-radius: 50%; border: none; color: #fff;
   font-weight: 700; font-size: 12.5px; display: flex; align-items: center; justify-content: center;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.02em; box-shadow: 0 1px 4px rgba(30, 20, 12, 0.35);
 }
 
 /* Onboarding */
@@ -360,6 +365,8 @@ textarea.field-input { resize: none; font-size: 14.5px; }
   padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex; justify-content: center;
 }
+.bottomnav-ridge { position: absolute; left: 0; right: 0; top: -15px; height: 15px; overflow: hidden; pointer-events: none; }
+.bottomnav-ridge svg { display: block; width: 100%; height: 100%; }
 .bottomnav-inner { max-width: 480px; width: 100%; display: flex; }
 .navbtn {
   flex: 1; background: none; border: none; padding: 11px 4px 9px; display: flex; flex-direction: column;
@@ -620,15 +627,17 @@ const FEATURED_LISTS = {
     ],
   },
 };
-/* Each season is a set of flat poster-print color separations (no gradients) —
-   bands run sky top-to-horizon, then the two mountain layers, snow cap, trail
-   and treeline. "fall" is tuned to match the reference sunset-and-slate-peaks
-   scene directly, since that's the real current season. */
+/* Each season is a painted-poster palette: a soft multi-stop sky blend (the
+   kind of illustration gradient a real retro travel-poster print uses for
+   its sunset — not UI-chrome decoration), two mountain layers each shaded
+   light-to-dark, a snow cap, trail and treeline. "fall" is tuned to match
+   the reference sunset-and-slate-peaks scene directly, since that's the
+   real current season. */
 const SEASONS = {
-  winter: { bands: ['#2c3a52', '#3f5570', '#6f83a0', '#c9d6e0'], far: '#7a8fa3', near: '#3d5468', snow: '#ffffff', tree: '#243444', trail: '#a9a196' },
-  spring: { bands: ['#3f5a4a', '#6f8f5e', '#a8bf6e', '#e3d488'], far: '#7fa08c', near: '#3f6b52', snow: '#f0ead0', tree: '#2e4a34', trail: '#a08a5f' },
-  summer: { bands: ['#1f4a68', '#2f6a86', '#5a9aa8', '#e3cf8a'], far: '#5f8a86', near: '#2c5654', snow: '#eef1e6', tree: '#1f3d34', trail: '#8f7a52' },
-  fall: { bands: ['#6f2a33', '#a13a24', '#c1552e', '#e0a83d'], far: '#5f7f92', near: '#2c4453', snow: '#f3e3bd', tree: '#241a12', trail: '#8a5a3f' },
+  winter: { bands: ['#2c3a52', '#3f5570', '#6f83a0', '#c9d6e0'], far: '#7a8fa3', farDark: '#5c6f82', near: '#3d5468', nearDark: '#26394a', snow: '#ffffff', tree: '#243444', trail: '#a9a196' },
+  spring: { bands: ['#3f5a4a', '#6f8f5e', '#a8bf6e', '#e3d488'], far: '#7fa08c', farDark: '#5f8069', near: '#3f6b52', nearDark: '#294a38', snow: '#f0ead0', tree: '#2e4a34', trail: '#a08a5f' },
+  summer: { bands: ['#1f4a68', '#2f6a86', '#5a9aa8', '#e3cf8a'], far: '#5f8a86', farDark: '#436866', near: '#2c5654', nearDark: '#1a3a38', snow: '#eef1e6', tree: '#1f3d34', trail: '#8f7a52' },
+  fall: { bands: ['#6f2a33', '#a13a24', '#c1552e', '#e0a83d'], far: '#5f7f92', farDark: '#425c6e', near: '#2c4453', nearDark: '#1a2d3a', snow: '#f3e3bd', tree: '#241a12', trail: '#8a5a3f' },
 };
 const TRAIL_ANCHORS = [
   { x: 40, y: 222 }, { x: 88, y: 196 }, { x: 58, y: 162 }, { x: 108, y: 136 },
@@ -637,6 +646,42 @@ const TRAIL_ANCHORS = [
 const FIGURE_COLOR = '#251a10';
 const FLAG_COLOR = '#dba33c';
 const PACK_COLOR = '#bf4e2c';
+const PACK_SHADOW = '#93381c';
+
+function skyGradientDefs(c, id) {
+  const n = c.bands.length;
+  const stops = c.bands.map((color, i) => `<stop offset="${Math.round((i / (n - 1)) * 100)}%" stop-color="${color}"/>`).join('');
+  return `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>`;
+}
+function ridgeGradientDefs(c, id, light, dark) {
+  return `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${light}"/><stop offset="100%" stop-color="${dark}"/></linearGradient>`;
+}
+function buildClouds(c, spots) {
+  const fill = c.bands[0];
+  return spots.map(([x, y, s]) => `
+    <g fill="${fill}" opacity="0.3">
+      <ellipse cx="${x}" cy="${y}" rx="${34 * s}" ry="${7 * s}"/>
+      <ellipse cx="${x + 22 * s}" cy="${y - 4 * s}" rx="${20 * s}" ry="${6 * s}"/>
+      <ellipse cx="${x - 20 * s}" cy="${y + 2 * s}" rx="${16 * s}" ry="${5 * s}"/>
+    </g>`).join('');
+}
+/* A filled hiker silhouette (head, dominant pack, mid-stride legs, poles) —
+   deliberately not a stick figure. (x,y) is the ground point between the feet. */
+function buildHikerSilhouette(x, y, scale) {
+  return `
+  <g transform="translate(${x},${y}) scale(${scale})">
+    <path d="M1.8 2L5 2L7.6 24L4.3 25L0.4 3.5Z" fill="${FIGURE_COLOR}"/>
+    <path d="M-2 2L-4.8 2L-6.8 21L-4.4 21.8L-0.6 3.2Z" fill="${FIGURE_COLOR}"/>
+    <path d="M6.3 -13.4C8.6 -11.4 10.3 -8.2 10.9 -4.6L12.9 -5.3C12.2 -9.3 10 -13 7.3 -15.4Z" fill="${FIGURE_COLOR}"/>
+    <path d="M-6.3 -13C-8.7 -11.2 -10.5 -8.4 -11.3 -5.2L-13.3 -5.9C-12.4 -9.7 -10.1 -13.2 -7.3 -15.2Z" fill="${FIGURE_COLOR}"/>
+    <line x1="12.9" y1="-5.3" x2="16.8" y2="25" stroke="${FIGURE_COLOR}" stroke-width="1.15" stroke-linecap="round"/>
+    <line x1="-13.3" y1="-5.9" x2="-17" y2="19" stroke="${FIGURE_COLOR}" stroke-width="1.15" stroke-linecap="round"/>
+    <path d="M-6.8 -14.6C-8.2 -8.2 -7.8 -1.4 -5.4 3.2C-1.8 4.6 1.8 4.6 5.4 3.2C7.8 -1.4 8.2 -8.2 6.8 -14.6C4.4 -17.6 -4.4 -17.6 -6.8 -14.6Z" fill="${PACK_COLOR}"/>
+    <path d="M-4.6 -16.2C-2 -18.4 2 -18.4 4.6 -16.2L3.6 -13.4L-3.6 -13.4Z" fill="${PACK_COLOR}"/>
+    <path d="M-6.8 -14.6C-6 -12 -5.8 -6 -6.6 0L-8 -0.6C-7.4 -6.4 -7.6 -11 -6.8 -14.6Z" fill="${PACK_SHADOW}"/>
+    <ellipse cx="0" cy="-21" rx="3.3" ry="3.7" fill="${FIGURE_COLOR}"/>
+  </g>`;
+}
 
 function typeInfo(id) { return TYPES.find(t => t.id === id) || TYPES[TYPES.length - 1]; }
 function colorForId(id) {
@@ -745,22 +790,25 @@ function normalizeUser(id, data) {
   };
 }
 
-/* Marquee brand illustration in the same flat, screen-printed-poster
-   technique as the Summit mountain (no gradients — solid color
-   separations), reusing that season's palette for a consistent world. */
+/* Marquee brand illustration: a full painted scene (banded-and-blended
+   sunset, shaded twin peaks, clouds, a winding trail, treeline, and a
+   filled hiker silhouette) in the same world as the Summit mountain. */
 function buildHeroScene() {
   const c = SEASONS[getSeason()];
-  const bandH = 150 / c.bands.length;
-  const bands = c.bands.map((color, i) => `<rect x="0" y="${Math.floor(i * bandH)}" width="400" height="${Math.ceil(bandH) + 1}" fill="${color}"/>`).join('');
   return `
   <svg viewBox="0 0 400 240" role="img" aria-label="A hiker on a mountain trail at sunset">
-    ${bands}
-    <rect x="0" y="150" width="400" height="90" fill="${c.bands[c.bands.length - 1]}"/>
-    <circle cx="215" cy="148" r="50" fill="${c.snow}" opacity="0.55"/>
-    <path d="M0,240 C60,150 140,60 210,30 C280,60 360,150 400,240 Z" fill="${c.far}" opacity="0.85"/>
-    <path d="M-10,240 C50,190 110,120 175,80 C235,120 290,190 340,240 Z" fill="${c.near}"/>
+    <defs>
+      ${skyGradientDefs(c, 'heroSky')}
+      ${ridgeGradientDefs(c, 'heroFar', c.far, c.farDark)}
+      ${ridgeGradientDefs(c, 'heroNear', c.near, c.nearDark)}
+    </defs>
+    <rect x="0" y="0" width="400" height="240" fill="url(#heroSky)"/>
+    <circle cx="215" cy="148" r="50" fill="${c.snow}" opacity="0.5"/>
+    ${buildClouds(c, [[95, 34, 1], [305, 22, 0.85]])}
+    <path d="M0,240 C60,150 140,60 210,30 C280,60 360,150 400,240 Z" fill="url(#heroFar)" opacity="0.88"/>
+    <path d="M-10,240 C50,190 110,120 175,80 C235,120 290,190 340,240 Z" fill="url(#heroNear)"/>
     <path d="M175,80 C167,90 159,102 154,118 C168,112 182,112 196,118 C191,102 183,90 175,80 Z" fill="${c.snow}"/>
-    <path d="M170,118 C150,150 165,175 145,205 C130,226 150,236 140,240 L210,240 C202,232 210,215 195,195 C180,172 190,145 170,118 Z" fill="${c.snow}" opacity="0.5"/>
+    <path d="M170,118 C150,150 165,175 145,205 C130,226 150,236 140,240 L210,240 C202,232 210,215 195,195 C180,172 190,145 170,118 Z" fill="${c.snow}" opacity="0.45"/>
     <rect x="0" y="222" width="400" height="18" fill="#3a2416"/>
     <g fill="${c.tree}">
       <path d="M40,240 C40,240 20,190 42,180 C64,190 44,240 44,240 Z"/>
@@ -768,17 +816,37 @@ function buildHeroScene() {
       <path d="M370,240 C370,240 353,198 372,190 C391,198 374,240 374,240 Z"/>
       <path d="M395,240 C395,240 383,212 397,206 C411,212 399,240 399,240 Z"/>
     </g>
-    <g transform="translate(200,203) scale(1.9)">
-      <path d="M-2.4 -13.6c-1.8 0.6-1.8 4.6 0.1 5.4" stroke="${FIGURE_COLOR}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-      <rect x="-4.6" y="-11.3" width="4.1" height="7.2" rx="1.2" fill="${PACK_COLOR}" transform="rotate(-10 -2.6 -7.7)"/>
-      <circle cx="0.5" cy="-15.2" r="3" fill="${FIGURE_COLOR}"/>
-      <path d="M0.5 -12.3L2 -3.8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <path d="M2 -3.8L-1.4 0.6L-3 7.4" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M2 -3.8L4.6 0.9L4.3 8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M0.9 -10.3L-2.6 -7.8" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M1.6 -10.1L5.2 -5.6" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M5.2 -5.6L7.4 8.6" stroke="#8a6a45" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+    ${buildHikerSilhouette(200, 203, 1.1)}
+  </svg>`;
+}
+
+/* Persistent sunset-ridge strip painted behind the top bar on every screen. */
+function buildTopbarScene() {
+  const c = SEASONS[getSeason()];
+  return `
+  <svg viewBox="0 0 400 100" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      ${skyGradientDefs(c, 'topSky')}
+      ${ridgeGradientDefs(c, 'topRidge', c.far, c.near)}
+    </defs>
+    <rect x="0" y="0" width="400" height="100" fill="url(#topSky)"/>
+    ${buildClouds(c, [[70, 20, 0.6], [270, 14, 0.5]])}
+    <path d="M0,78 C40,55 70,68 100,50 C140,28 170,60 210,45 C250,30 280,58 320,42 C350,30 375,50 400,40 L400,100 L0,100 Z" fill="url(#topRidge)"/>
+    <g fill="${c.tree}">
+      <path d="M18,100 C18,100 8,80 20,74 C32,80 22,100 22,100 Z"/>
+      <path d="M382,100 C382,100 370,76 384,70 C398,76 386,100 386,100 Z"/>
     </g>
+  </svg>`;
+}
+
+/* Thin decorative ridgeline along the top edge of the bottom nav, with a
+   tiny hiker on it — the same illustrated world bookending every screen. */
+function buildBottomRidge() {
+  const c = SEASONS[getSeason()];
+  return `
+  <svg viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,34 L0,20 C30,10 60,24 95,13 C130,2 165,20 200,11 C235,3 270,21 305,12 C340,5 370,18 400,9 L400,34 Z" fill="${c.tree}"/>
+    ${buildHikerSilhouette(198, 12, 0.34)}
   </svg>`;
 }
 
@@ -888,6 +956,7 @@ function subscribeAll() {
 function renderShell() {
   app.innerHTML = `
     <div class="topbar">
+      <div class="topbar-scene">${buildTopbarScene()}</div>
       <div class="brand">Breeze</div>
       <div class="topbar-actions">
         <button class="log-btn" id="logBtn">${ICONS.plus}Log</button>
@@ -896,6 +965,7 @@ function renderShell() {
     </div>
     <div id="screenHost" class="screen"></div>
     <div class="bottomnav">
+      <div class="bottomnav-ridge">${buildBottomRidge()}</div>
       <div class="bottomnav-inner">
         <button class="navbtn" data-tab="feed">${ICONS.home}Feed</button>
         <button class="navbtn" data-tab="rankings">${ICONS.ranks}My ranks</button>
@@ -1213,16 +1283,20 @@ function buildMountainSvg(season, fraction) {
   const c = SEASONS[season];
   const p = pointAtFraction(fraction);
   const trailPts = TRAIL_ANCHORS.map(pt => pt.x + ',' + pt.y).join(' ');
-  const bandH = 240 / c.bands.length;
-  const bands = c.bands.map((color, i) => `<rect x="0" y="${Math.floor(i * bandH)}" width="400" height="${Math.ceil(bandH) + 1}" fill="${color}"/>`).join('');
   const flag = fraction >= 1
     ? `<g transform="translate(150,44)"><path d="M0 14V0" stroke="${FIGURE_COLOR}" stroke-width="2"/><path d="M0 0h9l-3 3.5L9 7H0" fill="${FLAG_COLOR}"/></g>`
     : '';
   return `
   <svg viewBox="0 0 400 240" role="img" aria-label="Mountain progress">
-    ${bands}
-    <path d="M130,235 C118,146 128,73 152,32 C185,64 275,138 400,235 Z" fill="${c.far}" opacity="0.85"/>
-    <path d="M20,235 C58,158 100,92 150,50 C196,92 250,158 300,235 Z" fill="${c.near}"/>
+    <defs>
+      ${skyGradientDefs(c, 'peakSky')}
+      ${ridgeGradientDefs(c, 'peakFar', c.far, c.farDark)}
+      ${ridgeGradientDefs(c, 'peakNear', c.near, c.nearDark)}
+    </defs>
+    <rect x="0" y="0" width="400" height="240" fill="url(#peakSky)"/>
+    ${buildClouds(c, [[80, 30, 0.75], [300, 40, 0.9]])}
+    <path d="M130,235 C118,146 128,73 152,32 C185,64 275,138 400,235 Z" fill="url(#peakFar)" opacity="0.88"/>
+    <path d="M20,235 C58,158 100,92 150,50 C196,92 250,158 300,235 Z" fill="url(#peakNear)"/>
     <path d="M150,50 C142,60 135,71 131,86 C144,81 156,81 169,86 C165,71 158,60 150,50 Z" fill="${c.snow}"/>
     <polyline points="${trailPts}" fill="none" stroke="${c.trail}" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/>
     <g fill="${c.tree}">
@@ -1230,17 +1304,7 @@ function buildMountainSvg(season, fraction) {
       <path d="M345,235 C345,235 336,216 345,212 C354,216 345,235 345,235 Z"/>
       <path d="M60,235 C60,235 49,214 60,210 C71,214 60,235 60,235 Z"/>
     </g>
-    <g transform="translate(${p.x},${p.y})">
-      <path d="M-2.4 -13.6c-1.8 0.6-1.8 4.6 0.1 5.4" stroke="${FIGURE_COLOR}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-      <rect x="-4.6" y="-11.3" width="4.1" height="7.2" rx="1.2" fill="${PACK_COLOR}" transform="rotate(-10 -2.6 -7.7)"/>
-      <circle cx="0.5" cy="-15.2" r="3" fill="${FIGURE_COLOR}"/>
-      <path d="M0.5 -12.3L2 -3.8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <path d="M2 -3.8L-1.4 0.6L-3 7.4" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M2 -3.8L4.6 0.9L4.3 8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M0.9 -10.3L-2.6 -7.8" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M1.6 -10.1L5.2 -5.6" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M5.2 -5.6L7.4 8.6" stroke="#8a6a45" stroke-width="1.7" fill="none" stroke-linecap="round"/>
-    </g>
+    ${buildHikerSilhouette(p.x, p.y, 0.65)}
     ${flag}
   </svg>`;
 }
