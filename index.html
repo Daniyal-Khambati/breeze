@@ -123,28 +123,21 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 }
 .screen-sub { color: var(--text-secondary); font-size: 13px; margin: 0 0 16px; }
 
-/* Stories row */
-.stories-row { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 14px; margin-bottom: 4px; scrollbar-width: none; }
-.stories-row::-webkit-scrollbar { display: none; }
-.story-bubble {
-  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; width: 62px;
-  background: none; border: none; padding: 0;
+/* Featured lists row */
+.featured-row { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 14px; margin-bottom: 4px; scrollbar-width: none; }
+.featured-row::-webkit-scrollbar { display: none; }
+.featured-card {
+  flex-shrink: 0; width: 136px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 14px 13px 13px; display: flex; flex-direction: column; align-items: flex-start; gap: 9px; text-align: left;
 }
-.story-ring {
-  width: 56px; height: 56px; border-radius: 50%; padding: 2.5px; display: flex; align-items: center; justify-content: center;
-  border: 2px solid var(--border);
+.featured-card .ft-icon {
+  width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
 }
-.story-ring.unseen { border-color: var(--accent); }
-.story-ring.add { border: 2px dashed var(--border); background: var(--accent-soft); }
-.story-ring-inner {
-  width: 100%; height: 100%; border-radius: 50%; color: #fff; font-weight: 700; font-size: 15px;
-  display: flex; align-items: center; justify-content: center;
-}
-.story-ring-inner.add-inner { background: none; color: var(--accent); font-size: 18px; }
-.story-bubble .label {
-  font-size: 10.5px; font-weight: 600; color: var(--text-secondary); max-width: 62px; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis;
-}
+.featured-card .ft-title { font-family: var(--font-display); font-weight: 600; font-size: 13.5px; line-height: 1.25; }
+.featured-card .ft-sub { font-size: 11px; color: var(--text-muted); }
+.featured-card.prompt { background: var(--accent-soft); border-color: transparent; color: var(--accent-strong); }
+.featured-card.prompt .ft-icon { background: var(--surface); }
 
 /* Filter dropdown */
 .filter-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
@@ -384,34 +377,6 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 
 .error-text { color: var(--danger); font-size: 12px; margin-top: 5px; }
 
-/* Story viewer (deliberately dark, independent of the app's light theme) */
-.story-viewer {
-  position: fixed; inset: 0; z-index: 300; background: #14140f; display: flex; flex-direction: column;
-  padding-top: env(safe-area-inset-top, 0px); touch-action: none;
-}
-.story-progress-row { position: relative; z-index: 4; display: flex; gap: 4px; padding: 10px 12px 0; }
-.story-seg { flex: 1; height: 3px; background: rgba(255,255,255,0.28); border-radius: 2px; overflow: hidden; }
-.story-seg-fill { display: block; height: 100%; width: 0%; background: #fff; }
-.story-seg.done .story-seg-fill { width: 100%; }
-.story-seg.active .story-seg-fill { animation: storyFill 4.5s linear forwards; }
-@keyframes storyFill { from { width: 0%; } to { width: 100%; } }
-.story-header { position: relative; z-index: 4; display: flex; align-items: center; gap: 10px; padding: 10px 14px 12px; }
-.story-header-meta { min-width: 0; }
-.story-header-name { color: #fff; font-weight: 700; font-size: 13px; }
-.story-header-time { color: rgba(255,255,255,0.65); font-size: 11px; font-family: var(--font-mono); }
-.story-close { margin-left: auto; background: none; border: none; color: #fff; font-size: 20px; padding: 6px; }
-.story-content { flex: 1; position: relative; background-size: cover; background-position: center; display: flex; align-items: flex-end; overflow: hidden; }
-.story-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0) 55%); }
-.story-icon { position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%); font-size: 68px; color: rgba(255,255,255,0.85); }
-.story-caption { position: relative; z-index: 2; padding: 18px 18px calc(26px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 7px; color: #fff; }
-.story-caption .type-tag { background: rgba(255,255,255,0.18); color: #fff; align-self: flex-start; }
-.story-title { font-family: var(--font-display); font-weight: 600; font-size: 21px; }
-.story-loc { display: flex; gap: 5px; align-items: center; font-size: 12.5px; color: rgba(255,255,255,0.85); }
-.story-review { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.92); }
-.story-rank { align-self: flex-start; font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.16); padding: 4px 10px; border-radius: 999px; }
-.story-nav-zone { position: absolute; top: 0; bottom: 0; width: 40%; z-index: 3; background: transparent; border: none; padding: 0; }
-.story-nav-zone.left { left: 0; }
-.story-nav-zone.right { right: 0; width: 60%; }
 </style>
 </head>
 <body>
@@ -533,6 +498,122 @@ const GENERIC_PROMPTS = [
   { name: 'A lake worth paddling', location: '', generic: true },
   { name: 'Your local state or county park', location: '', generic: true },
 ];
+
+/* Featured "popular near you" lists, keyed by the same region preset a user's
+   home region matches (see matchPreset). Same spirit as REGION_PRESETS above:
+   real, well-documented places offered as illustrative starting points, not a
+   claim of verified popularity — just something to fill the space until a
+   region has real logged activity to rank by. */
+const FEATURED_CATEGORIES = [
+  { id: 'trails', label: 'Top trails', icon: 'hike' },
+  { id: 'swimming', label: 'Top swimming spots', icon: 'swim' },
+  { id: 'lookouts', label: 'Top lookouts', icon: 'lookout' },
+  { id: 'camping', label: 'Top campgrounds', icon: 'camp' },
+];
+const FEATURED_LISTS = {
+  'finger-lakes': {
+    trails: [
+      { name: 'Gorge Trail', location: 'Watkins Glen State Park, NY' },
+      { name: 'Rim Trail', location: 'Robert H. Treman State Park, NY' },
+      { name: 'Gorge Trail', location: 'Buttermilk Falls State Park, NY' },
+      { name: 'Cayuga Trail', location: 'Ithaca, NY' },
+      { name: 'Lucifer Falls Loop', location: 'Robert H. Treman State Park, NY' },
+      { name: 'Chimney Bluffs Trail', location: 'Chimney Bluffs State Park, NY' },
+    ],
+    swimming: [
+      { name: 'Cayuga Lake State Park Beach', location: 'Seneca Falls, NY' },
+      { name: 'Seneca Lake State Park Beach', location: 'Geneva, NY' },
+      { name: 'Robert H. Treman Lower Pool', location: 'Ithaca, NY' },
+      { name: "Taughannock Falls Beach", location: 'Trumansburg, NY' },
+      { name: 'Deans Cove', location: 'Cayuga Lake, NY' },
+    ],
+    lookouts: [
+      { name: 'Taughannock Point Overlook', location: 'Taughannock Falls State Park, NY' },
+      { name: 'Sunset Point', location: 'Watkins Glen, NY' },
+      { name: 'Mount Pleasant Overlook', location: 'Ithaca, NY' },
+      { name: 'Monkey Run Overlook', location: 'Ithaca, NY' },
+    ],
+    camping: [
+      { name: 'Cayuga Lake State Park Campground', location: 'Seneca Falls, NY' },
+      { name: 'Taughannock Falls State Park Campground', location: 'Trumansburg, NY' },
+      { name: 'Fillmore Glen Campground', location: 'Moravia, NY' },
+      { name: 'Allan H. Treman Marine Park', location: 'Ithaca, NY' },
+    ],
+  },
+  adirondacks: {
+    trails: [
+      { name: 'Van Hoevenberg Trail', location: 'Mount Marcy, NY' },
+      { name: 'Cascade Mountain Trail', location: 'Lake Placid, NY' },
+      { name: 'Algonquin Peak Trail', location: 'Adirondacks, NY' },
+      { name: 'Mount Jo Trail', location: 'Adirondak Loj, NY' },
+      { name: 'Ampersand Mountain Trail', location: 'Saranac Lake, NY' },
+    ],
+    swimming: [
+      { name: 'Lake Placid Beach', location: 'Lake Placid, NY' },
+      { name: 'Mirror Lake Beach', location: 'Lake Placid, NY' },
+      { name: 'Saranac Lake Public Beach', location: 'Saranac Lake, NY' },
+      { name: 'Chapel Pond', location: 'Keene, NY' },
+    ],
+    lookouts: [
+      { name: 'Whiteface Mountain Summit', location: 'Whiteface Mountain, NY' },
+      { name: 'Owls Head Lookout', location: 'Long Lake, NY' },
+      { name: 'Baker Mountain Summit', location: 'Saranac Lake, NY' },
+    ],
+    camping: [
+      { name: 'Wilmington Notch Campground', location: 'Wilmington, NY' },
+      { name: 'Fish Creek Pond Campground', location: 'Saranac Lake, NY' },
+      { name: 'Meadowbrook Campground', location: 'Ray Brook, NY' },
+    ],
+  },
+  'colorado-front-range': {
+    trails: [
+      { name: 'Chautauqua Trail', location: 'Boulder, CO' },
+      { name: 'Barr Trail', location: 'Pikes Peak, CO' },
+      { name: 'Bear Lake Loop', location: 'Rocky Mountain National Park, CO' },
+      { name: 'Emerald Lake Trail', location: 'Rocky Mountain National Park, CO' },
+      { name: 'Royal Arch Trail', location: 'Boulder, CO' },
+    ],
+    swimming: [
+      { name: 'Boulder Reservoir', location: 'Boulder, CO' },
+      { name: 'Chatfield Reservoir', location: 'Littleton, CO' },
+      { name: 'Cherry Creek Reservoir', location: 'Aurora, CO' },
+    ],
+    lookouts: [
+      { name: 'Sunrise Amphitheater', location: 'Boulder, CO' },
+      { name: 'Lookout Mountain', location: 'Golden, CO' },
+      { name: 'Trail Ridge Road Overlook', location: 'Rocky Mountain National Park, CO' },
+    ],
+    camping: [
+      { name: 'Moraine Park Campground', location: 'Rocky Mountain National Park, CO' },
+      { name: 'Golden Gate Canyon Campground', location: 'Golden Gate Canyon State Park, CO' },
+      { name: 'Cherry Creek State Park Campground', location: 'Aurora, CO' },
+    ],
+  },
+  'pacific-northwest': {
+    trails: [
+      { name: 'Skyline Trail', location: 'Mount Rainier National Park, WA' },
+      { name: 'Multnomah-Wahkeena Loop', location: 'Multnomah Falls, OR' },
+      { name: 'Hurricane Ridge Trail', location: 'Olympic National Park, WA' },
+      { name: 'Rattlesnake Ledge Trail', location: 'North Bend, WA' },
+    ],
+    swimming: [
+      { name: 'Lake Crescent', location: 'Olympic National Park, WA' },
+      { name: 'Alki Beach', location: 'Seattle, WA' },
+      { name: 'Green Lake', location: 'Seattle, WA' },
+    ],
+    lookouts: [
+      { name: 'Hurricane Ridge', location: 'Olympic National Park, WA' },
+      { name: 'Sunrise Point', location: 'Mount Rainier National Park, WA' },
+      { name: 'Vista House', location: 'Columbia River Gorge, OR' },
+      { name: 'Beacon Rock', location: 'Beacon Rock State Park, WA' },
+    ],
+    camping: [
+      { name: 'Cougar Rock Campground', location: 'Mount Rainier National Park, WA' },
+      { name: 'Kalaloch Campground', location: 'Olympic National Park, WA' },
+      { name: 'Ohanapecosh Campground', location: 'Mount Rainier National Park, WA' },
+    ],
+  },
+};
 const SEASONS = {
   winter: { skyTop: '#e4ecf1', skyBottom: '#f7f3ec', far: '#c3ccd3', near: '#8d9aa4', snow: '#ffffff', tree: '#61788a', trail: '#a9a196' },
   spring: { skyTop: '#dceee0', skyBottom: '#f8f4ea', far: '#b9cdb4', near: '#6f8f66', snow: '#f4f1e6', tree: '#5f7d54', trail: '#a79b7d' },
@@ -591,7 +672,6 @@ let activitiesOrder = []; // ids sorted by timestamp desc
 let usersMap = {};        // id -> {name,color} (lightweight cache from activity docs)
 let friendDocs = {};       // friendId -> normalized friend user doc
 let friendUnsubs = {};     // friendId -> unsubscribe fn
-let viewedStoryUsers = new Set();
 let currentTab = 'feed';
 let feedFilter = 'all';
 let pendingPhoto = null;
@@ -824,169 +904,62 @@ function isVisibleActivity(a) {
   return a.userId === currentUser.id || (currentUser.friends || []).includes(a.userId);
 }
 
-/* ---------- Stories ---------- */
-function storyGroupsForFeed() {
-  const groups = [];
-  const mine = activitiesOrder.filter(id => activitiesMap[id].userId === currentUser.id).map(id => activitiesMap[id]);
-  if (mine.length) groups.push({ id: currentUser.id, name: currentUser.name, color: currentUser.color, isSelf: true, items: mine });
-  (currentUser.friends || []).forEach(fid => {
-    const items = activitiesOrder.filter(id => activitiesMap[id].userId === fid).map(id => activitiesMap[id]);
-    if (!items.length) return;
-    const fd = friendDocs[fid];
-    const cached = usersMap[fid];
-    groups.push({
-      id: fid,
-      name: (fd && fd.name) || (cached && cached.name) || 'Friend',
-      color: (fd && fd.color) || (cached && cached.color) || colorForId(fid),
-      isSelf: false,
-      items,
-    });
-  });
-  const self = groups.filter(g => g.isSelf);
-  const rest = groups.filter(g => !g.isSelf).sort((a, b) => (b.items[0].timestamp || 0) - (a.items[0].timestamp || 0));
-  return self.concat(rest);
+/* ---------- Featured lists ---------- */
+function featuredRegionKey() {
+  const region = currentUser.region || '';
+  const preset = matchPreset(region);
+  return preset && FEATURED_LISTS[preset.key] ? preset.key : null;
 }
 
-function renderStoriesRow() {
-  const groups = storyGroupsForFeed();
-  const addBubble = `
-    <button class="story-bubble" id="addFriendBubble">
-      <span class="story-ring add"><span class="story-ring-inner add-inner">${ICONS.plus}</span></span>
-      <span class="label">Add friend</span>
-    </button>`;
-  const bubbles = groups.map(g => {
-    const unseen = !g.isSelf && !viewedStoryUsers.has(g.id);
-    return `
-    <button class="story-bubble" data-story-user="${g.id}">
-      <span class="story-ring ${unseen ? 'unseen' : ''}">
-        <span class="story-ring-inner" style="background:${g.color}">${escapeHtml(initials(g.name))}</span>
-      </span>
-      <span class="label">${g.isSelf ? 'Your story' : escapeHtml(g.name.split(' ')[0])}</span>
-    </button>`;
-  }).join('');
-  return `<div class="stories-row">${addBubble}${bubbles}</div>`;
-}
-
-let storyState = null;
-
-function openStoryViewer(userId) {
-  const groups = storyGroupsForFeed();
-  const groupIndex = groups.findIndex(g => g.id === userId);
-  if (groupIndex === -1) return;
-  viewedStoryUsers.add(userId);
-  storyState = { groups, groupIndex, itemIndex: 0, timer: null };
-  renderStoryViewer();
-}
-
-function closeStoryViewer() {
-  if (storyState && storyState.timer) clearTimeout(storyState.timer);
-  const el = document.getElementById('storyViewer');
-  if (el) el.remove();
-  storyState = null;
-  renderScreen();
-}
-
-function storyNext() {
-  if (!storyState) return;
-  const group = storyState.groups[storyState.groupIndex];
-  if (storyState.itemIndex < group.items.length - 1) {
-    storyState.itemIndex++;
-    renderStoryViewer();
-  } else if (storyState.groupIndex < storyState.groups.length - 1) {
-    storyState.groupIndex++;
-    storyState.itemIndex = 0;
-    viewedStoryUsers.add(storyState.groups[storyState.groupIndex].id);
-    renderStoryViewer();
-  } else {
-    closeStoryViewer();
+function renderFeaturedRow() {
+  const key = featuredRegionKey();
+  if (!key) {
+    return `<div class="featured-row">
+      <button class="featured-card prompt" id="featuredSetRegionBtn">
+        <span class="ft-icon">${ICONS.pin}</span>
+        <span class="ft-title">See what's popular near you</span>
+        <span class="ft-sub">Set your home region</span>
+      </button>
+    </div>`;
   }
+  const lists = FEATURED_LISTS[key];
+  const cards = FEATURED_CATEGORIES.filter(c => (lists[c.id] || []).length).map(c => `
+    <button class="featured-card" data-featured-cat="${c.id}">
+      <span class="ft-icon">${ICONS[c.icon]}</span>
+      <span class="ft-title">${escapeHtml(c.label)}</span>
+      <span class="ft-sub">${lists[c.id].length} places</span>
+    </button>`).join('');
+  return `<div class="featured-row">${cards}</div>`;
 }
 
-function storyPrev() {
-  if (!storyState) return;
-  if (storyState.itemIndex > 0) { storyState.itemIndex--; renderStoryViewer(); }
-  else if (storyState.groupIndex > 0) {
-    storyState.groupIndex--;
-    storyState.itemIndex = storyState.groups[storyState.groupIndex].items.length - 1;
-    renderStoryViewer();
-  }
-}
-
-function attachStorySwipeClose(el) {
-  let startY = 0, dragging = false, pid = null;
-  el.addEventListener('pointerdown', (e) => {
-    dragging = true; pid = e.pointerId; startY = e.clientY;
-    try { el.setPointerCapture(pid); } catch (err) {}
-    if (storyState && storyState.timer) clearTimeout(storyState.timer);
-  });
-  el.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
-    const dy = Math.max(0, e.clientY - startY);
-    el.style.transform = 'translateY(' + dy + 'px)';
-    el.style.opacity = String(1 - Math.min(0.6, dy / 400));
-  });
-  const end = (e) => {
-    if (!dragging) return;
-    dragging = false;
-    const dy = e.clientY - startY;
-    if (dy > 110) { closeStoryViewer(); return; }
-    el.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
-    el.style.transform = ''; el.style.opacity = '';
-    setTimeout(() => { el.style.transition = ''; }, 210);
-    if (storyState) storyState.timer = setTimeout(storyNext, 4500);
-  };
-  el.addEventListener('pointerup', end);
-  el.addEventListener('pointercancel', end);
-}
-
-function renderStoryViewer() {
-  let el = document.getElementById('storyViewer');
-  let fresh = false;
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'storyViewer';
-    el.className = 'story-viewer';
-    document.body.appendChild(el);
-    fresh = true;
-  }
-  const group = storyState.groups[storyState.groupIndex];
-  const item = group.items[storyState.itemIndex];
-  const ti = typeInfo(item.type);
-  const rankTxt = rankBadgeText(item.userId, item.id);
-  const bgStyle = item.photoUrl ? `background-image:url('${escapeHtml(item.photoUrl)}')` : `background-color:${group.color}`;
-  const displayName = group.isSelf ? currentUser.name : group.name;
-
-  el.innerHTML = `
-    <div class="story-progress-row">
-      ${group.items.map((_, i) => `<span class="story-seg ${i < storyState.itemIndex ? 'done' : ''} ${i === storyState.itemIndex ? 'active' : ''}"><span class="story-seg-fill"></span></span>`).join('')}
-    </div>
-    <div class="story-header">
-      <div class="mini-avatar" style="background:${group.color}">${escapeHtml(initials(displayName))}</div>
-      <div class="story-header-meta">
-        <div class="story-header-name">${escapeHtml(displayName)}</div>
-        <div class="story-header-time">${timeAgo(item.timestamp || Date.now())}</div>
+function openFeaturedListSheet(categoryId) {
+  const key = featuredRegionKey();
+  if (!key) return;
+  const cat = FEATURED_CATEGORIES.find(c => c.id === categoryId);
+  const preset = REGION_PRESETS.find(p => p.key === key);
+  const places = FEATURED_LISTS[key][categoryId] || [];
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.id = 'featuredOverlay';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${escapeHtml(cat.label)}</div>
+      <div class="modal-sub">Popular picks around ${escapeHtml(preset.label)}</div>
+      <div class="dest-list">
+        ${places.map((p, i) => `
+          <div class="dest-row">
+            <span class="rank-num ${i === 0 ? 'top' : ''}">${i + 1}</span>
+            <span class="dest-info">
+              <span class="dest-name">${escapeHtml(p.name)}</span>
+              <span class="dest-loc">${escapeHtml(p.location)}</span>
+            </span>
+          </div>`).join('')}
       </div>
-      <button class="story-close" id="storyCloseBtn">${ICONS.close}</button>
-    </div>
-    <div class="story-content" style="${bgStyle}">
-      ${item.photoUrl ? '<div class="story-scrim"></div>' : `<div class="story-icon">${ICONS[ti.icon]}</div>`}
-      <div class="story-caption">
-        <span class="type-tag">${ICONS[ti.icon]}${ti.label}</span>
-        <div class="story-title">${escapeHtml(item.title)}</div>
-        <div class="story-loc">${ICONS.pin}${escapeHtml(item.location || '')}</div>
-        ${item.review ? `<div class="story-review">${escapeHtml(item.review)}</div>` : ''}
-        ${rankTxt ? `<div class="story-rank">${group.isSelf ? 'My' : 'Their'} ${rankTxt}</div>` : ''}
-      </div>
-    </div>
-    <button class="story-nav-zone left" id="storyPrevZone" aria-label="Previous"></button>
-    <button class="story-nav-zone right" id="storyNextZone" aria-label="Next"></button>
-  `;
-  document.getElementById('storyCloseBtn').addEventListener('click', closeStoryViewer);
-  document.getElementById('storyPrevZone').addEventListener('click', storyPrev);
-  document.getElementById('storyNextZone').addEventListener('click', storyNext);
-  if (fresh) attachStorySwipeClose(el);
-  if (storyState.timer) clearTimeout(storyState.timer);
-  storyState.timer = setTimeout(storyNext, 4500);
+      <button class="btn-secondary" id="closeFeaturedBtn" style="margin-top:4px;">Close</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('closeFeaturedBtn').addEventListener('click', () => overlay.remove());
 }
 
 /* ---------- Friends sheet ---------- */
@@ -1200,18 +1173,24 @@ function buildMountainSvg(season, fraction) {
       </linearGradient>
     </defs>
     <rect x="0" y="0" width="400" height="240" fill="url(#skyGrad)"/>
-    <polygon points="150,30 400,235 130,235" fill="${c.far}" opacity="0.75"/>
-    <polygon points="150,50 20,235 300,235" fill="${c.near}"/>
-    <polygon points="150,50 133,86 167,86" fill="${c.snow}"/>
+    <path d="M130,235 C118,146 128,73 152,32 C185,64 275,138 400,235 Z" fill="${c.far}" opacity="0.75"/>
+    <path d="M20,235 C58,158 100,92 150,50 C196,92 250,158 300,235 Z" fill="${c.near}"/>
+    <path d="M150,50 C142,60 135,71 131,86 C144,81 156,81 169,86 C165,71 158,60 150,50 Z" fill="${c.snow}"/>
     <polyline points="${trailPts}" fill="none" stroke="${c.trail}" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/>
     <g fill="${c.tree}">
-      <polygon points="330,235 320,205 340,205"/>
-      <polygon points="345,235 337,212 353,212"/>
-      <polygon points="60,235 50,210 70,210"/>
+      <path d="M330,235 C330,235 319,210 330,205 C341,210 330,235 330,235 Z"/>
+      <path d="M345,235 C345,235 336,216 345,212 C354,216 345,235 345,235 Z"/>
+      <path d="M60,235 C60,235 49,214 60,210 C71,214 60,235 60,235 Z"/>
     </g>
     <g transform="translate(${p.x},${p.y})">
-      <circle cx="0" cy="-11" r="3.4" fill="${FIGURE_COLOR}"/>
-      <path d="M0 -7.5V-1M-3.5 -4H3.5M-2.5 8L0 -1L2.5 8" stroke="${FIGURE_COLOR}" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M-2.4 -13.6c-1.8 0.6-1.8 4.6 0.1 5.4" stroke="${FIGURE_COLOR}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <circle cx="0.5" cy="-15.2" r="3" fill="${FIGURE_COLOR}"/>
+      <path d="M0.5 -12.3L2 -3.8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M2 -3.8L-1.4 0.6L-3 7.4" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2 -3.8L4.6 0.9L4.3 8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M0.9 -10.3L-2.6 -7.8" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M1.6 -10.1L5.2 -5.6" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M5.2 -5.6L7.4 8.6" stroke="#8a6a45" stroke-width="1.7" fill="none" stroke-linecap="round"/>
     </g>
     ${flag}
   </svg>`;
@@ -1389,7 +1368,7 @@ function renderFeed(host) {
   host.innerHTML = `
     <h1 class="screen-title">Feed</h1>
     <p class="screen-sub">What your friends have been up to</p>
-    ${renderStoriesRow()}
+    ${renderFeaturedRow()}
     <div class="filter-row">
       <div class="filter-dropdown">
         <button class="filter-trigger" id="filterTrigger">${currentFilterInfo ? ICONS[currentFilterInfo.icon] : ''}${currentFilterInfo ? currentFilterInfo.label : 'All types'}${ICONS.chevronDown}</button>
@@ -1417,9 +1396,9 @@ function renderFeed(host) {
   menu.querySelectorAll('.filter-option').forEach(btn => btn.addEventListener('click', () => { feedFilter = btn.dataset.f; renderScreen(); }));
 
   host.querySelectorAll('.save-btn').forEach(b => b.addEventListener('click', () => toggleSave(b.dataset.act)));
-  const addFriendBubble = document.getElementById('addFriendBubble');
-  if (addFriendBubble) addFriendBubble.addEventListener('click', openFriendsSheet);
-  host.querySelectorAll('[data-story-user]').forEach(b => b.addEventListener('click', () => openStoryViewer(b.dataset.storyUser)));
+  const featuredSetRegionBtn = document.getElementById('featuredSetRegionBtn');
+  if (featuredSetRegionBtn) featuredSetRegionBtn.addEventListener('click', openRegionSheet);
+  host.querySelectorAll('[data-featured-cat]').forEach(b => b.addEventListener('click', () => openFeaturedListSheet(b.dataset.featuredCat)));
   const emptyAddFriend = document.getElementById('emptyAddFriend');
   if (emptyAddFriend) emptyAddFriend.addEventListener('click', openFriendsSheet);
   const emptyLogActivity = document.getElementById('emptyLogActivity');
