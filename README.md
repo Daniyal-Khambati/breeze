@@ -2,6 +2,8 @@
 
 Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.
 
+Visual style: a retro national-park-poster look — a warm oat/rust/teal palette and flat, screen-printed color bands (no gradients anywhere), with a seasonal sunset-and-mountains illustration on the welcome screen and the Summit tab.
+
 Originally built as a Claude artifact: https://claude.ai/artifact/Lbh6W9M5uuuF6ncuWTCCsZ
 
 ## Features

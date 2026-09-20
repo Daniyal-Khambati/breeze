@@ -9,28 +9,35 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;0,900;1,600;1,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #faf6f0;
-  --surface: #ffffff;
-  --surface-2: #f2ece2;
-  --surface-3: #e8ded0;
-  --border: #e3d9c9;
-  --text: #2b2a22;
-  --text-secondary: #6b6255;
-  --text-muted: #a79c8c;
-  --accent: #5f7d54;
-  --accent-strong: #46603b;
-  --accent-soft: rgba(95, 125, 84, 0.12);
-  --on-accent: #ffffff;
-  --gold: #c9a13f;
-  --gold-soft: rgba(201, 161, 63, 0.18);
-  --on-gold: #2b2a22;
-  --danger: #b5533f;
-  --danger-soft: rgba(181, 83, 63, 0.12);
+  /* Retro trailhead-poster palette, pulled from a screen-printed sunset scene:
+     warm oat paper, rust/burnt-orange as the primary "ink", a slate-teal
+     secondary from the mountain layers, and amber for highlights. */
+  --bg: #f1e4c8;
+  --surface: #fdf8ec;
+  --surface-2: #e8d6ab;
+  --surface-3: #dcc48a;
+  --border: #cbaf7c;
+  --text: #251a10;
+  --text-secondary: #6b5335;
+  --text-muted: #9d8058;
+  --accent: #bf4e2c;
+  --accent-strong: #93381c;
+  --accent-soft: rgba(191, 78, 44, 0.14);
+  --on-accent: #fdf8ec;
+  --teal: #3c6478;
+  --teal-strong: #294a5c;
+  --teal-soft: rgba(60, 100, 120, 0.14);
+  --on-teal: #fdf8ec;
+  --gold: #dba33c;
+  --gold-soft: rgba(219, 163, 60, 0.2);
+  --on-gold: #251a10;
+  --danger: #7c2a2a;
+  --danger-soft: rgba(124, 42, 42, 0.14);
   --radius-lg: 14px;
   --radius-md: 10px;
   --radius-sm: 8px;
-  --shadow-sm: 0 1px 2px rgba(43, 42, 34, 0.06);
-  --shadow-md: 0 8px 24px rgba(43, 42, 34, 0.08);
+  --shadow-sm: 0 1px 2px rgba(37, 26, 16, 0.08);
+  --shadow-md: 0 8px 24px rgba(37, 26, 16, 0.12);
   --font-sans: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -78,18 +85,17 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
 
 /* Onboarding */
 .onboard-wrap {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 32px; text-align: center;
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  text-align: center; overflow-y: auto;
 }
-.onboard-mark {
-  width: 52px; height: 52px; border-radius: var(--radius-lg); background: var(--accent-soft);
-  color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 22px;
-}
+.onboard-hero { width: 100%; aspect-ratio: 400 / 260; overflow: hidden; }
+.onboard-hero svg { display: block; width: 100%; height: 100%; }
+.onboard-body { width: 100%; box-sizing: border-box; padding: 26px 32px 32px; display: flex; flex-direction: column; align-items: center; }
 .onboard-wrap h1 {
   font-family: var(--font-display); font-style: italic; font-weight: 700; color: var(--accent);
-  font-size: 34px; margin: 0 0 12px; letter-spacing: -0.01em; text-wrap: balance;
+  font-size: 32px; margin: 0 0 12px; letter-spacing: -0.01em; text-wrap: balance;
 }
-.onboard-wrap p { color: var(--text-secondary); font-size: 14.5px; line-height: 1.55; margin: 0 0 30px; max-width: 320px; text-wrap: balance; }
+.onboard-wrap p { color: var(--text-secondary); font-size: 14.5px; line-height: 1.55; margin: 0 0 26px; max-width: 320px; text-wrap: balance; }
 .onboard-form { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 12px; }
 
 .field-input {
@@ -421,7 +427,7 @@ const TYPES = [
   { id: 'swim', label: 'Swim', icon: 'swim' },
   { id: 'other', label: 'Other', icon: 'other' },
 ];
-const AVATAR_TONES = ['#c07d5f', '#5f7d54', '#5f7f91', '#b98b34', '#818c5a', '#a9727a'];
+const AVATAR_TONES = ['#bf4e2c', '#3c6478', '#c98a2e', '#7c2a2a', '#4a5d43', '#294a5c'];
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
 /* Starter destination lists for a handful of well-known outdoor regions.
@@ -614,18 +620,23 @@ const FEATURED_LISTS = {
     ],
   },
 };
+/* Each season is a set of flat poster-print color separations (no gradients) —
+   bands run sky top-to-horizon, then the two mountain layers, snow cap, trail
+   and treeline. "fall" is tuned to match the reference sunset-and-slate-peaks
+   scene directly, since that's the real current season. */
 const SEASONS = {
-  winter: { skyTop: '#e4ecf1', skyBottom: '#f7f3ec', far: '#c3ccd3', near: '#8d9aa4', snow: '#ffffff', tree: '#61788a', trail: '#a9a196' },
-  spring: { skyTop: '#dceee0', skyBottom: '#f8f4ea', far: '#b9cdb4', near: '#6f8f66', snow: '#f4f1e6', tree: '#5f7d54', trail: '#a79b7d' },
-  summer: { skyTop: '#cfe6ef', skyBottom: '#f8f4ea', far: '#a9c4b0', near: '#4f6e57', snow: '#eef1e6', tree: '#3f6b4a', trail: '#9c8f74' },
-  fall: { skyTop: '#f3d9ae', skyBottom: '#faf1e2', far: '#c9a97a', near: '#8a5a3f', snow: '#f6efe4', tree: '#b5652f', trail: '#8a7358' },
+  winter: { bands: ['#2c3a52', '#3f5570', '#6f83a0', '#c9d6e0'], far: '#7a8fa3', near: '#3d5468', snow: '#ffffff', tree: '#243444', trail: '#a9a196' },
+  spring: { bands: ['#3f5a4a', '#6f8f5e', '#a8bf6e', '#e3d488'], far: '#7fa08c', near: '#3f6b52', snow: '#f0ead0', tree: '#2e4a34', trail: '#a08a5f' },
+  summer: { bands: ['#1f4a68', '#2f6a86', '#5a9aa8', '#e3cf8a'], far: '#5f8a86', near: '#2c5654', snow: '#eef1e6', tree: '#1f3d34', trail: '#8f7a52' },
+  fall: { bands: ['#6f2a33', '#a13a24', '#c1552e', '#e0a83d'], far: '#5f7f92', near: '#2c4453', snow: '#f3e3bd', tree: '#241a12', trail: '#8a5a3f' },
 };
 const TRAIL_ANCHORS = [
   { x: 40, y: 222 }, { x: 88, y: 196 }, { x: 58, y: 162 }, { x: 108, y: 136 },
   { x: 78, y: 100 }, { x: 124, y: 74 }, { x: 150, y: 50 },
 ];
-const FIGURE_COLOR = '#2b2a22';
-const FLAG_COLOR = '#c9a13f';
+const FIGURE_COLOR = '#251a10';
+const FLAG_COLOR = '#dba33c';
+const PACK_COLOR = '#bf4e2c';
 
 function typeInfo(id) { return TYPES.find(t => t.id === id) || TYPES[TYPES.length - 1]; }
 function colorForId(id) {
@@ -734,25 +745,66 @@ function normalizeUser(id, data) {
   };
 }
 
+/* Marquee brand illustration in the same flat, screen-printed-poster
+   technique as the Summit mountain (no gradients — solid color
+   separations), reusing that season's palette for a consistent world. */
+function buildHeroScene() {
+  const c = SEASONS[getSeason()];
+  const bandH = 150 / c.bands.length;
+  const bands = c.bands.map((color, i) => `<rect x="0" y="${Math.floor(i * bandH)}" width="400" height="${Math.ceil(bandH) + 1}" fill="${color}"/>`).join('');
+  return `
+  <svg viewBox="0 0 400 240" role="img" aria-label="A hiker on a mountain trail at sunset">
+    ${bands}
+    <rect x="0" y="150" width="400" height="90" fill="${c.bands[c.bands.length - 1]}"/>
+    <circle cx="215" cy="148" r="50" fill="${c.snow}" opacity="0.55"/>
+    <path d="M0,240 C60,150 140,60 210,30 C280,60 360,150 400,240 Z" fill="${c.far}" opacity="0.85"/>
+    <path d="M-10,240 C50,190 110,120 175,80 C235,120 290,190 340,240 Z" fill="${c.near}"/>
+    <path d="M175,80 C167,90 159,102 154,118 C168,112 182,112 196,118 C191,102 183,90 175,80 Z" fill="${c.snow}"/>
+    <path d="M170,118 C150,150 165,175 145,205 C130,226 150,236 140,240 L210,240 C202,232 210,215 195,195 C180,172 190,145 170,118 Z" fill="${c.snow}" opacity="0.5"/>
+    <rect x="0" y="222" width="400" height="18" fill="#3a2416"/>
+    <g fill="${c.tree}">
+      <path d="M40,240 C40,240 20,190 42,180 C64,190 44,240 44,240 Z"/>
+      <path d="M15,240 C15,240 0,205 17,197 C34,205 19,240 19,240 Z"/>
+      <path d="M370,240 C370,240 353,198 372,190 C391,198 374,240 374,240 Z"/>
+      <path d="M395,240 C395,240 383,212 397,206 C411,212 399,240 399,240 Z"/>
+    </g>
+    <g transform="translate(200,203) scale(1.9)">
+      <path d="M-2.4 -13.6c-1.8 0.6-1.8 4.6 0.1 5.4" stroke="${FIGURE_COLOR}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <rect x="-4.6" y="-11.3" width="4.1" height="7.2" rx="1.2" fill="${PACK_COLOR}" transform="rotate(-10 -2.6 -7.7)"/>
+      <circle cx="0.5" cy="-15.2" r="3" fill="${FIGURE_COLOR}"/>
+      <path d="M0.5 -12.3L2 -3.8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M2 -3.8L-1.4 0.6L-3 7.4" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2 -3.8L4.6 0.9L4.3 8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M0.9 -10.3L-2.6 -7.8" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M1.6 -10.1L5.2 -5.6" stroke="${FIGURE_COLOR}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M5.2 -5.6L7.4 8.6" stroke="#8a6a45" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+    </g>
+  </svg>`;
+}
+
 function renderNoDb() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-mark">${ICONS.pin}</div>
-      <h1>Breeze</h1>
-      <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
+      <div class="onboard-hero">${buildHeroScene()}</div>
+      <div class="onboard-body">
+        <h1>Breeze</h1>
+        <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
+      </div>
     </div>`;
 }
 
 function renderOnboarding() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-mark">${ICONS.pin}</div>
-      <h1>Breeze</h1>
-      <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
-      <div class="onboard-form">
-        <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
-        <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
-        <button class="btn-primary" id="startBtn">Get started</button>
+      <div class="onboard-hero">${buildHeroScene()}</div>
+      <div class="onboard-body">
+        <h1>Breeze</h1>
+        <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
+        <div class="onboard-form">
+          <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
+          <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
+          <button class="btn-primary" id="startBtn">Get started</button>
+        </div>
       </div>
     </div>`;
   const input = document.getElementById('nameInput');
@@ -1161,19 +1213,15 @@ function buildMountainSvg(season, fraction) {
   const c = SEASONS[season];
   const p = pointAtFraction(fraction);
   const trailPts = TRAIL_ANCHORS.map(pt => pt.x + ',' + pt.y).join(' ');
+  const bandH = 240 / c.bands.length;
+  const bands = c.bands.map((color, i) => `<rect x="0" y="${Math.floor(i * bandH)}" width="400" height="${Math.ceil(bandH) + 1}" fill="${color}"/>`).join('');
   const flag = fraction >= 1
     ? `<g transform="translate(150,44)"><path d="M0 14V0" stroke="${FIGURE_COLOR}" stroke-width="2"/><path d="M0 0h9l-3 3.5L9 7H0" fill="${FLAG_COLOR}"/></g>`
     : '';
   return `
   <svg viewBox="0 0 400 240" role="img" aria-label="Mountain progress">
-    <defs>
-      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${c.skyTop}"/>
-        <stop offset="100%" stop-color="${c.skyBottom}"/>
-      </linearGradient>
-    </defs>
-    <rect x="0" y="0" width="400" height="240" fill="url(#skyGrad)"/>
-    <path d="M130,235 C118,146 128,73 152,32 C185,64 275,138 400,235 Z" fill="${c.far}" opacity="0.75"/>
+    ${bands}
+    <path d="M130,235 C118,146 128,73 152,32 C185,64 275,138 400,235 Z" fill="${c.far}" opacity="0.85"/>
     <path d="M20,235 C58,158 100,92 150,50 C196,92 250,158 300,235 Z" fill="${c.near}"/>
     <path d="M150,50 C142,60 135,71 131,86 C144,81 156,81 169,86 C165,71 158,60 150,50 Z" fill="${c.snow}"/>
     <polyline points="${trailPts}" fill="none" stroke="${c.trail}" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/>
@@ -1184,6 +1232,7 @@ function buildMountainSvg(season, fraction) {
     </g>
     <g transform="translate(${p.x},${p.y})">
       <path d="M-2.4 -13.6c-1.8 0.6-1.8 4.6 0.1 5.4" stroke="${FIGURE_COLOR}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <rect x="-4.6" y="-11.3" width="4.1" height="7.2" rx="1.2" fill="${PACK_COLOR}" transform="rotate(-10 -2.6 -7.7)"/>
       <circle cx="0.5" cy="-15.2" r="3" fill="${FIGURE_COLOR}"/>
       <path d="M0.5 -12.3L2 -3.8" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       <path d="M2 -3.8L-1.4 0.6L-3 7.4" stroke="${FIGURE_COLOR}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
