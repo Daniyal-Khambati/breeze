@@ -50,12 +50,7 @@ body {
   font-family: var(--font-sans); -webkit-font-smoothing: antialiased;
   font-size: 16px; line-height: 1.5;
 }
-/* The illustrated scene is a fixed, full-viewport backdrop behind the whole
-   app — not a header — so it stays visible on every tab and behind every
-   scrollable list. UI chrome sits above it as frosted glass panels. */
-#appBg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--bg); }
-#appBg svg { display: block; width: 100%; height: 100%; }
-#app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 84px; }
+#app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 84px; }
 img { max-width: 100%; display: block; }
 button { font-family: var(--font-sans); cursor: pointer; }
 input, textarea, select { font-family: var(--font-sans); }
@@ -66,14 +61,10 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-/* Top bar — a slim frosted-glass strip that floats over the ambient scene,
-   the same on every tab, rather than an illustrated banner of its own. */
+/* Top bar */
 .topbar {
-  position: relative; z-index: 2;
-  padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 14px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg);
+  padding: 18px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 .brand {
   font-family: var(--font-pixel); font-size: 14px;
@@ -89,16 +80,13 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
 .avatar-btn {
   width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border); color: #fff;
   font-weight: 700; font-size: 12.5px; display: flex; align-items: center; justify-content: center;
-  letter-spacing: 0.02em; box-shadow: 0 1px 4px rgba(30, 20, 12, 0.35);
+  letter-spacing: 0.02em;
 }
 
-/* Onboarding — the ambient scene fills the whole screen behind this; the
-   copy and form sit in a frosted panel anchored to the bottom, like a
-   game's title screen rather than a page with a picture at the top. */
+/* Onboarding */
 .onboard-wrap {
-  flex: 1; min-height: 100vh; min-height: 100dvh;
-  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-  text-align: center;
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 32px; text-align: center;
 }
 .onboard-mark {
   width: 60px; height: 60px; border-radius: var(--radius-md); border: 1px solid var(--border);
@@ -133,22 +121,15 @@ textarea.field-input { resize: none; font-size: 15px; }
 .btn-secondary:active { background: var(--surface-2); }
 .btn-ghost {
   background: transparent; border: none; color: var(--text-secondary); font-size: 12.5px; font-weight: 600;
-  padding: 6px; text-shadow: 0 0 2px var(--bg), 0 0 5px var(--bg), 0 0 12px rgba(253, 248, 236, 0.85);
+  padding: 6px;
 }
 .btn-ghost:hover { color: var(--text); }
 
-/* Main content — titles sit directly over the ambient scene rather than in
-   a glass panel, so they get a soft light halo to stay legible over any
-   part of the illustration behind them. */
+/* Main content */
 .screen { flex: 1; padding: 4px 20px 20px; }
 .screen-title {
   font-family: var(--font-display); font-weight: 800; font-size: 27px; margin: 4px 0 4px;
   letter-spacing: -0.01em; text-wrap: balance;
-  text-shadow: 0 0 2px var(--bg), 0 0 6px var(--bg), 0 0 16px rgba(253, 248, 236, 0.9);
-}
-.screen-sub {
-  color: var(--text-secondary); font-size: 13px; margin: 0 0 16px;
-  text-shadow: 0 0 2px var(--bg), 0 0 5px var(--bg), 0 0 14px rgba(253, 248, 236, 0.9);
 }
 .screen-sub {
   color: var(--text-secondary); font-size: 11.5px; margin: 0 0 16px; font-weight: 700;
@@ -231,10 +212,7 @@ textarea.field-input { resize: none; font-size: 15px; }
 }
 .type-tag svg { font-size: 12.5px; }
 
-.empty-state {
-  text-align: center; padding: 40px 20px; color: var(--text-muted);
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
-}
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
 .empty-state .icon-wrap {
   width: 44px; height: 44px; border-radius: 50%; background: var(--surface-2); color: var(--text-muted);
   display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 14px;
@@ -295,10 +273,7 @@ textarea.field-input { resize: none; font-size: 15px; }
 /* Summit (mountain gamification) */
 .mountain-wrap { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-bottom: 14px; }
 .mountain-wrap svg { display: block; width: 100%; height: auto; }
-.climb-readout {
-  font-size: 12.5px; color: var(--text-secondary); text-align: center; margin: 0 0 16px;
-  text-shadow: 0 0 2px var(--bg), 0 0 5px var(--bg), 0 0 14px rgba(253, 248, 236, 0.9);
-}
+.climb-readout { font-size: 12.5px; color: var(--text-secondary); text-align: center; margin: 0 0 16px; }
 .scope-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
 .scope-toggle { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2px; }
 .scope-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-sm); border: none; background: none; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
@@ -385,21 +360,12 @@ textarea.field-input { resize: none; font-size: 15px; }
 .star.full { color: var(--gold); }
 .star-fill-half { position: absolute; inset: 0; width: 50%; overflow: hidden; color: var(--gold); }
 
-/* Frosted glass — every panel that sits directly over the ambient scene
-   gets a soft blur so it stays readable against a busy sky/mountain. */
-.card, .featured-card, .rank-row, .dest-row, .mountain-wrap, .duel-card, .duel-vs,
-.friend-code-box, .modal, .filter-menu, .filter-trigger, .field-input, .btn-secondary,
-.duel-btn, .empty-state, .type-opt, .scope-toggle, .dest-badge, .rank-badge, .type-tag, .toast {
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-}
-
 /* Bottom nav */
 .bottomnav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
   background: var(--surface); border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex; justify-content: center;
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
 }
 .bottomnav-inner { max-width: 480px; width: 100%; display: flex; }
 .navbtn {
@@ -429,7 +395,6 @@ textarea.field-input { resize: none; font-size: 15px; }
 </style>
 </head>
 <body>
-<div id="appBg"></div>
 <div id="app"></div>
 
 <script>
@@ -744,8 +709,6 @@ let summitScope = 'region'; // 'region' | 'everywhere'
 let peekRegion = null; // non-null while checking a region other than your own
 
 const app = document.getElementById('app');
-const appBg = document.getElementById('appBg');
-if (appBg) appBg.innerHTML = buildAmbientScene('bg');
 
 function toast(msg) {
   let el = document.getElementById('toastEl');
@@ -800,83 +763,25 @@ function normalizeUser(id, data) {
   };
 }
 
-/* The ambient scene: a full painted overlook (multi-stop sunset sky, a sun
-   glow, blurred clouds, a hazy far ridge, a two-tone sunlit/shadow snow
-   peak, a nearer treeline ridge, a winding river in the valley, foreground
-   pines, and a filled hiker silhouette on a rock ledge) rendered once as
-   the app's fixed, full-viewport backdrop — not a header. It is drawn tall
-   and cropped edge-to-edge (preserveAspectRatio slice) so it reads as a
-   real backdrop behind any screen size, anchored to the ground at the
-   bottom the way it would be if you were actually standing there. */
-function buildAmbientScene(idPrefix) {
-  const c = SEASONS[getSeason()];
-  const id = idPrefix || 'amb';
-  return `
-  <svg viewBox="0 0 400 640" preserveAspectRatio="xMidYMax slice" role="img" aria-label="A hiker overlooking a mountain valley at sunset">
-    <defs>
-      ${skyGradientDefs(c, id + 'Sky')}
-      ${sunGlowDefs(c, id + 'Sun')}
-      ${ridgeGradientDefs(c, id + 'PeakLight', c.peakSun, c.peakSunDark)}
-      ${ridgeGradientDefs(c, id + 'PeakShadow', c.peakShadow, c.peakShadowDark)}
-      ${ridgeGradientDefs(c, id + 'Far', c.far, c.farDark)}
-      ${ridgeGradientDefs(c, id + 'Near', c.near, c.nearDark)}
-      <linearGradient id="${id}River" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${c.river}" stop-opacity="0.85"/>
-        <stop offset="100%" stop-color="${c.river}" stop-opacity="0.5"/>
-      </linearGradient>
-      <filter id="${id}Blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
-      <filter id="${id}Grain" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="n"/>
-        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0"/>
-      </filter>
-    </defs>
-    <rect x="0" y="0" width="400" height="640" fill="url(#${id}Sky)"/>
-    <circle cx="205" cy="250" r="185" fill="url(#${id}Sun)"/>
-    <circle cx="205" cy="250" r="26" fill="${c.sun}" opacity="0.9"/>
-    <g filter="url(#${id}Blur)">${buildClouds(c.cloud, [[100, 140, 1.2], [300, 110, 1.0], [50, 205, 0.8]])}</g>
-    <path d="M55,640 C90,470 145,300 195,140 C193,300 203,470 200,640 Z" fill="url(#${id}PeakShadow)"/>
-    <path d="M195,140 C245,300 300,470 340,640 L200,640 C203,470 193,300 195,140 Z" fill="url(#${id}PeakLight)"/>
-    <path d="M195,140 L173,196 L184,188 L195,173 L207,188 L219,196 Z" fill="${c.snow}" opacity="0.95"/>
-    <path d="M0,640 L0,390 L60,320 L120,385 L190,300 L260,380 L330,325 L400,375 L400,640 Z" fill="${c.haze}" opacity="0.55" filter="url(#${id}Blur)"/>
-    <path d="M0,640 L0,455 L70,385 L150,440 L220,375 L300,445 L400,400 L400,640 Z" fill="url(#${id}Far)" opacity="0.92"/>
-    <path d="M-30,640 C60,516 160,424 200,414 C240,424 340,516 430,640 Z" fill="url(#${id}Near)"/>
-    <path d="${riverPath(203, 424, 640)}" fill="url(#${id}River)"/>
-    <rect x="0" y="606" width="400" height="34" fill="${c.ground}"/>
-    <g fill="${c.tree}">
-      <path d="M20,640 C20,640 2,568 30,552 C58,568 34,640 34,640 Z"/>
-      <path d="M-15,640 C-15,640 -30,584 -6,572 C18,584 -2,640 -2,640 Z"/>
-      <path d="M58,640 C58,640 44,588 64,578 C84,588 66,640 66,640 Z"/>
-      <path d="M380,640 C380,640 362,562 392,546 C420,562 396,640 396,640 Z"/>
-      <path d="M410,640 C410,640 398,580 420,570 C440,580 424,640 424,640 Z"/>
-      <path d="M342,640 C342,640 330,590 348,580 C366,590 350,640 350,640 Z"/>
-    </g>
-    <ellipse cx="203" cy="618" rx="46" ry="12" fill="${c.groundShadow}" opacity="0.4"/>
-    ${buildHikerSilhouette(203, 606, 2.5)}
-    <rect x="0" y="0" width="400" height="640" filter="url(#${id}Grain)"/>
-  </svg>`;
-}
-
 function renderNoDb() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-body">
-        <h1>Breeze</h1>
-        <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
-      </div>
+      <div class="onboard-mark">${ICONS.pin}</div>
+      <h1>Breeze</h1>
+      <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
     </div>`;
 }
 
 function renderOnboarding() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-body">
-        <h1>Breeze</h1>
-        <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
-        <div class="onboard-form">
-          <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
-          <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
-          <button class="btn-primary" id="startBtn">Get started</button>
-        </div>
+      <div class="onboard-mark">${ICONS.pin}</div>
+      <h1>Breeze</h1>
+      <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
+      <div class="onboard-form">
+        <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
+        <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
+        <button class="btn-primary" id="startBtn">Get started</button>
       </div>
     </div>`;
   const input = document.getElementById('nameInput');
