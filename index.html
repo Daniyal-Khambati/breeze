@@ -6,56 +6,51 @@
 <title>Breeze</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;0,900;1,600;1,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Retro trailhead-poster palette, pulled from a screen-printed sunset scene:
-     warm oat paper, rust/burnt-orange as the primary "ink", a slate-teal
-     secondary from the mountain layers, and amber for highlights. */
-  --bg: #f1e4c8;
-  --surface: rgba(253, 248, 236, 0.88);
-  --surface-2: rgba(232, 214, 171, 0.82);
-  --surface-3: rgba(220, 196, 138, 0.76);
-  --border: rgba(203, 175, 124, 0.65);
-  --text: #251a10;
-  --text-secondary: #6b5335;
-  --text-muted: #9d8058;
-  --accent: #bf4e2c;
-  --accent-strong: #93381c;
-  --accent-soft: rgba(191, 78, 44, 0.14);
-  --on-accent: #fdf8ec;
-  --teal: #3c6478;
-  --teal-strong: #294a5c;
-  --teal-soft: rgba(60, 100, 120, 0.14);
-  --on-teal: #fdf8ec;
-  --gold: #dba33c;
-  --gold-soft: rgba(219, 163, 60, 0.2);
-  --on-gold: #251a10;
-  --danger: #7c2a2a;
-  --danger-soft: rgba(124, 42, 42, 0.14);
-  --radius-lg: 14px;
-  --radius-md: 10px;
-  --radius-sm: 8px;
-  --shadow-sm: 0 1px 2px rgba(37, 26, 16, 0.08);
-  --shadow-md: 0 8px 24px rgba(37, 26, 16, 0.12);
+  --bg: #f2e9d3;
+  --surface: #fbf5e6;
+  --surface-2: #e6d9b3;
+  --surface-3: #d8c896;
+  --border: #c3ae7c;
+  --border-soft: #ddd0a8;
+  --text: #3a2f1f;
+  --text-secondary: #7a6a47;
+  --text-muted: #a4926a;
+  --accent: #4a7a52;
+  --accent-strong: #33582f;
+  --accent-soft: rgba(74, 122, 82, 0.15);
+  --on-accent: #fbf5e6;
+  --gold: #d9a83e;
+  --gold-soft: rgba(217, 168, 62, 0.2);
+  --on-gold: #3a2308;
+  --danger: #c0603a;
+  --danger-soft: rgba(192, 96, 58, 0.16);
+  --coral: #c0603a;
+  --coral-soft: rgba(192, 96, 58, 0.16);
+  --sky: #5f8fa0;
+  --sky-soft: rgba(95, 143, 160, 0.18);
+  --radius-lg: 6px;
+  --radius-md: 4px;
+  --radius-sm: 3px;
+  --shadow-sm: 0 1px 2px rgba(58, 47, 31, 0.08);
+  --shadow-md: 0 4px 14px rgba(58, 47, 31, 0.14);
   --font-sans: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: 'VT323', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: 'VT323', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-pixel: 'Press Start 2P', var(--font-display);
 }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  background: var(--bg); color: var(--text);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-sans); -webkit-font-smoothing: antialiased;
-  font-size: 15px; line-height: 1.45;
+  font-size: 16px; line-height: 1.5;
 }
-/* The illustrated scene is a fixed, full-viewport backdrop behind the whole
-   app — not a header — so it stays visible on every tab and behind every
-   scrollable list. UI chrome sits above it as frosted glass panels. */
-#appBg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--bg); }
-#appBg svg { display: block; width: 100%; height: 100%; }
-#app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 84px; }
+#app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 84px; }
 img { max-width: 100%; display: block; }
 button { font-family: var(--font-sans); cursor: pointer; }
 input, textarea, select { font-family: var(--font-sans); }
@@ -66,90 +61,79 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-/* Top bar — a slim frosted-glass strip that floats over the ambient scene,
-   the same on every tab, rather than an illustrated banner of its own. */
+/* Top bar */
 .topbar {
-  position: relative; z-index: 2;
-  padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 14px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg);
+  padding: 18px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 .brand {
-  font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: 22px;
-  letter-spacing: -0.01em; color: var(--accent);
+  font-family: var(--font-pixel); font-size: 14px;
+  letter-spacing: 0; color: var(--accent);
 }
 .topbar-actions { display: flex; align-items: center; gap: 10px; }
 .log-btn {
-  display: flex; align-items: center; gap: 6px; background: var(--accent); color: var(--on-accent);
-  border: none; padding: 8px 14px 8px 11px; border-radius: 999px; font-weight: 700; font-size: 13px;
-  box-shadow: 0 1px 4px rgba(30, 20, 12, 0.35);
+  display: flex; align-items: center; gap: 6px; background: var(--gold); color: var(--on-gold);
+  border: 1px solid var(--border); padding: 7px 13px 7px 10px; border-radius: var(--radius-md); font-weight: 700; font-size: 13px;
 }
 .log-btn svg { font-size: 15px; }
-.log-btn:active { background: var(--accent-strong); }
+.log-btn:active { background: var(--gold-soft); }
 .avatar-btn {
-  width: 34px; height: 34px; border-radius: 50%; border: none; color: #fff;
+  width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border); color: #fff;
   font-weight: 700; font-size: 12.5px; display: flex; align-items: center; justify-content: center;
-  letter-spacing: 0.02em; box-shadow: 0 1px 4px rgba(30, 20, 12, 0.35);
+  letter-spacing: 0.02em;
 }
 
-/* Onboarding — the ambient scene fills the whole screen behind this; the
-   copy and form sit in a frosted panel anchored to the bottom, like a
-   game's title screen rather than a page with a picture at the top. */
+/* Onboarding */
 .onboard-wrap {
-  flex: 1; min-height: 100vh; min-height: 100dvh;
-  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-  text-align: center;
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 32px; text-align: center;
 }
-.onboard-body {
-  width: 100%; box-sizing: border-box; padding: 28px 32px calc(30px + env(safe-area-inset-bottom, 0px));
-  display: flex; flex-direction: column; align-items: center;
-  background: var(--surface); border: 1px solid var(--border); border-bottom: none;
-  border-radius: 24px 24px 0 0; box-shadow: 0 -12px 32px rgba(20, 14, 8, 0.25);
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+.onboard-mark {
+  width: 60px; height: 60px; border-radius: var(--radius-md); border: 1px solid var(--border);
+  background: var(--accent-soft);
+  color: var(--accent-strong); display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 20px;
 }
 .onboard-wrap h1 {
-  font-family: var(--font-display); font-style: italic; font-weight: 700; color: var(--accent);
-  font-size: 32px; margin: 0 0 12px; letter-spacing: -0.01em; text-wrap: balance;
+  font-family: var(--font-pixel); color: var(--accent);
+  font-size: 22px; margin: 0 0 16px; letter-spacing: 0; text-wrap: balance; line-height: 1.6;
 }
-.onboard-wrap p { color: var(--text-secondary); font-size: 14.5px; line-height: 1.55; margin: 0 0 26px; max-width: 320px; text-wrap: balance; }
+.onboard-wrap p { color: var(--text-secondary); font-size: 15px; line-height: 1.55; margin: 0 0 30px; max-width: 320px; text-wrap: balance; }
 .onboard-form { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 12px; }
 
 .field-input {
-  width: 100%; padding: 12px 14px; border-radius: var(--radius-md); border: 1.5px solid var(--border);
-  background: var(--surface); color: var(--text); font-size: 14.5px; outline: none;
+  width: 100%; padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); font-size: 15px; outline: none;
 }
+.field-input::placeholder { color: var(--text-muted); opacity: 1; }
 .field-input:focus { border-color: var(--accent); }
-textarea.field-input { resize: none; font-size: 14.5px; }
+textarea.field-input { resize: none; font-size: 15px; }
 
 .btn-primary {
-  background: var(--accent); color: var(--on-accent); border: none; padding: 13px 20px; border-radius: var(--radius-md);
-  font-weight: 700; font-size: 14.5px; width: 100%;
+  background: var(--accent); color: var(--on-accent); border: 1px solid var(--border); padding: 12px 20px; border-radius: var(--radius-md);
+  font-weight: 700; font-size: 15px; width: 100%;
 }
 .btn-primary:active { background: var(--accent-strong); }
 .btn-primary:disabled { opacity: 0.5; }
 .btn-secondary {
-  background: var(--surface); color: var(--text); border: 1.5px solid var(--border);
-  padding: 11px 18px; border-radius: var(--radius-md); font-weight: 600; font-size: 13.5px;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  padding: 11px 18px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px;
 }
+.btn-secondary:active { background: var(--surface-2); }
 .btn-ghost {
   background: transparent; border: none; color: var(--text-secondary); font-size: 12.5px; font-weight: 600;
-  padding: 6px; text-shadow: 0 0 2px var(--bg), 0 0 5px var(--bg), 0 0 12px rgba(253, 248, 236, 0.85);
+  padding: 6px;
 }
 .btn-ghost:hover { color: var(--text); }
 
-/* Main content — titles sit directly over the ambient scene rather than in
-   a glass panel, so they get a soft light halo to stay legible over any
-   part of the illustration behind them. */
+/* Main content */
 .screen { flex: 1; padding: 4px 20px 20px; }
 .screen-title {
-  font-family: var(--font-display); font-weight: 600; font-size: 25px; margin: 4px 0 4px;
+  font-family: var(--font-display); font-weight: 800; font-size: 27px; margin: 4px 0 4px;
   letter-spacing: -0.01em; text-wrap: balance;
-  text-shadow: 0 0 2px var(--bg), 0 0 6px var(--bg), 0 0 16px rgba(253, 248, 236, 0.9);
 }
 .screen-sub {
-  color: var(--text-secondary); font-size: 13px; margin: 0 0 16px;
-  text-shadow: 0 0 2px var(--bg), 0 0 5px var(--bg), 0 0 14px rgba(253, 248, 236, 0.9);
+  color: var(--text-secondary); font-size: 11.5px; margin: 0 0 16px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
 }
 
 /* Featured lists row */
@@ -199,8 +183,8 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .card-body { padding: 14px 16px 15px; }
 .card-user-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .mini-avatar {
-  width: 28px; height: 28px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 11px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: var(--radius-sm); color: #fff; font-weight: 700; font-size: 11px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--border);
 }
 .card-user-name { font-weight: 700; font-size: 13px; }
 .card-time { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -212,7 +196,7 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .card-footer { display: flex; align-items: center; justify-content: space-between; }
 .rank-badge {
   display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 4px 10px 4px 8px;
-  border-radius: 999px; background: var(--surface-2); color: var(--text-secondary);
+  border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text-secondary);
   font-family: var(--font-mono); font-variant-numeric: tabular-nums;
 }
 .rank-badge svg { font-size: 12px; }
@@ -224,14 +208,11 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .save-btn.saved { color: var(--accent); }
 .type-tag {
   display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 4px 9px;
-  border-radius: 999px; background: var(--surface-2); color: var(--text-secondary);
+  border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text-secondary);
 }
 .type-tag svg { font-size: 12.5px; }
 
-.empty-state {
-  text-align: center; padding: 40px 20px; color: var(--text-muted);
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
-}
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
 .empty-state .icon-wrap {
   width: 44px; height: 44px; border-radius: 50%; background: var(--surface-2); color: var(--text-muted);
   display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 14px;
@@ -248,7 +229,7 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 }
 .type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .type-opt {
-  padding: 12px 4px 10px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: var(--surface);
+  padding: 12px 4px 10px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--surface);
   display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600; color: var(--text-secondary);
 }
 .type-opt.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
@@ -292,13 +273,10 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 /* Summit (mountain gamification) */
 .mountain-wrap { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-bottom: 14px; }
 .mountain-wrap svg { display: block; width: 100%; height: auto; }
-.climb-readout {
-  font-size: 12.5px; color: var(--text-secondary); text-align: center; margin: 0 0 16px;
-  text-shadow: 0 0 2px var(--bg), 0 0 5px var(--bg), 0 0 14px rgba(253, 248, 236, 0.9);
-}
+.climb-readout { font-size: 12.5px; color: var(--text-secondary); text-align: center; margin: 0 0 16px; }
 .scope-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
-.scope-toggle { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 2px; }
-.scope-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: none; background: none; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.scope-toggle { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2px; }
+.scope-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-sm); border: none; background: none; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
 .scope-btn svg { font-size: 13px; }
 .scope-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
 .dest-list { margin-top: 4px; }
@@ -308,7 +286,7 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 }
 .dest-row.done { border-color: var(--accent); background: var(--accent-soft); }
 .dest-check {
-  width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0;
+  width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border); flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; color: var(--on-accent);
 }
 .dest-row.done .dest-check { background: var(--accent); border-color: var(--accent); }
@@ -317,7 +295,7 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .dest-name { font-family: var(--font-display); font-weight: 600; font-size: 14px; }
 .dest-loc { font-size: 11.5px; color: var(--text-muted); }
 .dest-badge {
-  flex-shrink: 0; font-size: 10.5px; font-weight: 700; padding: 4px 9px; border-radius: 999px;
+  flex-shrink: 0; font-size: 10.5px; font-weight: 700; padding: 4px 9px; border-radius: var(--radius-sm);
   background: var(--surface-2); color: var(--text-secondary); font-family: var(--font-mono); white-space: nowrap;
 }
 .preset-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -325,12 +303,12 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 /* Duel comparison */
 .duel-compare { display: flex; flex-direction: column; align-items: stretch; gap: 6px; margin: 4px 0 12px; }
 .duel-card {
-  position: relative; width: 100%; border-radius: var(--radius-lg); border: 1.5px solid var(--border);
+  position: relative; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border);
   background: var(--surface-2); display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px; padding: 16px 20px; text-align: center;
 }
 .duel-card.front {
-  background: var(--surface); box-shadow: var(--shadow-md); cursor: grab; user-select: none;
+  background: var(--surface); box-shadow: var(--shadow-sm); cursor: grab; user-select: none;
   touch-action: pan-y; will-change: transform;
 }
 .duel-card.front:active { cursor: grabbing; }
@@ -340,11 +318,11 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .duel-card .loc { font-size: 11.5px; color: var(--text-muted); }
 .duel-vs {
   align-self: center; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: var(--text-muted);
-  background: var(--bg); padding: 2px 8px; border-radius: 999px; margin: -2px 0;
+  background: var(--bg); padding: 2px 8px; border-radius: var(--radius-sm); margin: -2px 0;
 }
 .duel-stamp {
-  position: absolute; top: 14px; padding: 5px 11px; border-radius: 999px; font-size: 10.5px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0; border: 2px solid; pointer-events: none;
+  position: absolute; top: 14px; padding: 5px 11px; border-radius: var(--radius-sm); font-size: 10.5px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.06em; opacity: 0; border: 1.5px solid; pointer-events: none;
 }
 .duel-stamp.right { right: 14px; color: var(--accent-strong); border-color: var(--accent); transform: rotate(8deg); }
 .duel-stamp.left { left: 14px; color: var(--text-secondary); border-color: var(--text-muted); transform: rotate(-8deg); }
@@ -355,7 +333,7 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .duel-hint-row svg { font-size: 13px; flex-shrink: 0; }
 .duel-actions { display: flex; align-items: center; justify-content: center; gap: 22px; margin-bottom: 6px; }
 .duel-btn {
-  width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--surface);
+  width: 46px; height: 46px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--surface);
   display: flex; align-items: center; justify-content: center; color: var(--text-secondary);
 }
 .duel-btn svg { font-size: 19px; }
@@ -378,17 +356,9 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 .rank-info .t { font-family: var(--font-display); font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rank-info .l { font-size: 11.5px; color: var(--text-muted); }
 .rank-stars { display: flex; align-items: center; gap: 1px; flex-shrink: 0; margin-left: 8px; font-size: 13px; }
-.star { position: relative; display: inline-flex; color: var(--border); }
+.star { position: relative; display: inline-flex; color: var(--border-soft); }
 .star.full { color: var(--gold); }
 .star-fill-half { position: absolute; inset: 0; width: 50%; overflow: hidden; color: var(--gold); }
-
-/* Frosted glass — every panel that sits directly over the ambient scene
-   gets a soft blur so it stays readable against a busy sky/mountain. */
-.card, .featured-card, .rank-row, .dest-row, .mountain-wrap, .duel-card, .duel-vs,
-.friend-code-box, .modal, .filter-menu, .filter-trigger, .field-input, .btn-secondary,
-.duel-btn, .empty-state, .type-opt, .scope-toggle, .dest-badge, .rank-badge, .type-tag, .toast {
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-}
 
 /* Bottom nav */
 .bottomnav {
@@ -396,20 +366,21 @@ textarea.field-input { resize: none; font-size: 14.5px; }
   background: var(--surface); border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex; justify-content: center;
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
 }
 .bottomnav-inner { max-width: 480px; width: 100%; display: flex; }
 .navbtn {
-  flex: 1; background: none; border: none; padding: 11px 4px 9px; display: flex; flex-direction: column;
+  flex: 1; background: none; border: none; padding: 9px 4px 9px; display: flex; flex-direction: column;
   align-items: center; gap: 4px; color: var(--text-muted); font-size: 10.5px; font-weight: 700;
-  border-top: 2px solid transparent; margin-top: -1px;
 }
-.navbtn svg { font-size: 19px; }
-.navbtn.active { color: var(--accent); border-top-color: var(--accent); }
+.navbtn svg {
+  width: 40px; height: 24px; border-radius: var(--radius-sm); transition: background 0.1s ease, color 0.1s ease;
+}
+.navbtn.active { color: var(--accent-strong); }
+.navbtn.active svg { background: var(--gold-soft); color: var(--accent-strong); }
 
 .toast {
   position: fixed; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
-  background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: 13px;
+  background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius-md); font-size: 13px;
   font-weight: 600; z-index: 200; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; white-space: nowrap;
 }
 .toast.show { opacity: 1; }
@@ -424,12 +395,11 @@ textarea.field-input { resize: none; font-size: 14.5px; }
 </style>
 </head>
 <body>
-<div id="appBg"></div>
 <div id="app"></div>
 
 <script>
 function svgIcon(paths) {
-  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>';
 }
 const ICONS = {
   home: svgIcon('<path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1H9v-6h6v6h2.5a1 1 0 0 0 1-1V9.5"/>'),
@@ -466,7 +436,20 @@ const TYPES = [
   { id: 'swim', label: 'Swim', icon: 'swim' },
   { id: 'other', label: 'Other', icon: 'other' },
 ];
-const AVATAR_TONES = ['#bf4e2c', '#3c6478', '#c98a2e', '#7c2a2a', '#4a5d43', '#294a5c'];
+/* Color-coded per activity type, like trailhead blaze colors — gives the
+   feed and log flow variety instead of one uniform accent everywhere. */
+const TYPE_COLORS = {
+  hike: { bg: '#3f93a8', fg: '#fff8ec' },
+  lookout: { bg: '#6fb0c2', fg: '#123641' },
+  walk: { bg: '#f0a83a', fg: '#341808' },
+  kayak: { bg: '#2c5f85', fg: '#eaf3f7' },
+  camp: { bg: '#d1552c', fg: '#fff3e6' },
+  bike: { bg: '#a5487a', fg: '#fcecf5' },
+  swim: { bg: '#1f8f7a', fg: '#e8fbf5' },
+  other: { bg: '#8a7a5a', fg: '#f2e9d3' },
+};
+function typeColor(id) { return TYPE_COLORS[id] || TYPE_COLORS.other; }
+const AVATAR_TONES = ['#e8683a', '#3f93a8', '#6fb0c2', '#f0a83a', '#a8563a', '#c9707a'];
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
 /* Starter destination lists for a handful of well-known outdoor regions.
@@ -659,114 +642,19 @@ const FEATURED_LISTS = {
     ],
   },
 };
-/* Each season is a painted, atmospheric-perspective palette: a multi-stop
-   sunset sky, a sun glow, a hazy far ridge, a two-tone (sunlit/shadow) main
-   peak, a nearer treeline ridge, and ground/river/tree accents — built for
-   a full painted scene, not a flat poster silhouette. "fall" is tuned to
-   match the reference sunset-and-peaks scene, since that's the real season. */
+/* Flat, quantized colors only — this is a pixel-art scene, not a painted one. */
 const SEASONS = {
-  winter: {
-    bands: ['#1c2a42', '#2e4360', '#5d7590', '#a9bcc9', '#e4e9e2'],
-    far: '#7a8fa3', farDark: '#5c6f82', near: '#3d5468', nearDark: '#26394a',
-    haze: '#aebfd2', cloud: '#dfe8ea', snow: '#ffffff', tree: '#1a2432', trail: '#a9a196',
-    sun: '#eef2ee', sunGlow: '#dfe8ea',
-    peakSun: '#8195ab', peakSunDark: '#5c7189', peakShadow: '#2f3f56', peakShadowDark: '#1c2738',
-    river: '#c9d8de', ground: '#4a4238', groundShadow: '#20293a',
-  },
-  spring: {
-    bands: ['#2c3f3a', '#4c6b52', '#8aa563', '#d3c876', '#f2e6b8'],
-    far: '#7fa08c', farDark: '#5f8069', near: '#3f6b52', nearDark: '#294a38',
-    haze: '#a8c1a6', cloud: '#f4e6b0', snow: '#f0ead0', tree: '#213022', trail: '#a08a5f',
-    sun: '#fff3c4', sunGlow: '#f4e19a',
-    peakSun: '#a9b877', peakSunDark: '#7c9058', peakShadow: '#3f5a45', peakShadowDark: '#233626',
-    river: '#cfe0c9', ground: '#5a4a30', groundShadow: '#1f2c1f',
-  },
-  summer: {
-    bands: ['#12395a', '#1f5878', '#4a8b96', '#a8c98a', '#f0d878'],
-    far: '#5f8a86', farDark: '#436866', near: '#2c5654', nearDark: '#1a3a38',
-    haze: '#8fb3ae', cloud: '#ffe9a8', snow: '#eef1e6', tree: '#122420', trail: '#8f7a52',
-    sun: '#fff0b0', sunGlow: '#ffdf8a',
-    peakSun: '#7fa08a', peakSunDark: '#4f7562', peakShadow: '#28453f', peakShadowDark: '#152c27',
-    river: '#bfe0d8', ground: '#4a3d28', groundShadow: '#152c27',
-  },
-  fall: {
-    bands: ['#4a1a28', '#8c2f24', '#c1552e', '#dd8a3c', '#f2c469'],
-    far: '#5f7f92', farDark: '#425c6e', near: '#2c4453', nearDark: '#1a2d3a',
-    haze: '#9fb0c4', cloud: '#ffcf8a', snow: '#f6dfc4', tree: '#1b120d', trail: '#8a5a3f',
-    sun: '#ffe2a0', sunGlow: '#ffb15c',
-    peakSun: '#c1704a', peakSunDark: '#8a4530', peakShadow: '#3a3450', peakShadowDark: '#221f34',
-    river: '#e8b06a', ground: '#5a3823', groundShadow: '#1f1c30',
-  },
+  winter: { sky: '#c9dce8', sun: '#fff3d6', far: '#8fa8c2', near: '#4a6b8a', snow: '#ffffff', tree: '#25384a', trail: '#a68a68' },
+  spring: { sky: '#e8c9d6', sun: '#ffe0a8', far: '#7fae8a', near: '#3f6b4a', snow: '#f2e6c4', tree: '#1f3a26', trail: '#a3703f' },
+  summer: { sky: '#e8a33d', sun: '#fbe37a', far: '#4a8a9a', near: '#245c52', snow: '#f2dfae', tree: '#12241a', trail: '#b8482c' },
+  fall: { sky: '#d97a4a', sun: '#f7c467', far: '#8a6a80', near: '#6b3320', snow: '#e8cfa0', tree: '#241208', trail: '#8a4a26' },
 };
 const TRAIL_ANCHORS = [
   { x: 40, y: 222 }, { x: 88, y: 196 }, { x: 58, y: 162 }, { x: 108, y: 136 },
   { x: 78, y: 100 }, { x: 124, y: 74 }, { x: 150, y: 50 },
 ];
-const FIGURE_COLOR = '#251a10';
-const FLAG_COLOR = '#dba33c';
-const PACK_COLOR = '#bf4e2c';
-const PACK_SHADOW = '#93381c';
-
-function skyGradientDefs(c, id) {
-  const n = c.bands.length;
-  const stops = c.bands.map((color, i) => `<stop offset="${Math.round((i / (n - 1)) * 100)}%" stop-color="${color}"/>`).join('');
-  return `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>`;
-}
-function ridgeGradientDefs(c, id, light, dark) {
-  return `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${light}"/><stop offset="100%" stop-color="${dark}"/></linearGradient>`;
-}
-function sunGlowDefs(c, id) {
-  return `<radialGradient id="${id}" cx="50%" cy="50%" r="50%">
-    <stop offset="0%" stop-color="${c.sunGlow}" stop-opacity="0.9"/>
-    <stop offset="45%" stop-color="${c.sunGlow}" stop-opacity="0.32"/>
-    <stop offset="100%" stop-color="${c.sunGlow}" stop-opacity="0"/>
-  </radialGradient>`;
-}
-function buildClouds(fill, spots) {
-  return spots.map(([x, y, s]) => `
-    <g fill="${fill}" opacity="0.32">
-      <ellipse cx="${x}" cy="${y}" rx="${34 * s}" ry="${7 * s}"/>
-      <ellipse cx="${x + 22 * s}" cy="${y - 4 * s}" rx="${20 * s}" ry="${6 * s}"/>
-      <ellipse cx="${x - 20 * s}" cy="${y + 2 * s}" rx="${16 * s}" ry="${5 * s}"/>
-    </g>`).join('');
-}
-/* A tapered ribbon (river) from a narrow point near the mountain base down
-   to a wide point at the bottom of the frame, winding gently side to side. */
-function riverPath(cx, topY, bottomY) {
-  const pts = [
-    { x: cx, y: topY, w: 3 },
-    { x: cx - 16, y: topY + (bottomY - topY) * 0.28, w: 9 },
-    { x: cx + 12, y: topY + (bottomY - topY) * 0.55, w: 16 },
-    { x: cx - 10, y: topY + (bottomY - topY) * 0.78, w: 23 },
-    { x: cx + 6, y: bottomY, w: 30 },
-  ];
-  const left = pts.map(p => ({ x: p.x - p.w / 2, y: p.y }));
-  const right = pts.map(p => ({ x: p.x + p.w / 2, y: p.y })).reverse();
-  const toPts = (arr, first) => arr.map((p, i) => (i === 0 && first ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-  return toPts(left, true) + ' ' + toPts(right, false) + ' Z';
-}
-/* A filled hiker silhouette (head, dominant pack, mid-stride legs, poles) —
-   deliberately not a stick figure. (x,y) is the ground point between the feet. */
-function buildHikerSilhouette(x, y, scale) {
-  return `
-  <g transform="translate(${x},${y}) scale(${scale})">
-    <path d="M1.8 2L5 2L7.6 24L4.3 25L0.4 3.5Z" fill="${FIGURE_COLOR}"/>
-    <path d="M-2 2L-4.8 2L-6.8 21L-4.4 21.8L-0.6 3.2Z" fill="${FIGURE_COLOR}"/>
-    <path d="M2.8 24.3L7.9 23.4L9 26.2L2.4 27Z" fill="${FIGURE_COLOR}"/>
-    <path d="M-4.6 21.2L-7 20.8L-8.2 23.4L-4.1 24.2Z" fill="${FIGURE_COLOR}"/>
-    <path d="M6.3 -13.4C8.6 -11.4 10.3 -8.2 10.9 -4.6L12.9 -5.3C12.2 -9.3 10 -13 7.3 -15.4Z" fill="${FIGURE_COLOR}"/>
-    <path d="M-6.3 -13C-8.7 -11.2 -10.5 -8.4 -11.3 -5.2L-13.3 -5.9C-12.4 -9.7 -10.1 -13.2 -7.3 -15.2Z" fill="${FIGURE_COLOR}"/>
-    <line x1="12.9" y1="-5.3" x2="16.8" y2="25" stroke="${FIGURE_COLOR}" stroke-width="1.15" stroke-linecap="round"/>
-    <line x1="-13.3" y1="-5.9" x2="-17" y2="19" stroke="${FIGURE_COLOR}" stroke-width="1.15" stroke-linecap="round"/>
-    <circle cx="12.9" cy="-5.3" r="1.1" fill="${FIGURE_COLOR}"/>
-    <circle cx="-13.3" cy="-5.9" r="1.1" fill="${FIGURE_COLOR}"/>
-    <path d="M-6.8 -14.6C-8.2 -8.2 -7.8 -1.4 -5.4 3.2C-1.8 4.6 1.8 4.6 5.4 3.2C7.8 -1.4 8.2 -8.2 6.8 -14.6C4.4 -17.6 -4.4 -17.6 -6.8 -14.6Z" fill="${PACK_COLOR}"/>
-    <path d="M-4.6 -16.2C-2 -18.4 2 -18.4 4.6 -16.2L3.6 -13.4L-3.6 -13.4Z" fill="${PACK_COLOR}"/>
-    <path d="M-6.8 -14.6C-6 -12 -5.8 -6 -6.6 0L-8 -0.6C-7.4 -6.4 -7.6 -11 -6.8 -14.6Z" fill="${PACK_SHADOW}"/>
-    <path d="M-3.6 -20C-3.9 -22.6 -1.4 -25 1 -24.6C3.4 -24.2 5 -21.7 4.6 -19.2C3.4 -20.6 1.3 -21.5 -0.6 -21.4C-1.8 -21.3 -2.8 -20.8 -3.6 -20Z" fill="${FIGURE_COLOR}"/>
-    <ellipse cx="0" cy="-20.6" rx="3.4" ry="3.9" fill="${FIGURE_COLOR}"/>
-  </g>`;
-}
+const FIGURE_COLOR = '#2c1c10';
+const FLAG_COLOR = '#c0603a';
 
 function typeInfo(id) { return TYPES.find(t => t.id === id) || TYPES[TYPES.length - 1]; }
 function colorForId(id) {
@@ -821,8 +709,6 @@ let summitScope = 'region'; // 'region' | 'everywhere'
 let peekRegion = null; // non-null while checking a region other than your own
 
 const app = document.getElementById('app');
-const appBg = document.getElementById('appBg');
-if (appBg) appBg.innerHTML = buildAmbientScene('bg');
 
 function toast(msg) {
   let el = document.getElementById('toastEl');
@@ -877,83 +763,25 @@ function normalizeUser(id, data) {
   };
 }
 
-/* The ambient scene: a full painted overlook (multi-stop sunset sky, a sun
-   glow, blurred clouds, a hazy far ridge, a two-tone sunlit/shadow snow
-   peak, a nearer treeline ridge, a winding river in the valley, foreground
-   pines, and a filled hiker silhouette on a rock ledge) rendered once as
-   the app's fixed, full-viewport backdrop — not a header. It is drawn tall
-   and cropped edge-to-edge (preserveAspectRatio slice) so it reads as a
-   real backdrop behind any screen size, anchored to the ground at the
-   bottom the way it would be if you were actually standing there. */
-function buildAmbientScene(idPrefix) {
-  const c = SEASONS[getSeason()];
-  const id = idPrefix || 'amb';
-  return `
-  <svg viewBox="0 0 400 640" preserveAspectRatio="xMidYMax slice" role="img" aria-label="A hiker overlooking a mountain valley at sunset">
-    <defs>
-      ${skyGradientDefs(c, id + 'Sky')}
-      ${sunGlowDefs(c, id + 'Sun')}
-      ${ridgeGradientDefs(c, id + 'PeakLight', c.peakSun, c.peakSunDark)}
-      ${ridgeGradientDefs(c, id + 'PeakShadow', c.peakShadow, c.peakShadowDark)}
-      ${ridgeGradientDefs(c, id + 'Far', c.far, c.farDark)}
-      ${ridgeGradientDefs(c, id + 'Near', c.near, c.nearDark)}
-      <linearGradient id="${id}River" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${c.river}" stop-opacity="0.85"/>
-        <stop offset="100%" stop-color="${c.river}" stop-opacity="0.5"/>
-      </linearGradient>
-      <filter id="${id}Blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
-      <filter id="${id}Grain" x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="n"/>
-        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0"/>
-      </filter>
-    </defs>
-    <rect x="0" y="0" width="400" height="640" fill="url(#${id}Sky)"/>
-    <circle cx="205" cy="250" r="185" fill="url(#${id}Sun)"/>
-    <circle cx="205" cy="250" r="26" fill="${c.sun}" opacity="0.9"/>
-    <g filter="url(#${id}Blur)">${buildClouds(c.cloud, [[100, 140, 1.2], [300, 110, 1.0], [50, 205, 0.8]])}</g>
-    <path d="M55,640 C90,470 145,300 195,140 C193,300 203,470 200,640 Z" fill="url(#${id}PeakShadow)"/>
-    <path d="M195,140 C245,300 300,470 340,640 L200,640 C203,470 193,300 195,140 Z" fill="url(#${id}PeakLight)"/>
-    <path d="M195,140 L173,196 L184,188 L195,173 L207,188 L219,196 Z" fill="${c.snow}" opacity="0.95"/>
-    <path d="M0,640 L0,390 L60,320 L120,385 L190,300 L260,380 L330,325 L400,375 L400,640 Z" fill="${c.haze}" opacity="0.55" filter="url(#${id}Blur)"/>
-    <path d="M0,640 L0,455 L70,385 L150,440 L220,375 L300,445 L400,400 L400,640 Z" fill="url(#${id}Far)" opacity="0.92"/>
-    <path d="M-30,640 C60,516 160,424 200,414 C240,424 340,516 430,640 Z" fill="url(#${id}Near)"/>
-    <path d="${riverPath(203, 424, 640)}" fill="url(#${id}River)"/>
-    <rect x="0" y="606" width="400" height="34" fill="${c.ground}"/>
-    <g fill="${c.tree}">
-      <path d="M20,640 C20,640 2,568 30,552 C58,568 34,640 34,640 Z"/>
-      <path d="M-15,640 C-15,640 -30,584 -6,572 C18,584 -2,640 -2,640 Z"/>
-      <path d="M58,640 C58,640 44,588 64,578 C84,588 66,640 66,640 Z"/>
-      <path d="M380,640 C380,640 362,562 392,546 C420,562 396,640 396,640 Z"/>
-      <path d="M410,640 C410,640 398,580 420,570 C440,580 424,640 424,640 Z"/>
-      <path d="M342,640 C342,640 330,590 348,580 C366,590 350,640 350,640 Z"/>
-    </g>
-    <ellipse cx="203" cy="618" rx="46" ry="12" fill="${c.groundShadow}" opacity="0.4"/>
-    ${buildHikerSilhouette(203, 606, 2.5)}
-    <rect x="0" y="0" width="400" height="640" filter="url(#${id}Grain)"/>
-  </svg>`;
-}
-
 function renderNoDb() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-body">
-        <h1>Breeze</h1>
-        <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
-      </div>
+      <div class="onboard-mark">${ICONS.pin}</div>
+      <h1>Breeze</h1>
+      <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
     </div>`;
 }
 
 function renderOnboarding() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-body">
-        <h1>Breeze</h1>
-        <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
-        <div class="onboard-form">
-          <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
-          <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
-          <button class="btn-primary" id="startBtn">Get started</button>
-        </div>
+      <div class="onboard-mark">${ICONS.pin}</div>
+      <h1>Breeze</h1>
+      <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
+      <div class="onboard-form">
+        <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
+        <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
+        <button class="btn-primary" id="startBtn">Get started</button>
       </div>
     </div>`;
   const input = document.getElementById('nameInput');
@@ -1361,35 +1189,33 @@ function pointAtFraction(frac) {
 function buildMountainSvg(season, fraction) {
   const c = SEASONS[season];
   const p = pointAtFraction(fraction);
+  const hx = Math.round(p.x), hy = Math.round(p.y);
   const trailPts = TRAIL_ANCHORS.map(pt => pt.x + ',' + pt.y).join(' ');
   const flag = fraction >= 1
-    ? `<g transform="translate(150,44)"><path d="M0 14V0" stroke="${FIGURE_COLOR}" stroke-width="2"/><path d="M0 0h9l-3 3.5L9 7H0" fill="${FLAG_COLOR}"/></g>`
+    ? `<g transform="translate(158,30)" stroke="${c.snow}" stroke-width="1"><rect x="0" y="0" width="2" height="20" fill="${FIGURE_COLOR}"/><rect x="2" y="0" width="10" height="7" fill="${FLAG_COLOR}"/></g>`
     : '';
   return `
-  <svg viewBox="0 0 400 240" role="img" aria-label="Mountain progress">
-    <defs>
-      ${skyGradientDefs(c, 'peakSky')}
-      ${sunGlowDefs(c, 'peakSunGlow')}
-      ${ridgeGradientDefs(c, 'peakLight', c.peakSun, c.peakSunDark)}
-      ${ridgeGradientDefs(c, 'peakShadowG', c.peakShadow, c.peakShadowDark)}
-      ${ridgeGradientDefs(c, 'peakFar', c.far, c.farDark)}
-      <filter id="peakBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4"/></filter>
-    </defs>
-    <rect x="0" y="0" width="400" height="240" fill="url(#peakSky)"/>
-    <circle cx="150" cy="55" r="60" fill="url(#peakSunGlow)"/>
-    <g filter="url(#peakBlur)">${buildClouds(c.cloud, [[80, 30, 0.75], [300, 40, 0.9]])}</g>
-    <path d="M-10,240 C40,150 100,80 150,32 C120,90 190,150 260,240 Z" fill="${c.haze}" opacity="0.5" filter="url(#peakBlur)"/>
-    <path d="M130,235 C118,146 128,73 152,32 C185,64 275,138 400,235 Z" fill="url(#peakFar)" opacity="0.88"/>
-    <path d="M20,235 C58,158 100,92 150,50 L150,235 Z" fill="url(#peakShadowG)"/>
-    <path d="M150,50 C196,92 250,158 300,235 L150,235 Z" fill="url(#peakLight)"/>
-    <path d="M150,50 C142,60 135,71 131,86 C144,81 156,81 169,86 C165,71 158,60 150,50 Z" fill="${c.snow}"/>
-    <polyline points="${trailPts}" fill="none" stroke="${c.trail}" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/>
+  <svg viewBox="0 0 400 240" role="img" aria-label="Mountain progress" shape-rendering="crispEdges">
+    <rect x="0" y="0" width="400" height="240" fill="${c.sky}"/>
+    <polygon points="288,48 312,48 316,52 316,68 312,72 288,72 284,68 284,52" fill="${c.sun}"/>
+    <polygon points="230,190 230,160 260,160 260,130 290,130 290,75 320,75 320,130 350,130 350,160 380,160 380,190" fill="${c.far}"/>
+    <polygon points="20,240 20,200 60,200 60,160 100,160 100,115 140,115 140,55 175,55 175,115 215,115 215,160 255,160 255,200 295,200 295,240" fill="${c.near}"/>
+    <rect x="145" y="55" width="10" height="10" fill="${c.snow}"/>
+    <rect x="135" y="65" width="10" height="10" fill="${c.snow}"/>
+    <rect x="155" y="65" width="10" height="10" fill="${c.snow}"/>
+    <polyline points="${trailPts}" fill="none" stroke="${c.trail}" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="butt"/>
     <g fill="${c.tree}">
-      <path d="M330,235 C330,235 319,210 330,205 C341,210 330,235 330,235 Z"/>
-      <path d="M345,235 C345,235 336,216 345,212 C354,216 345,235 345,235 Z"/>
-      <path d="M60,235 C60,235 49,214 60,210 C71,214 60,235 60,235 Z"/>
+      <polygon points="330,240 318,210 342,210"/>
+      <polygon points="352,240 342,218 362,218"/>
+      <polygon points="45,240 33,212 57,212"/>
     </g>
-    ${buildHikerSilhouette(p.x, p.y, 0.65)}
+    <g transform="translate(${hx - 5},${hy - 18})" fill="${FIGURE_COLOR}" stroke="${c.snow}" stroke-width="1">
+      <rect x="11" y="4" width="2" height="19" fill="#c9915a"/>
+      <rect x="3" y="0" width="6" height="6"/>
+      <rect x="0" y="6" width="12" height="9"/>
+      <rect x="0" y="15" width="4" height="7"/>
+      <rect x="7" y="15" width="4" height="7"/>
+    </g>
     ${flag}
   </svg>`;
 }
@@ -1605,6 +1431,7 @@ function renderFeed(host) {
 
 function activityCardHtml(a) {
   const ti = typeInfo(a.type);
+  const tc = typeColor(a.type);
   const isMine = a.userId === currentUser.id;
   const rankTxt = rankBadgeText(a.userId, a.id);
   const saved = currentUser.bucketList.includes(a.id);
@@ -1619,7 +1446,7 @@ function activityCardHtml(a) {
             <div class="card-user-name">${escapeHtml(a.userName)}</div>
             <div class="card-time">${timeAgo(a.timestamp || Date.now())}</div>
           </div>
-          <span class="type-tag">${ICONS[ti.icon]}${ti.label}</span>
+          <span class="type-tag" style="background:${tc.bg};color:${tc.fg}">${ICONS[ti.icon]}${ti.label}</span>
         </div>
         <div class="card-title-row"><div class="card-title">${escapeHtml(a.title)}</div></div>
         <div class="card-loc">${ICONS.pin}${escapeHtml(a.location || 'Unspecified')}</div>
@@ -1733,7 +1560,12 @@ function openLogModal() {
       <div class="form-group">
         <label class="form-label">Type</label>
         <div class="type-grid" id="typeGrid">
-          ${TYPES.map(t => `<button class="type-opt ${t.id==='hike'?'active':''}" data-type="${t.id}">${ICONS[t.icon]}${t.label}</button>`).join('')}
+          ${TYPES.map(t => {
+            const tc = typeColor(t.id);
+            const active = t.id === 'hike';
+            const style = active ? `style="border-color:${tc.fg};background:${tc.bg};color:${tc.fg}"` : '';
+            return `<button class="type-opt ${active ? 'active' : ''}" data-type="${t.id}" ${style}>${ICONS[t.icon]}${t.label}</button>`;
+          }).join('')}
         </div>
       </div>
       <div class="form-group">
@@ -1767,7 +1599,16 @@ function openLogModal() {
   document.getElementById('typeGrid').addEventListener('click', (e) => {
     const btn = e.target.closest('.type-opt'); if (!btn) return;
     logState.type = btn.dataset.type;
-    document.querySelectorAll('#typeGrid .type-opt').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('#typeGrid .type-opt').forEach(b => {
+      const isActive = b === btn;
+      b.classList.toggle('active', isActive);
+      if (isActive) {
+        const tc = typeColor(b.dataset.type);
+        b.style.borderColor = tc.fg; b.style.background = tc.bg; b.style.color = tc.fg;
+      } else {
+        b.style.borderColor = ''; b.style.background = ''; b.style.color = '';
+      }
+    });
   });
   const photoInput = document.getElementById('photoInput');
   if (!assets) {
