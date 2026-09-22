@@ -2,6 +2,8 @@
 
 Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.
 
+Visual style: a retro national-park-poster look crossed with 16-bit game background art — flat, faceted color blocks only (no gradients, no photorealism), a banded sunset sky, layered mountain silhouettes that recede from pale blue-grey to muted blue-purple to a near-black-green treeline, and a rust-orange accent lifted from the recurring hiker sprite's backpack. That hiker — a solid, rounded game-sprite silhouette, not a stick figure — appears throughout the app: a decorative masthead scene above the top bar on every screen, the onboarding hero, and walking further along the trail on the Summit tab as you log real progress toward your region's destinations.
+
 Originally built as a Claude artifact: https://claude.ai/artifact/Lbh6W9M5uuuF6ncuWTCCsZ
 
 ## Features

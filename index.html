@@ -6,40 +6,38 @@
 <title>Breeze</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f2e9d3;
-  --surface: #fbf5e6;
-  --surface-2: #e6d9b3;
-  --surface-3: #d8c896;
-  --border: #c3ae7c;
-  --border-soft: #ddd0a8;
-  --text: #3a2f1f;
-  --text-secondary: #7a6a47;
-  --text-muted: #a4926a;
-  --accent: #4a7a52;
-  --accent-strong: #33582f;
-  --accent-soft: rgba(74, 122, 82, 0.15);
-  --on-accent: #fbf5e6;
-  --gold: #d9a83e;
-  --gold-soft: rgba(217, 168, 62, 0.2);
-  --on-gold: #3a2308;
-  --danger: #c0603a;
-  --danger-soft: rgba(192, 96, 58, 0.16);
-  --coral: #c0603a;
-  --coral-soft: rgba(192, 96, 58, 0.16);
-  --sky: #5f8fa0;
-  --sky-soft: rgba(95, 143, 160, 0.18);
-  --radius-lg: 6px;
-  --radius-md: 4px;
-  --radius-sm: 3px;
-  --shadow-sm: 0 1px 2px rgba(58, 47, 31, 0.08);
-  --shadow-md: 0 4px 14px rgba(58, 47, 31, 0.14);
+  /* Retro national-park-poster palette: warm parchment paper, a rust/orange
+     "trail blaze" accent lifted straight from the hiker's pack, and gold for
+     secondary highlights. Flat color blocks only — no gradients. */
+  --bg: #f2e4c4;
+  --surface: #fbf3e0;
+  --surface-2: #e8d5a8;
+  --surface-3: #dcc086;
+  --border: #b98a4e;
+  --border-soft: #ddc38c;
+  --text: #2c1f14;
+  --text-secondary: #71583a;
+  --text-muted: #a08a54;
+  --accent: #c9531f;
+  --accent-strong: #963d16;
+  --accent-soft: rgba(201, 83, 31, 0.16);
+  --on-accent: #fbf3e0;
+  --gold: #e0a23c;
+  --gold-soft: rgba(224, 162, 60, 0.22);
+  --on-gold: #2c1c08;
+  --danger: #963d16;
+  --danger-soft: rgba(150, 61, 22, 0.16);
+  --radius-lg: 10px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 1px 2px rgba(44, 31, 20, 0.12);
+  --shadow-md: 0 4px 14px rgba(44, 31, 20, 0.18);
   --font-sans: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-display: 'VT323', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-mono: 'VT323', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-pixel: 'Press Start 2P', var(--font-display);
+  --font-display: 'Baloo 2', var(--font-sans);
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -61,43 +59,49 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
+/* Scene banner — a static, flat-vector illustrated strip (banded sunset
+   sky, layered mountain silhouettes, a treeline framing the edges, and the
+   hiker sprite on the trail) that sits above the functional top bar. It is
+   purely decorative and scrolls away with the page like a masthead. */
+.scene-banner { width: 100%; aspect-ratio: 400 / 150; overflow: hidden; display: block; }
+.scene-banner svg { display: block; width: 100%; height: 100%; }
+
 /* Top bar */
 .topbar {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg);
-  padding: 18px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border-bottom: 2px solid var(--border);
 }
 .brand {
-  font-family: var(--font-pixel); font-size: 14px;
-  letter-spacing: 0; color: var(--accent);
+  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  letter-spacing: -0.01em; color: var(--accent);
 }
 .topbar-actions { display: flex; align-items: center; gap: 10px; }
 .log-btn {
-  display: flex; align-items: center; gap: 6px; background: var(--gold); color: var(--on-gold);
-  border: 1px solid var(--border); padding: 7px 13px 7px 10px; border-radius: var(--radius-md); font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; gap: 6px; background: var(--accent); color: var(--on-accent);
+  border: 1.5px solid var(--accent-strong); padding: 8px 14px 8px 11px; border-radius: var(--radius-md); font-weight: 700; font-size: 13px;
 }
 .log-btn svg { font-size: 15px; }
-.log-btn:active { background: var(--gold-soft); }
+.log-btn:active { background: var(--accent-strong); }
 .avatar-btn {
-  width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border); color: #fff;
+  width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); color: #fff;
   font-weight: 700; font-size: 12.5px; display: flex; align-items: center; justify-content: center;
   letter-spacing: 0.02em;
 }
 
 /* Onboarding */
 .onboard-wrap {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 32px; text-align: center;
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  text-align: center; overflow-y: auto;
 }
-.onboard-mark {
-  width: 60px; height: 60px; border-radius: var(--radius-md); border: 1px solid var(--border);
-  background: var(--accent-soft);
-  color: var(--accent-strong); display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 20px;
-}
+.onboard-hero { width: 100%; aspect-ratio: 400 / 260; overflow: hidden; }
+.onboard-hero svg { display: block; width: 100%; height: 100%; }
+.onboard-body { width: 100%; box-sizing: border-box; padding: 26px 32px 32px; display: flex; flex-direction: column; align-items: center; }
 .onboard-wrap h1 {
-  font-family: var(--font-pixel); color: var(--accent);
-  font-size: 22px; margin: 0 0 16px; letter-spacing: 0; text-wrap: balance; line-height: 1.6;
+  font-family: var(--font-display); font-weight: 800; color: var(--accent);
+  font-size: 30px; margin: 0 0 12px; letter-spacing: -0.01em; text-wrap: balance;
 }
-.onboard-wrap p { color: var(--text-secondary); font-size: 15px; line-height: 1.55; margin: 0 0 30px; max-width: 320px; text-wrap: balance; }
+.onboard-wrap p { color: var(--text-secondary); font-size: 14.5px; line-height: 1.55; margin: 0 0 26px; max-width: 320px; text-wrap: balance; }
 .onboard-form { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 12px; }
 
 .field-input {
@@ -140,7 +144,7 @@ textarea.field-input { resize: none; font-size: 15px; }
 .featured-row { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 14px; margin-bottom: 4px; scrollbar-width: none; }
 .featured-row::-webkit-scrollbar { display: none; }
 .featured-card {
-  flex-shrink: 0; width: 136px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+  flex-shrink: 0; width: 136px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md);
   padding: 14px 13px 13px; display: flex; flex-direction: column; align-items: flex-start; gap: 9px; text-align: left;
 }
 .featured-card .ft-icon {
@@ -176,7 +180,7 @@ textarea.field-input { resize: none; font-size: 15px; }
 
 /* Activity card */
 .card {
-  background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border);
+  background: var(--surface); border-radius: var(--radius-lg); border: 1.5px solid var(--border);
   margin-bottom: 14px; overflow: hidden;
 }
 .card-photo { width: 100%; aspect-ratio: 16/10; object-fit: cover; background: var(--surface-2); }
@@ -271,9 +275,11 @@ textarea.field-input { resize: none; font-size: 15px; }
 .friend-row .name { flex: 1; font-weight: 600; font-size: 13.5px; }
 
 /* Summit (mountain gamification) */
-.mountain-wrap { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-bottom: 14px; }
+.mountain-wrap { border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--border); margin-bottom: 14px; }
 .mountain-wrap svg { display: block; width: 100%; height: auto; }
 .climb-readout { font-size: 12.5px; color: var(--text-secondary); text-align: center; margin: 0 0 16px; }
+.progress-bar { height: 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); overflow: hidden; margin: 0 0 10px; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 999px; }
 .scope-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
 .scope-toggle { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 2px; }
 .scope-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-sm); border: none; background: none; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
@@ -282,7 +288,7 @@ textarea.field-input { resize: none; font-size: 15px; }
 .dest-list { margin-top: 4px; }
 .dest-row {
   width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; text-align: left;
+  border: 1.5px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; text-align: left;
 }
 .dest-row.done { border-color: var(--accent); background: var(--accent-soft); }
 .dest-check {
@@ -342,7 +348,7 @@ textarea.field-input { resize: none; font-size: 15px; }
 /* Ranking list */
 .rank-row {
   display: flex; align-items: center; gap: 12px; padding: 11px 13px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px;
 }
 .rank-num {
   width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2); color: var(--text-secondary);
@@ -401,13 +407,19 @@ textarea.field-input { resize: none; font-size: 15px; }
 function svgIcon(paths) {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>';
 }
+/* A flat, filled silhouette rather than a thin outline — for the icons that
+   should read as small faceted glyphs (mini mountain, map pin) matching the
+   illustration's solid-shape style. */
+function svgIconFilled(paths) {
+  return '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">' + paths + '</svg>';
+}
 const ICONS = {
   home: svgIcon('<path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1H9v-6h6v6h2.5a1 1 0 0 0 1-1V9.5"/>'),
   ranks: svgIcon('<path d="M4 20V12"/><path d="M10 20V8"/><path d="M16 20V4"/>'),
   saved: svgIcon('<path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/>'),
   savedFilled: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>',
   plus: svgIcon('<path d="M12 5v14M5 12h14"/>'),
-  pin: svgIcon('<path d="M12 21s7-6.7 7-11.5A7 7 0 0 0 5 9.5C5 14.3 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/>'),
+  pin: svgIconFilled('<path d="M12 21s7-6.7 7-11.5A7 7 0 0 0 5 9.5C5 14.3 12 21 12 21z"/>'),
   close: svgIcon('<path d="M6 6l12 12M18 6 6 18"/>'),
   chevronDown: svgIcon('<path d="M6 9l6 6 6-6"/>'),
   arrowLeft: svgIcon('<path d="M19 12H5M11 18l-6-6 6-6"/>'),
@@ -416,7 +428,7 @@ const ICONS = {
   star: svgIcon('<path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6-4.4-4.2 6-.8L12 3.5z"/>'),
   starFilled: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6-4.4-4.2 6-.8L12 3.5z"/></svg>',
   globe: svgIcon('<circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c2.6 2.4 2.6 14.2 0 16.6M12 3.7c-2.6 2.4-2.6 14.2 0 16.6"/>'),
-  hike: svgIcon('<path d="M3 19h18L14.5 7 11 13l-2-2.3L3 19z"/>'),
+  hike: svgIconFilled('<path d="M3 19h18L14.5 7 11 13l-2-2.3L3 19z"/>'),
   lookout: svgIcon('<circle cx="12" cy="12" r="8.3"/><path d="M15 9l-1.8 4.2L9 15l1.8-4.2L15 9z"/>'),
   walk: svgIcon('<path d="M4 17c2.3-.8 2.9-3 4.9-3s2.6 2.2 4.9 2.2 2.6-2.2 4.9-3"/>'),
   kayak: svgIcon('<path d="M2.5 13.5c3.2 3 6.8 4 9.5 4s6.3-1 9.5-4c-2.4 4.6-6 7.4-9.5 7.4s-7.1-2.8-9.5-7.4z"/><path d="M5.5 6.5l5.3 5.3M18.5 17.5l-5.3-5.3"/>'),
@@ -642,19 +654,99 @@ const FEATURED_LISTS = {
     ],
   },
 };
-/* Flat, quantized colors only — this is a pixel-art scene, not a painted one. */
+/* Retro national-park-poster / 16-bit game-background palette. Flat color
+   blocks only — no gradients, no blending. Sky is a banded sunset built
+   from a handful of discrete steps; mountains recede through decreasing
+   saturation (pale blue-grey far, muted blue-purple mid, near-black green
+   treeline up close) rather than atmospheric blur. */
 const SEASONS = {
-  winter: { sky: '#c9dce8', sun: '#fff3d6', far: '#8fa8c2', near: '#4a6b8a', snow: '#ffffff', tree: '#25384a', trail: '#a68a68' },
-  spring: { sky: '#e8c9d6', sun: '#ffe0a8', far: '#7fae8a', near: '#3f6b4a', snow: '#f2e6c4', tree: '#1f3a26', trail: '#a3703f' },
-  summer: { sky: '#e8a33d', sun: '#fbe37a', far: '#4a8a9a', near: '#245c52', snow: '#f2dfae', tree: '#12241a', trail: '#b8482c' },
-  fall: { sky: '#d97a4a', sun: '#f7c467', far: '#8a6a80', near: '#6b3320', snow: '#e8cfa0', tree: '#241208', trail: '#8a4a26' },
+  winter: {
+    skyBands: ['#2b3a5e', '#48547e', '#7c8aa0', '#c7d0d8'],
+    sun: '#eef2ee', far: '#aab8cc', mid: '#5f7292', near: '#141d22',
+    snow: '#ffffff', trail: '#a68a68',
+  },
+  spring: {
+    skyBands: ['#4a2f4a', '#9c4f6e', '#e0835f', '#f4c37a'],
+    sun: '#ffe3a8', far: '#b7c5c9', mid: '#6a80a0', near: '#14251a',
+    snow: '#f2e6c4', trail: '#a3703f',
+  },
+  summer: {
+    skyBands: ['#123a5c', '#2f6a86', '#68a6a0', '#e6cd7c'],
+    sun: '#fbe37a', far: '#a9c0c9', mid: '#4f6f92', near: '#0e1f16',
+    snow: '#f2dfae', trail: '#8f7a52',
+  },
+  fall: {
+    skyBands: ['#5a1f2b', '#a13a24', '#d9722f', '#f0b24a'],
+    sun: '#f7c467', far: '#a7b4c4', mid: '#5c6a90', near: '#151b12',
+    snow: '#e8cfa0', trail: '#8a4a26',
+  },
 };
 const TRAIL_ANCHORS = [
   { x: 40, y: 222 }, { x: 88, y: 196 }, { x: 58, y: 162 }, { x: 108, y: 136 },
   { x: 78, y: 100 }, { x: 124, y: 74 }, { x: 150, y: 50 },
 ];
 const FIGURE_COLOR = '#2c1c10';
+const PACK_COLOR = '#c9531f';
+const PACK_SHADOW = '#8a3413';
+const STICK_COLOR = '#c9a06a';
 const FLAG_COLOR = '#c0603a';
+
+/* Sky rendered as discrete flat bands (a screen-printed sunset), not a
+   smooth gradient. */
+function skyBandRects(c) {
+  const n = c.skyBands.length;
+  const h = 240 / n;
+  return c.skyBands.map((color, i) => `<rect x="0" y="${Math.floor(i * h)}" width="400" height="${Math.ceil(h) + 1}" fill="${color}"/>`).join('');
+}
+function farRidgePoly(c) {
+  return `<polygon points="0,240 0,150 45,100 85,130 125,85 165,120 210,75 255,115 300,90 345,125 400,105 400,240" fill="${c.far}"/>`;
+}
+function midRidgePoly(c) {
+  return `<polygon points="0,240 0,190 40,150 80,175 120,120 150,60 180,120 220,165 260,135 300,165 350,145 400,175 400,240" fill="${c.mid}"/>`;
+}
+/* A cluster of angular pine silhouettes — the foreground band's treeline,
+   framing the edges of the scene rather than covering it. */
+function pineCluster(x, baseY, c, scale) {
+  const s = scale || 1;
+  return `<g fill="${c.near}">
+    <polygon points="${x},${baseY} ${x - 14 * s},${baseY} ${x - 7 * s},${baseY - 34 * s}"/>
+    <polygon points="${x + 22 * s},${baseY} ${x + 8 * s},${baseY} ${x + 15 * s},${baseY - 46 * s}"/>
+    <polygon points="${x - 26 * s},${baseY} ${x - 40 * s},${baseY} ${x - 33 * s},${baseY - 24 * s}"/>
+  </g>`;
+}
+function foregroundBand(c, groundY) {
+  const gy = groundY == null ? 205 : groundY;
+  return `
+    <rect x="0" y="${gy}" width="400" height="${240 - gy}" fill="${c.near}"/>
+    ${pineCluster(48, gy + 6, c, 1.05)}
+    ${pineCluster(14, gy + 10, c, 0.8)}
+    ${pineCluster(352, gy + 6, c, 1.05)}
+    ${pineCluster(386, gy + 10, c, 0.8)}
+  `;
+}
+/* Small flat, faceted sun — an octagon rather than a smooth circle, to
+   match the angular-shapes-only rule. */
+function sunPoly(cx, cy, r, c) {
+  const k = r * 0.42;
+  return `<polygon points="${cx - k},${cy - r} ${cx + k},${cy - r} ${cx + r},${cy - k} ${cx + r},${cy + k} ${cx + k},${cy + r} ${cx - k},${cy + r} ${cx - r},${cy + k} ${cx - r},${cy - k}" fill="${c.sun}"/>`;
+}
+/* The recurring hiker sprite — a solid, rounded, game-sprite silhouette
+   (legs, torso, backpack, head, walking stick) seen from behind, not a
+   line-drawn stick figure. (x,y) is the ground point between the feet. */
+function buildHikerSprite(x, y, scale) {
+  const s = scale || 1;
+  return `
+  <g transform="translate(${x},${y}) scale(${s})">
+    <rect x="-5.5" y="-2" width="4.2" height="16" rx="1.8" fill="${FIGURE_COLOR}"/>
+    <rect x="1.3" y="-2" width="4.2" height="16" rx="1.8" fill="${FIGURE_COLOR}"/>
+    <rect x="-7.5" y="-21" width="15" height="21" rx="4" fill="${FIGURE_COLOR}"/>
+    <rect x="7" y="-29" width="2.4" height="31" rx="1.2" fill="${STICK_COLOR}"/>
+    <rect x="-6.5" y="-28.5" width="13" height="14.5" rx="4.5" fill="${PACK_COLOR}"/>
+    <rect x="-5" y="-27" width="10" height="3.2" rx="1.6" fill="${PACK_SHADOW}"/>
+    <rect x="-5" y="-19" width="10" height="3.2" rx="1.6" fill="${PACK_SHADOW}"/>
+    <circle cx="0" cy="-34.5" r="5.8" fill="${FIGURE_COLOR}"/>
+  </g>`;
+}
 
 function typeInfo(id) { return TYPES.find(t => t.id === id) || TYPES[TYPES.length - 1]; }
 function colorForId(id) {
@@ -766,22 +858,26 @@ function normalizeUser(id, data) {
 function renderNoDb() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-mark">${ICONS.pin}</div>
-      <h1>Breeze</h1>
-      <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
+      <div class="onboard-hero">${buildMountainSvg(getSeason(), 0.4)}</div>
+      <div class="onboard-body">
+        <h1>Breeze</h1>
+        <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
+      </div>
     </div>`;
 }
 
 function renderOnboarding() {
   app.innerHTML = `
     <div class="onboard-wrap">
-      <div class="onboard-mark">${ICONS.pin}</div>
-      <h1>Breeze</h1>
-      <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
-      <div class="onboard-form">
-        <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
-        <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
-        <button class="btn-primary" id="startBtn">Get started</button>
+      <div class="onboard-hero">${buildMountainSvg(getSeason(), 0.4)}</div>
+      <div class="onboard-body">
+        <h1>Breeze</h1>
+        <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
+        <div class="onboard-form">
+          <input class="field-input" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
+          <div class="error-text hidden" id="nameError" hidden>Enter a name to continue</div>
+          <button class="btn-primary" id="startBtn">Get started</button>
+        </div>
       </div>
     </div>`;
   const input = document.getElementById('nameInput');
@@ -864,6 +960,7 @@ function subscribeAll() {
 
 function renderShell() {
   app.innerHTML = `
+    <div class="scene-banner">${buildSceneBanner()}</div>
     <div class="topbar">
       <div class="brand">Breeze</div>
       <div class="topbar-actions">
@@ -1189,34 +1286,47 @@ function pointAtFraction(frac) {
 function buildMountainSvg(season, fraction) {
   const c = SEASONS[season];
   const p = pointAtFraction(fraction);
-  const hx = Math.round(p.x), hy = Math.round(p.y);
   const trailPts = TRAIL_ANCHORS.map(pt => pt.x + ',' + pt.y).join(' ');
   const flag = fraction >= 1
-    ? `<g transform="translate(158,30)" stroke="${c.snow}" stroke-width="1"><rect x="0" y="0" width="2" height="20" fill="${FIGURE_COLOR}"/><rect x="2" y="0" width="10" height="7" fill="${FLAG_COLOR}"/></g>`
+    ? `<g transform="translate(158,30)"><rect x="0" y="0" width="2.4" height="20" rx="1" fill="${FIGURE_COLOR}"/><polygon points="2.4,0 13,3.5 2.4,7" fill="${FLAG_COLOR}"/></g>`
     : '';
   return `
   <svg viewBox="0 0 400 240" role="img" aria-label="Mountain progress" shape-rendering="crispEdges">
-    <rect x="0" y="0" width="400" height="240" fill="${c.sky}"/>
-    <polygon points="288,48 312,48 316,52 316,68 312,72 288,72 284,68 284,52" fill="${c.sun}"/>
-    <polygon points="230,190 230,160 260,160 260,130 290,130 290,75 320,75 320,130 350,130 350,160 380,160 380,190" fill="${c.far}"/>
-    <polygon points="20,240 20,200 60,200 60,160 100,160 100,115 140,115 140,55 175,55 175,115 215,115 215,160 255,160 255,200 295,200 295,240" fill="${c.near}"/>
-    <rect x="145" y="55" width="10" height="10" fill="${c.snow}"/>
-    <rect x="135" y="65" width="10" height="10" fill="${c.snow}"/>
-    <rect x="155" y="65" width="10" height="10" fill="${c.snow}"/>
+    ${skyBandRects(c)}
+    ${sunPoly(320, 55, 22, c)}
+    ${farRidgePoly(c)}
+    ${midRidgePoly(c)}
+    <rect x="141" y="82" width="9" height="9" fill="${c.snow}"/>
+    <rect x="130" y="91" width="9" height="9" fill="${c.snow}"/>
+    <rect x="152" y="91" width="9" height="9" fill="${c.snow}"/>
     <polyline points="${trailPts}" fill="none" stroke="${c.trail}" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="butt"/>
-    <g fill="${c.tree}">
-      <polygon points="330,240 318,210 342,210"/>
-      <polygon points="352,240 342,218 362,218"/>
-      <polygon points="45,240 33,212 57,212"/>
-    </g>
-    <g transform="translate(${hx - 5},${hy - 18})" fill="${FIGURE_COLOR}" stroke="${c.snow}" stroke-width="1">
-      <rect x="11" y="4" width="2" height="19" fill="#c9915a"/>
-      <rect x="3" y="0" width="6" height="6"/>
-      <rect x="0" y="6" width="12" height="9"/>
-      <rect x="0" y="15" width="4" height="7"/>
-      <rect x="7" y="15" width="4" height="7"/>
-    </g>
+    ${foregroundBand(c, 205)}
+    ${buildHikerSprite(p.x, p.y, 0.6)}
     ${flag}
+  </svg>`;
+}
+
+/* The decorative masthead scene shared by the top bar and onboarding — the
+   same banded-sky, layered-ridge, treeline-and-trail composition as the
+   Summit mountain, but static (no progress tracking) with the hiker
+   standing partway up a simple winding trail. */
+function buildSceneBanner() {
+  const c = SEASONS[getSeason()];
+  return `
+  <svg viewBox="0 0 400 150" role="img" aria-label="A hiker on a mountain trail at sunset" shape-rendering="crispEdges">
+    <defs><clipPath id="bannerClip"><rect x="0" y="0" width="400" height="150"/></clipPath></defs>
+    <g clip-path="url(#bannerClip)">
+      ${skyBandRects(c)}
+      ${sunPoly(320, 42, 18, c)}
+      ${farRidgePoly(c)}
+      ${midRidgePoly(c)}
+      <rect x="141" y="82" width="9" height="9" fill="${c.snow}"/>
+      <rect x="130" y="91" width="9" height="9" fill="${c.snow}"/>
+      <rect x="152" y="91" width="9" height="9" fill="${c.snow}"/>
+      <polyline points="50,150 95,125 72,100 115,90" fill="none" stroke="${c.trail}" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="butt"/>
+      ${foregroundBand(c, 118)}
+      ${buildHikerSprite(95, 125, 0.9)}
+    </g>
   </svg>`;
 }
 
