@@ -6,38 +6,41 @@
 <title>Breeze</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bevan&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Retro national-park-poster palette: warm parchment paper, a rust/orange
-     "trail blaze" accent lifted straight from the hiker's pack, and gold for
-     secondary highlights. Flat color blocks only — no gradients. */
-  --bg: #f2e4c4;
-  --surface: #fbf3e0;
-  --surface-2: #e8d5a8;
-  --surface-3: #dcc086;
-  --border: #b98a4e;
-  --border-soft: #ddc38c;
-  --text: #2c1f14;
-  --text-secondary: #71583a;
-  --text-muted: #a08a54;
-  --accent: #c9531f;
-  --accent-strong: #963d16;
-  --accent-soft: rgba(201, 83, 31, 0.16);
-  --on-accent: #fbf3e0;
-  --gold: #e0a23c;
-  --gold-soft: rgba(224, 162, 60, 0.22);
+  /* Ported from design/breeze-mock.html: warm paper, a rust "trail blaze"
+     accent, and lake/moss/near-mtn as secondary tag colors pulled from the
+     hero scene's own palette. */
+  --bg: #ecdbb2;
+  --surface: #f3e7c4;
+  --surface-2: #e2cf9c;
+  --surface-3: #d6bd88;
+  --border: #d2b989;
+  --border-soft: #e2cf9c;
+  --text: #231a13;
+  --text-secondary: #5c4c3a;
+  --text-muted: #8a765a;
+  --accent: #c1502c;
+  --accent-strong: #7c341c;
+  --accent-soft: rgba(193, 80, 44, 0.14);
+  --on-accent: var(--bg);
+  --gold: #f4b942;
+  --gold-soft: rgba(244, 185, 66, 0.22);
   --on-gold: #2c1c08;
-  --danger: #963d16;
-  --danger-soft: rgba(150, 61, 22, 0.16);
-  --radius-lg: 10px;
-  --radius-md: 8px;
-  --radius-sm: 6px;
-  --shadow-sm: 0 1px 2px rgba(44, 31, 20, 0.12);
-  --shadow-md: 0 4px 14px rgba(44, 31, 20, 0.18);
-  --font-sans: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-display: 'Baloo 2', var(--font-sans);
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --lake: #3f6d8e;
+  --moss: #5a6b3f;
+  --near-mtn: #263454;
+  --danger: #7c341c;
+  --danger-soft: rgba(124, 52, 28, 0.16);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 9px;
+  --shadow-sm: 0 2px 7px rgba(35, 26, 19, 0.12);
+  --shadow-md: 0 4px 14px rgba(35, 26, 19, 0.16);
+  --font-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Bevan', Georgia, serif;
+  --font-mono: var(--font-sans);
 }
 
 * { box-sizing: border-box; }
@@ -50,10 +53,39 @@ body {
 }
 #app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 84px; }
 img { max-width: 100%; display: block; }
+
+/* ---------- Hero: a pinned canvas scene behind the scrolling content,
+   ported from design/breeze-mock.html's hero-fixed/content-sheet pattern —
+   the art stays in place while the content sheet scrolls up over it. ---------- */
+#heroFixed {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px; aspect-ratio: 20 / 9;
+  overflow: hidden; z-index: 0; pointer-events: none;
+}
+#heroFixed canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.hero-spacer { width: 100%; aspect-ratio: 20 / 9; flex-shrink: 0; }
+.content-sheet {
+  position: relative; z-index: 1; flex: 1;
+  background: var(--bg-tile, var(--bg)); background-repeat: repeat; background-size: 16px 16px;
+  image-rendering: pixelated;
+}
+/* A soft seam so the sheet's top edge dissolves into the pinned art behind
+   it as it scrolls up over it, instead of a hard cutoff line. */
+.content-sheet::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 30px;
+  background: linear-gradient(to bottom, rgba(30, 20, 15, 0.15), rgba(30, 20, 15, 0));
+  pointer-events: none; z-index: 2;
+}
+.warm-wash {
+  position: absolute; left: 0; right: 0; top: 0; height: 320px;
+  background: linear-gradient(to bottom, rgba(193, 80, 44, 0.10) 0%, rgba(193, 80, 44, 0.045) 45%, rgba(193, 80, 44, 0) 100%);
+  pointer-events: none; z-index: 0;
+}
 button { font-family: var(--font-sans); cursor: pointer; }
 input, textarea, select { font-family: var(--font-sans); }
 [hidden] { display: none !important; }
 svg { width: 1em; height: 1em; flex-shrink: 0; }
+svg.pxicon rect { shape-rendering: crispEdges; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
@@ -63,42 +95,36 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
    sky, layered mountain silhouettes, a treeline framing the edges, and the
    hiker sprite on the trail) that sits above the functional top bar. It is
    purely decorative and scrolls away with the page like a masthead. */
-.scene-banner { width: 100%; aspect-ratio: 400 / 150; overflow: hidden; display: block; }
-.scene-banner svg { display: block; width: 100%; height: 100%; }
-
-/* Top bar */
+/* Top bar — lives inside .content-sheet now, so it scrolls with the page
+   rather than sitting in its own sticky strip above the pinned hero. */
 .topbar {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg);
   padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid var(--surface-2); position: relative; z-index: 1;
 }
 .brand {
-  font-family: var(--font-display); font-weight: 800; font-size: 22px;
-  letter-spacing: -0.01em; color: var(--accent);
+  font-family: var(--font-display); font-size: 24px;
+  letter-spacing: -0.01em; color: var(--accent-strong); line-height: 1;
 }
 .topbar-actions { display: flex; align-items: center; gap: 10px; }
 .log-btn {
   display: flex; align-items: center; gap: 6px; background: var(--accent); color: var(--on-accent);
-  border: 1.5px solid var(--accent-strong); padding: 8px 14px 8px 11px; border-radius: var(--radius-md); font-weight: 700; font-size: 13px;
+  border: none; padding: 10px 16px 10px 13px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px;
+  box-shadow: 0 3px 8px rgba(124, 52, 28, 0.35);
 }
 .log-btn svg { font-size: 15px; }
-.log-btn:active { background: var(--accent-strong); }
+.log-btn:active { filter: brightness(0.92); }
 .avatar-btn {
-  width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); color: #fff;
-  font-weight: 700; font-size: 12.5px; display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 11px; border: none; color: var(--bg);
+  font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center;
   letter-spacing: 0.02em;
 }
 
-/* Onboarding */
-.onboard-wrap {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  text-align: center; overflow-y: auto;
-}
-.onboard-hero { width: 100%; aspect-ratio: 400 / 260; overflow: hidden; }
-.onboard-hero svg { display: block; width: 100%; height: 100%; }
-.onboard-body { width: 100%; box-sizing: border-box; padding: 26px 32px 32px; display: flex; flex-direction: column; align-items: center; }
+/* Onboarding — reuses the same pinned-hero + content-sheet pattern as the
+   main shell, with the copy and form in the sheet instead of tab screens. */
+.onboard-wrap { text-align: center; }
+.onboard-body { width: 100%; box-sizing: border-box; padding: 30px 32px 32px; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
 .onboard-wrap h1 {
-  font-family: var(--font-display); font-weight: 800; color: var(--accent);
+  font-family: var(--font-display); color: var(--accent-strong); font-weight: 400;
   font-size: 30px; margin: 0 0 12px; letter-spacing: -0.01em; text-wrap: balance;
 }
 .onboard-wrap p { color: var(--text-secondary); font-size: 14.5px; line-height: 1.55; margin: 0 0 26px; max-width: 320px; text-wrap: balance; }
@@ -130,91 +156,105 @@ textarea.field-input { resize: none; font-size: 15px; }
 .btn-ghost:hover { color: var(--text); }
 
 /* Main content */
-.screen { flex: 1; padding: 4px 20px 20px; }
+.screen { flex: 1; padding: 4px 20px 20px; position: relative; z-index: 1; }
 .screen-title {
-  font-family: var(--font-display); font-weight: 800; font-size: 27px; margin: 4px 0 4px;
-  letter-spacing: -0.01em; text-wrap: balance;
+  font-family: var(--font-display); font-weight: 400; font-size: 27px; margin: 4px 0 4px;
+  letter-spacing: -0.01em; text-wrap: balance; color: var(--text);
 }
 .screen-sub {
-  color: var(--text-secondary); font-size: 11.5px; margin: 0 0 16px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-secondary); font-size: 12.5px; margin: 0 0 12px; font-weight: 500;
+}
+/* A dashed rust "trail" divider, ported from the mock's .divider-trail. */
+.divider-trail {
+  height: 10px; margin: 8px 0 4px;
+  background-image: repeating-linear-gradient(90deg, var(--accent) 0 8px, transparent 8px 14px);
+  opacity: 0.6;
 }
 
-/* Featured lists row */
+/* Featured lists row — restyled as the mock's icon-square stat cards, kept
+   horizontally scrollable since we have more than 3 categories. */
 .featured-row { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 14px; margin-bottom: 4px; scrollbar-width: none; }
 .featured-row::-webkit-scrollbar { display: none; }
 .featured-card {
-  flex-shrink: 0; width: 136px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md);
-  padding: 14px 13px 13px; display: flex; flex-direction: column; align-items: flex-start; gap: 9px; text-align: left;
+  flex-shrink: 0; width: 130px; background: var(--surface-2); border: none; border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm); padding: 12px 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
 }
 .featured-card .ft-icon {
-  width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
-  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  width: 32px; height: 32px; border-radius: 9px; background: var(--gold); color: var(--on-gold);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
-.featured-card .ft-title { font-family: var(--font-display); font-weight: 600; font-size: 13.5px; line-height: 1.25; }
-.featured-card .ft-sub { font-size: 11px; color: var(--text-muted); }
-.featured-card.prompt { background: var(--accent-soft); border-color: transparent; color: var(--accent-strong); }
-.featured-card.prompt .ft-icon { background: var(--surface); }
+.featured-card .ft-title { font-weight: 500; font-size: 12.5px; line-height: 1.25; color: var(--text); }
+.featured-card .ft-sub { font-size: 11.5px; color: var(--text-secondary); font-weight: 500; }
+.featured-card.prompt { background: var(--accent-soft); color: var(--accent-strong); }
+.featured-card.prompt .ft-icon { background: var(--accent); color: var(--on-accent); }
 
 /* Filter dropdown */
 .filter-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
 .filter-dropdown { position: relative; }
 .filter-trigger {
-  display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 8px 12px; font-size: 12.5px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 8px; background: var(--surface-2); border: none;
+  border-radius: 999px; padding: 8px 14px; font-size: 12.5px; font-weight: 500; color: var(--text);
+  box-shadow: var(--shadow-sm);
 }
 .filter-trigger svg:first-child { font-size: 13px; color: var(--text-secondary); }
 .filter-trigger svg:last-child { font-size: 13px; color: var(--text-muted); transition: transform 0.15s ease; }
 .filter-trigger.open svg:last-child { transform: rotate(180deg); }
 .filter-menu {
-  position: absolute; right: 0; top: calc(100% + 6px); background: var(--surface); border: 1px solid var(--border);
+  position: absolute; right: 0; top: calc(100% + 6px); background: var(--surface); border: none;
   border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: 6px; min-width: 172px; z-index: 15;
   display: flex; flex-direction: column; gap: 1px; max-height: 320px; overflow-y: auto;
 }
 .filter-option {
   display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px;
-  font-weight: 600; color: var(--text-secondary); background: none; border: none; width: 100%; text-align: left;
+  font-weight: 500; color: var(--text-secondary); background: none; border: none; width: 100%; text-align: left;
 }
 .filter-option svg { font-size: 15px; }
 .filter-option.active { background: var(--accent-soft); color: var(--accent-strong); }
 
 /* Activity card */
 .card {
-  background: var(--surface); border-radius: var(--radius-lg); border: 1.5px solid var(--border);
-  margin-bottom: 14px; overflow: hidden;
+  background: var(--surface-2); border-radius: var(--radius-lg); border: none;
+  box-shadow: var(--shadow-md); margin-bottom: 14px; overflow: hidden;
 }
-.card-photo { width: 100%; aspect-ratio: 16/10; object-fit: cover; background: var(--surface-2); }
-.card-body { padding: 14px 16px 15px; }
-.card-user-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.card-photo { width: 100%; aspect-ratio: 16/10; object-fit: cover; background: var(--surface-3); }
+.card-body { padding: 14px; }
+.card-user-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .mini-avatar {
-  width: 28px; height: 28px; border-radius: var(--radius-sm); color: #fff; font-weight: 700; font-size: 11px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--border);
+  width: 28px; height: 28px; border-radius: 9px; color: var(--bg); font-weight: 600; font-size: 11px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.card-user-name { font-weight: 700; font-size: 13px; }
-.card-time { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.card-user-name { font-weight: 600; font-size: 13px; }
+.card-time { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
 .card-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-.card-title { font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
-.card-loc { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 9px; }
+.card-title { font-family: var(--font-display); font-weight: 400; font-size: 17px; letter-spacing: -0.01em; line-height: 1.3; }
+.card-loc { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--text-secondary); font-weight: 500; margin-bottom: 11px; }
 .card-loc svg { font-size: 13px; color: var(--text-muted); }
 .card-review { font-size: 13.5px; color: var(--text); line-height: 1.55; margin-bottom: 11px; }
-.card-footer { display: flex; align-items: center; justify-content: space-between; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .rank-badge {
-  display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 4px 10px 4px 8px;
-  border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text-secondary);
-  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 6px 10px;
+  border-radius: var(--radius-sm); background: var(--gold); color: var(--on-gold); white-space: nowrap;
 }
 .rank-badge svg { font-size: 12px; }
-.rank-badge.empty { background: none; padding: 4px 0; font-family: var(--font-sans); }
+.rank-badge.empty { background: none; padding: 4px 0; color: var(--text-muted); font-weight: 500; }
 .save-btn {
   background: none; border: none; padding: 4px; color: var(--text-muted); font-size: 19px;
   display: flex; align-items: center;
 }
 .save-btn.saved { color: var(--accent); }
 .type-tag {
-  display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 4px 9px;
-  border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text-secondary);
+  display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; padding: 6px 11px;
+  border-radius: var(--radius-sm);
 }
-.type-tag svg { font-size: 12.5px; }
+.type-tag svg { font-size: 11px; }
+
+/* A trail-progress bar riding a tiny hiker sprite at its fill point, ported
+   from the mock's .trail-progress — shows an activity's rank position
+   visually, alongside the numeric "#N of M" rank badge. */
+.trail-progress { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.trail-track { position: relative; flex: 1; height: 7px; background: var(--surface-3); border-radius: 999px; }
+.trail-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--accent); border-radius: 999px; }
+.trail-hiker { position: absolute; top: 50%; transform: translate(-50%, -58%); }
 
 .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
 .empty-state .icon-wrap {
@@ -252,10 +292,10 @@ textarea.field-input { resize: none; font-size: 15px; }
 }
 .overlay.center { align-items: center; padding: 20px; }
 .modal {
-  background: var(--surface); border-radius: 20px 20px 0 0; padding: 22px 20px calc(24px + env(safe-area-inset-bottom, 0px));
-  width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; border: 1px solid var(--border); border-bottom: none;
+  background: var(--bg); border-radius: 20px 20px 0 0; padding: 22px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; border: none;
 }
-.overlay.center .modal { border-radius: 18px; border-bottom: 1px solid var(--border); }
+.overlay.center .modal { border-radius: 18px; }
 .modal-title {
   font-family: var(--font-display); font-weight: 600; font-size: 19px; margin: 0 0 4px;
   text-align: center; letter-spacing: -0.01em;
@@ -275,7 +315,7 @@ textarea.field-input { resize: none; font-size: 15px; }
 .friend-row .name { flex: 1; font-weight: 600; font-size: 13.5px; }
 
 /* Summit (mountain gamification) */
-.mountain-wrap { border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--border); margin-bottom: 14px; }
+.mountain-wrap { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 14px; }
 .mountain-wrap svg { display: block; width: 100%; height: auto; }
 .climb-readout { font-size: 12.5px; color: var(--text-secondary); text-align: center; margin: 0 0 16px; }
 .progress-bar { height: 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); overflow: hidden; margin: 0 0 10px; }
@@ -287,8 +327,8 @@ textarea.field-input { resize: none; font-size: 15px; }
 .scope-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
 .dest-list { margin-top: 4px; }
 .dest-row {
-  width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface);
-  border: 1.5px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; text-align: left;
+  width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface-2);
+  border: none; box-shadow: var(--shadow-sm); border-radius: var(--radius-md); margin-bottom: 8px; text-align: left;
 }
 .dest-row.done { border-color: var(--accent); background: var(--accent-soft); }
 .dest-check {
@@ -309,12 +349,12 @@ textarea.field-input { resize: none; font-size: 15px; }
 /* Duel comparison */
 .duel-compare { display: flex; flex-direction: column; align-items: stretch; gap: 6px; margin: 4px 0 12px; }
 .duel-card {
-  position: relative; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border);
-  background: var(--surface-2); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; width: 100%; border-radius: var(--radius-lg); border: none;
+  background: var(--surface-3); display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px; padding: 16px 20px; text-align: center;
 }
 .duel-card.front {
-  background: var(--surface); box-shadow: var(--shadow-sm); cursor: grab; user-select: none;
+  background: var(--surface-2); box-shadow: var(--shadow-md); cursor: grab; user-select: none;
   touch-action: pan-y; will-change: transform;
 }
 .duel-card.front:active { cursor: grabbing; }
@@ -347,13 +387,12 @@ textarea.field-input { resize: none; font-size: 15px; }
 
 /* Ranking list */
 .rank-row {
-  display: flex; align-items: center; gap: 12px; padding: 11px 13px; background: var(--surface);
-  border: 1.5px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px; padding: 11px 13px; background: var(--surface-2);
+  border: none; box-shadow: var(--shadow-sm); border-radius: var(--radius-md); margin-bottom: 8px;
 }
 .rank-num {
-  width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2); color: var(--text-secondary);
-  font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  font-family: var(--font-mono);
+  width: 26px; height: 26px; border-radius: 50%; background: var(--surface-3); color: var(--text-secondary);
+  font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .rank-num.top { background: var(--gold); color: var(--on-gold); }
 .rank-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px; }
@@ -366,23 +405,25 @@ textarea.field-input { resize: none; font-size: 15px; }
 .star.full { color: var(--gold); }
 .star-fill-half { position: absolute; inset: 0; width: 50%; overflow: hidden; color: var(--gold); }
 
-/* Bottom nav */
+/* Bottom nav — a floating, rounded-top bar per the mock's .navbar. */
 .bottomnav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
-  background: var(--surface); border-top: 1px solid var(--border);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex; justify-content: center;
 }
-.bottomnav-inner { max-width: 480px; width: 100%; display: flex; }
+.bottomnav-inner {
+  max-width: 480px; width: 100%; display: flex;
+  background: var(--surface-2); box-shadow: 0 -4px 16px rgba(35, 26, 19, 0.12);
+  border-radius: 20px 20px 0 0; padding: 10px 4px calc(8px + env(safe-area-inset-bottom, 0px));
+}
 .navbtn {
-  flex: 1; background: none; border: none; padding: 9px 4px 9px; display: flex; flex-direction: column;
-  align-items: center; gap: 4px; color: var(--text-muted); font-size: 10.5px; font-weight: 700;
+  flex: 1; background: none; border: none; padding: 6px 0; display: flex; flex-direction: column;
+  align-items: center; gap: 5px; color: var(--text-secondary); font-size: 10.5px; font-weight: 500;
 }
 .navbtn svg {
-  width: 40px; height: 24px; border-radius: var(--radius-sm); transition: background 0.1s ease, color 0.1s ease;
+  width: 28px; height: 28px; border-radius: 9px; transition: background 0.1s ease, color 0.1s ease;
 }
 .navbtn.active { color: var(--accent-strong); }
-.navbtn.active svg { background: var(--gold-soft); color: var(--accent-strong); }
+.navbtn.active svg { background: var(--gold); color: var(--accent-strong); }
 
 .toast {
   position: fixed; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
@@ -392,15 +433,16 @@ textarea.field-input { resize: none; font-size: 15px; }
 .toast.show { opacity: 1; }
 
 .stat-row { display: flex; gap: 10px; margin-bottom: 20px; }
-.stat-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center; }
-.stat-card .n { font-size: 21px; font-weight: 800; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.stat-card .l { font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+.stat-card { flex: 1; background: var(--surface-2); border: none; box-shadow: var(--shadow-sm); border-radius: var(--radius-md); padding: 14px; text-align: center; }
+.stat-card .n { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat-card .l { font-size: 10.5px; color: var(--text-secondary); font-weight: 500; margin-top: 2px; }
 
 .error-text { color: var(--danger); font-size: 12px; margin-top: 5px; }
 
 </style>
 </head>
 <body>
+<div id="heroFixed"><canvas id="heroCanvas" width="240" height="108"></canvas></div>
 <div id="app"></div>
 
 <script>
@@ -438,6 +480,23 @@ const ICONS = {
   other: svgIcon('<path d="M12 4v16M5 8l14 8M19 8 5 16"/>'),
 };
 
+/* Hand-drawn 8x8 pixel-grid icons, ported from design/breeze-mock.html's
+   .pxicon pattern, for the two most visible always-on-screen spots: the
+   featured-category row and the bottom nav (which uses currentColor so the
+   active/inactive tint still works). */
+const PIXEL_ICONS = {
+  trails: '<svg class="pxicon" viewBox="0 0 8 8"><rect x="4" y="0" width="1" height="1" fill="#fdf6e0"/><rect x="3" y="1" width="3" height="1" fill="#8f3a1f"/><rect x="2" y="2" width="5" height="1" fill="#8f3a1f"/><rect x="1" y="3" width="7" height="1" fill="#c1502c"/><rect x="0" y="4" width="8" height="4" fill="#c1502c"/></svg>',
+  swimming: '<svg class="pxicon" viewBox="0 0 8 8"><rect x="0" y="3" width="1" height="1" fill="#3f6d8e"/><rect x="1" y="4" width="1" height="1" fill="#3f6d8e"/><rect x="2" y="3" width="1" height="1" fill="#3f6d8e"/><rect x="3" y="4" width="1" height="1" fill="#3f6d8e"/><rect x="4" y="3" width="1" height="1" fill="#3f6d8e"/><rect x="5" y="4" width="1" height="1" fill="#3f6d8e"/><rect x="6" y="3" width="1" height="1" fill="#3f6d8e"/><rect x="7" y="4" width="1" height="1" fill="#3f6d8e"/><rect x="0" y="5" width="1" height="1" fill="#5f92b3"/><rect x="1" y="6" width="1" height="1" fill="#5f92b3"/><rect x="2" y="5" width="1" height="1" fill="#5f92b3"/><rect x="3" y="6" width="1" height="1" fill="#5f92b3"/><rect x="4" y="5" width="1" height="1" fill="#5f92b3"/><rect x="5" y="6" width="1" height="1" fill="#5f92b3"/><rect x="6" y="5" width="1" height="1" fill="#5f92b3"/><rect x="7" y="6" width="1" height="1" fill="#5f92b3"/></svg>',
+  lookouts: '<svg class="pxicon" viewBox="0 0 8 8"><rect x="3" y="0" width="2" height="1" fill="#5a6b3f"/><rect x="2" y="1" width="4" height="1" fill="#5a6b3f"/><rect x="1" y="2" width="6" height="1" fill="#5a6b3f"/><rect x="0" y="3" width="8" height="1" fill="#5a6b3f"/><rect x="0" y="4" width="8" height="1" fill="#5a6b3f"/><rect x="1" y="5" width="6" height="1" fill="#5a6b3f"/><rect x="2" y="6" width="4" height="1" fill="#5a6b3f"/><rect x="3" y="7" width="2" height="1" fill="#5a6b3f"/><rect x="3" y="3" width="2" height="2" fill="#c1502c"/></svg>',
+  camping: '<svg class="pxicon" viewBox="0 0 8 8"><rect x="3" y="0" width="2" height="1" fill="#231a13"/><rect x="2" y="1" width="4" height="1" fill="#231a13"/><rect x="1" y="2" width="6" height="1" fill="#231a13"/><rect x="0" y="3" width="8" height="1" fill="#231a13"/><rect x="3" y="4" width="2" height="4" fill="#f4b942"/><rect x="0" y="7" width="8" height="1" fill="#231a13"/></svg>',
+};
+const NAV_PIXEL_ICONS = {
+  feed: '<svg class="pxicon" viewBox="0 0 8 8" fill="currentColor"><rect x="3" y="1" width="2" height="1"/><rect x="2" y="2" width="4" height="1"/><rect x="1" y="3" width="6" height="1"/><rect x="1" y="4" width="6" height="3"/></svg>',
+  rankings: '<svg class="pxicon" viewBox="0 0 8 8" fill="currentColor"><rect x="1" y="4" width="2" height="3"/><rect x="3" y="2" width="2" height="5"/><rect x="5" y="0" width="2" height="7"/></svg>',
+  summit: '<svg class="pxicon" viewBox="0 0 8 8" fill="currentColor"><rect x="3" y="0" width="1" height="1"/><rect x="2" y="1" width="3" height="1"/><rect x="1" y="2" width="5" height="1"/><rect x="0" y="3" width="8" height="4"/></svg>',
+  saved: '<svg class="pxicon" viewBox="0 0 8 9" fill="currentColor"><rect x="1" y="0" width="6" height="7"/><rect x="1" y="7" width="2" height="1" fill="var(--surface-2)"/><rect x="5" y="7" width="2" height="1" fill="var(--surface-2)"/></svg>',
+};
+
 const TYPES = [
   { id: 'hike', label: 'Hike', icon: 'hike' },
   { id: 'lookout', label: 'Lookout', icon: 'lookout' },
@@ -451,17 +510,17 @@ const TYPES = [
 /* Color-coded per activity type, like trailhead blaze colors — gives the
    feed and log flow variety instead of one uniform accent everywhere. */
 const TYPE_COLORS = {
-  hike: { bg: '#3f93a8', fg: '#fff8ec' },
-  lookout: { bg: '#6fb0c2', fg: '#123641' },
-  walk: { bg: '#f0a83a', fg: '#341808' },
-  kayak: { bg: '#2c5f85', fg: '#eaf3f7' },
-  camp: { bg: '#d1552c', fg: '#fff3e6' },
-  bike: { bg: '#a5487a', fg: '#fcecf5' },
-  swim: { bg: '#1f8f7a', fg: '#e8fbf5' },
-  other: { bg: '#8a7a5a', fg: '#f2e9d3' },
+  hike: { bg: '#7c341c', fg: '#f7ecd3' },
+  lookout: { bg: '#3f6d8e', fg: '#eaf3f7' },
+  walk: { bg: '#f4b942', fg: '#2c1c08' },
+  kayak: { bg: '#263454', fg: '#eaf0f7' },
+  camp: { bg: '#c1502c', fg: '#fdf3e2' },
+  bike: { bg: '#8a4a6b', fg: '#fbecf3' },
+  swim: { bg: '#5a6b3f', fg: '#f0f3e6' },
+  other: { bg: '#5c4c3a', fg: '#ecdbb2' },
 };
 function typeColor(id) { return TYPE_COLORS[id] || TYPE_COLORS.other; }
-const AVATAR_TONES = ['#e8683a', '#3f93a8', '#6fb0c2', '#f0a83a', '#a8563a', '#c9707a'];
+const AVATAR_TONES = ['#c1502c', '#3f6d8e', '#5a6b3f', '#f4b942', '#7c341c', '#8a4a6b'];
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
 /* Starter destination lists for a handful of well-known outdoor regions.
@@ -748,6 +807,360 @@ function buildHikerSprite(x, y, scale) {
   </g>`;
 }
 
+/* ---------- Hero canvas scene, ported from design/breeze-mock.html ----------
+   A small pixel-grid canvas (240x108) scaled up with image-rendering:
+   pixelated, painted with flat tone bands plus fine grain dithering biased
+   toward the sun — clouds, pines, bushes, rocks and the river all use the
+   same lit/mid/shadow volumetric technique — rather than smooth gradients
+   or flat silhouettes. Palette swaps per season via SCENE_PALETTES. */
+const SCENE_PALETTES = {
+  fall: {
+    sky: ['#33192e', '#502335', '#712936', '#973432', '#c04f31', '#dc7433', '#ec9c3f', '#f4bd58'],
+    horizon: '#241531',
+    sunCore: '#fff3c4', sunMid: '#f9d77e',
+    clouds: [
+      { warm: '#d98a52', mid: '#93555c', shadow: '#3c2340' },
+      { warm: '#f2b16a', mid: '#c07862', shadow: '#4d2c48' },
+      { warm: '#fbd28a', mid: '#e0955f', shadow: '#7a4142' },
+    ],
+    bird: '#2c1c22',
+    ground: { base: '#0d0b0a', fleck: '#1d1613' },
+    pine: { warm: '#cf9f57', mid: '#4c6b46', shadow: '#16241a' },
+    bush: { warm: '#c99a52', mid: '#4a6b3e', shadow: '#182619' },
+    rock: { lit: '#c9b998', mid: '#7a6f5c', shade: '#332c22' },
+    river: { warm: '#f6c26e', mid: '#6a7fa0', shadow: '#232c48' },
+  },
+  winter: {
+    sky: ['#151c33', '#232c4a', '#33456b', '#4a6086', '#6a86a6', '#8fa8c2', '#b7c9dc', '#dbe6ee'],
+    horizon: '#111a2c',
+    sunCore: '#f4f8ff', sunMid: '#cfe0ee',
+    clouds: [
+      { warm: '#b9c9d9', mid: '#7f8fa8', shadow: '#3a3f5c' },
+      { warm: '#d3e0ec', mid: '#9aacc4', shadow: '#4a5470' },
+      { warm: '#e8f0f6', mid: '#b7c6da', shadow: '#5c6684' },
+    ],
+    bird: '#1c2436',
+    ground: { base: '#0a0d14', fleck: '#161c28' },
+    pine: { warm: '#8fa0ac', mid: '#33474a', shadow: '#101c1e' },
+    bush: { warm: '#7f929c', mid: '#30454a', shadow: '#0e1a1c' },
+    rock: { lit: '#c4ccd4', mid: '#818e98', shade: '#333c44' },
+    river: { warm: '#dce8f2', mid: '#5a7a9a', shadow: '#1e2c48' },
+  },
+  spring: {
+    sky: ['#2c1f3e', '#4a2f52', '#7c3f5e', '#a85a5e', '#ce7d5e', '#e6a568', '#f2c47a', '#f8dfa0'],
+    horizon: '#231a34',
+    sunCore: '#fff2d4', sunMid: '#f7cf8a',
+    clouds: [
+      { warm: '#e0a878', mid: '#a26a72', shadow: '#442a4a' },
+      { warm: '#f0bd8a', mid: '#c48a7c', shadow: '#5a3652' },
+      { warm: '#fadaa0', mid: '#e0a888', shadow: '#824a54' },
+    ],
+    bird: '#2c2032',
+    ground: { base: '#0e0d0a', fleck: '#1c1a14' },
+    pine: { warm: '#a8c078', mid: '#4a6b3e', shadow: '#182619' },
+    bush: { warm: '#b8cc7a', mid: '#5a7a44', shadow: '#1c2c18' },
+    rock: { lit: '#c9c0a0', mid: '#7a725c', shade: '#332e22' },
+    river: { warm: '#f6d888', mid: '#7a92a0', shadow: '#28384a' },
+  },
+  summer: {
+    sky: ['#0e2c44', '#154060', '#1f5a78', '#2f7a8a', '#4a9a92', '#78b888', '#a8ce74', '#e0d878'],
+    horizon: '#0c2436',
+    sunCore: '#fff8dc', sunMid: '#fbe98a',
+    clouds: [
+      { warm: '#e8c878', mid: '#7a9a7c', shadow: '#284452' },
+      { warm: '#f4dc94', mid: '#94b088', shadow: '#385a5c' },
+      { warm: '#fceaa8', mid: '#b0c894', shadow: '#4a6a5c' },
+    ],
+    bird: '#16282a',
+    ground: { base: '#0a1410', fleck: '#16241c' },
+    pine: { warm: '#d8d868', mid: '#3f7a52', shadow: '#122a1a' },
+    bush: { warm: '#d0cc6c', mid: '#4f8a52', shadow: '#163a1e' },
+    rock: { lit: '#cfc99c', mid: '#7f8a6a', shade: '#2e3a26' },
+    river: { warm: '#f4e284', mid: '#5a9aa0', shadow: '#1e3a48' },
+  },
+};
+
+function heroHex(h) { h = h.replace('#', ''); return [parseInt(h.substring(0, 2), 16), parseInt(h.substring(2, 4), 16), parseInt(h.substring(4, 6), 16)]; }
+const HERO_BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+function heroBayer(x, y) { return (HERO_BAYER[y & 3][x & 3] + 0.5) / 16; }
+function heroNoise(x, y) { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return n - Math.floor(n); }
+function heroMix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+function heroLerp(a, b, t) { return a + (b - a) * t; }
+function heroRidgeY(pts, xf, H) {
+  for (let i = 0; i < pts.length - 1; i++) {
+    if (xf >= pts[i][0] && xf <= pts[i + 1][0]) {
+      const t = (xf - pts[i][0]) / (pts[i + 1][0] - pts[i][0]);
+      return heroLerp(pts[i][1], pts[i + 1][1], t) * H;
+    }
+  }
+  return pts[pts.length - 1][1] * H;
+}
+
+function renderHeroCanvas(canvas) {
+  const P = SCENE_PALETTES[getSeason()];
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(W, H);
+  const data = img.data;
+  function px(x, y, rgb, a) {
+    if (x < 0 || x >= W || y < 0 || y >= H) return;
+    const i = (y * W + x) * 4;
+    data[i] = rgb[0]; data[i + 1] = rgb[1]; data[i + 2] = rgb[2]; data[i + 3] = a === undefined ? 255 : a;
+  }
+
+  // ---- sky bands + irregular hand-drawn horizon ----
+  const skyH = Math.floor(H * 0.62);
+  const stops = P.sky.map(heroHex);
+  const segH = skyH / (stops.length - 1);
+  const horizonBase = heroHex(P.horizon);
+  function horizonOffset(x) {
+    return 5 * (0.55 * Math.sin(x * 0.085 + 0.6) + 0.30 * Math.sin(x * 0.19 + 2.1) + 0.15 * Math.sin(x * 0.47 + 1.0));
+  }
+  for (let x = 0; x < W; x++) {
+    const effBottom = skyH + Math.round(horizonOffset(x));
+    for (let y = 0; y < H; y++) {
+      if (y < effBottom) {
+        const seg = Math.min(stops.length - 2, Math.floor(y / segH));
+        const localT = (y - seg * segH) / segH;
+        const jitter = (heroNoise(x * 0.6, y * 0.6) - 0.5) * 0.55;
+        const tt = localT + jitter;
+        const c = tt > 0.5 ? stops[seg + 1] : stops[seg];
+        px(x, y, c, 255);
+      } else {
+        const edgeJ = heroNoise(x * 0.7, y * 0.7) > 0.86 ? heroMix(horizonBase, [0, 0, 0], 0.12) : horizonBase;
+        px(x, y, edgeJ, 255);
+      }
+    }
+  }
+
+  // ---- sun + glow ----
+  const sunX = Math.floor(W * 0.76), sunY = Math.floor(H * 0.14), sunR = Math.floor(H * 0.075);
+  const sunCore = heroHex(P.sunCore), sunMid = heroHex(P.sunMid);
+  for (let y2 = 0; y2 < skyH; y2++) {
+    for (let x2 = 0; x2 < W; x2++) {
+      const dx = x2 - sunX, dy = y2 - sunY, d = Math.sqrt(dx * dx + dy * dy);
+      if (d < sunR) { px(x2, y2, d < sunR * 0.6 ? sunCore : sunMid, 255); }
+      else if (d < sunR * 2.8) {
+        const g = 1 - ((d - sunR) / (sunR * 1.8));
+        if (g > 0 && heroNoise(x2 * 0.8, y2 * 0.8) < g * 0.75) { px(x2, y2, sunMid, 255); }
+      }
+    }
+  }
+
+  // ---- clouds: organic multi-lobe cumulus, lit toward the sun ----
+  function drawCloud(spec) {
+    const cx = spec.cx * W, cy = spec.cy * H, s = spec.scale * H;
+    const lobes = spec.lobes.map(l => ({ x: cx + l[0] * s, y: cy + l[1] * s, r: l[2] * s }));
+    let minX = W, maxX = 0, minY = H, maxY = 0;
+    lobes.forEach(l => {
+      minX = Math.min(minX, l.x - l.r); maxX = Math.max(maxX, l.x + l.r);
+      minY = Math.min(minY, l.y - l.r); maxY = Math.max(maxY, l.y + l.r);
+    });
+    minX = Math.max(0, Math.floor(minX)); maxX = Math.min(W, Math.ceil(maxX));
+    minY = Math.max(0, Math.floor(minY)); maxY = Math.min(H, Math.ceil(maxY));
+    const sunSide = (sunX - cx) >= 0 ? 1 : -1;
+    const warm = heroHex(spec.warm), mid = heroHex(spec.mid), shadow = heroHex(spec.shadow);
+    const bh = (maxY - minY) || 1, bw = (maxX - minX) || 1;
+    for (let yy = minY; yy < maxY; yy++) {
+      for (let xx = minX; xx < maxX; xx++) {
+        let inside = false;
+        for (let i = 0; i < lobes.length; i++) {
+          const l = lobes[i], dx = xx - l.x, dy = yy - l.y, dn = Math.sqrt(dx * dx + dy * dy) / l.r;
+          if (dn < 1) { inside = true; break; }
+        }
+        if (!inside) continue;
+        const vertT = 1 - (yy - minY) / bh;
+        const horizT = ((xx - cx) / (bw * 0.5)) * sunSide;
+        const jitter = (heroNoise(xx * 0.85 + cx * 3, yy * 0.85 + cy * 3) - 0.5) * 0.30;
+        const tt = vertT * 0.62 + horizT * 0.22 + jitter - 0.28;
+        const col = tt > 0.30 ? warm : (tt > 0.02 ? mid : shadow);
+        px(xx, yy, col, 255);
+      }
+    }
+  }
+  const cloudLobesBig = [[0, 0, 1], [-1.05, 0.18, 0.78], [1.0, 0.12, 0.82], [-0.5, -0.4, 0.66], [0.55, -0.32, 0.68], [-1.75, 0.32, 0.5], [1.7, 0.28, 0.52], [0.1, 0.42, 0.62]];
+  const cloudLobesSml = [[0, 0, 1], [-1, 0.15, 0.74], [0.95, 0.1, 0.78], [-0.5, -0.32, 0.6], [0.5, -0.28, 0.62], [1.55, 0.24, 0.48]];
+  drawCloud(Object.assign({ cx: 0.17, cy: 0.19, scale: 0.135, lobes: cloudLobesBig }, P.clouds[0]));
+  drawCloud(Object.assign({ cx: 0.58, cy: 0.235, scale: 0.09, lobes: cloudLobesSml }, P.clouds[1]));
+  drawCloud(Object.assign({ cx: 0.79, cy: 0.24, scale: 0.125, lobes: cloudLobesBig }, P.clouds[2]));
+
+  // ---- distant birds ----
+  function drawBird(cx, cy, scale, color) {
+    const c = heroHex(color);
+    for (let d = 1; d <= scale; d++) {
+      px(Math.floor(cx - d), Math.floor(cy - d), c, 255);
+      px(Math.floor(cx + d), Math.floor(cy - d), c, 255);
+    }
+    px(Math.floor(cx), Math.floor(cy), c, 255);
+  }
+  drawBird(W * 0.365, H * 0.155, 3, P.bird);
+  drawBird(W * 0.405, H * 0.19, 2, P.bird);
+  drawBird(W * 0.685, H * 0.095, 3, P.bird);
+  drawBird(W * 0.71, H * 0.125, 2, P.bird);
+
+  // ---- foreground ground ----
+  const groundPts = [[0, .90], [.15, .84], [.30, .90], [.45, .85], [.60, .92], [.75, .86], [.90, .91], [1, .87]];
+  const groundBase = heroHex(P.ground.base), groundFleck = heroHex(P.ground.fleck);
+  for (let x5 = 0; x5 < W; x5++) {
+    const gy = heroRidgeY(groundPts, x5 / (W - 1), H);
+    for (let y5 = Math.floor(gy); y5 < H; y5++) {
+      const c5 = heroBayer(x5 * 7 + 1, y5 * 3 + 2) > 0.82 ? groundFleck : groundBase;
+      px(x5, y5, c5, 255);
+    }
+  }
+
+  // ---- pine trees: tiered, volumetric shading ----
+  function drawPine(cx, baseY, h, warmC, midC, shadowC) {
+    const warm = heroHex(warmC), mid = heroHex(midC), shadow = heroHex(shadowC);
+    const sunSide = (sunX - cx) >= 0 ? 1 : -1;
+    const tiers = 4, tierH = h * 0.30;
+    for (let i = 0; i < tiers; i++) {
+      const top = baseY - h + i * (tierH * 0.76);
+      const widthMax = (h * 0.30) * (0.40 + 0.60 * (i / (tiers - 1)));
+      for (let ty = 0; ty < tierH; ty++) {
+        const y = Math.floor(top + ty);
+        if (y < 0 || y >= H) continue;
+        const rowFrac = ty / tierH;
+        const halfw = Math.max(0.7, widthMax * rowFrac);
+        for (let dx = -halfw; dx <= halfw; dx++) {
+          const x = Math.floor(cx + dx);
+          const nx = dx / (halfw || 1);
+          const vert = 1 - rowFrac;
+          const jitter = (heroNoise(x * 1.1 + cx * 2, y * 1.1) - 0.5) * 0.34;
+          const tt = vert * 0.28 + (nx * sunSide) * 0.44 + jitter + 0.02;
+          const c = tt > 0.34 ? warm : (tt > 0.00 ? mid : shadow);
+          px(x, y, c, 255);
+        }
+      }
+    }
+    for (let yt = Math.floor(baseY - 3); yt < baseY + 2; yt++) { px(Math.floor(cx), yt, [38, 26, 17], 255); }
+  }
+  const pineSpots = [[0.05, 17, 1], [0.10, 24, 1], [0.16, 14, 0.9], [0.845, 15, 1], [0.895, 25, 1], [0.955, 13, 0.9]];
+  for (let pt = 0; pt < pineSpots.length; pt++) {
+    const pxFrac = pineSpots[pt][0], ph = pineSpots[pt][1];
+    const pby = heroRidgeY(groundPts, pxFrac, H) + 5;
+    drawPine(pxFrac * W, pby, ph, P.pine.warm, P.pine.mid, P.pine.shadow);
+  }
+
+  // ---- bushes ----
+  function drawBush(cx, baseY, r, warmC, midC, shadowC) {
+    const warm = heroHex(warmC), mid = heroHex(midC), shadow = heroHex(shadowC);
+    const sunSide = (sunX - cx) >= 0 ? 1 : -1;
+    const lobes = [[0, -0.2, 1], [-0.75, 0.05, 0.72], [0.75, 0.0, 0.75], [-0.2, -0.55, 0.6], [0.35, -0.5, 0.62]];
+    const pts = lobes.map(l => ({ x: cx + l[0] * r, y: baseY + l[1] * r, r: l[2] * r }));
+    let minX = W, maxX = 0, minY = H, maxY = 0;
+    pts.forEach(l => { minX = Math.min(minX, l.x - l.r); maxX = Math.max(maxX, l.x + l.r); minY = Math.min(minY, l.y - l.r); maxY = Math.max(maxY, l.y + l.r); });
+    minX = Math.max(0, Math.floor(minX)); maxX = Math.min(W, Math.ceil(maxX));
+    minY = Math.max(0, Math.floor(minY)); maxY = Math.min(H, Math.ceil(maxY));
+    const bh = (maxY - minY) || 1;
+    for (let yy = minY; yy < maxY; yy++) {
+      for (let xx = minX; xx < maxX; xx++) {
+        let inside = false;
+        for (let i = 0; i < pts.length; i++) { const l = pts[i], dx = xx - l.x, dy = yy - l.y, dn = Math.sqrt(dx * dx + dy * dy) / l.r; if (dn < 1) { inside = true; break; } }
+        if (!inside) continue;
+        const vertT = 1 - (yy - minY) / bh;
+        const horizT = ((xx - cx) / r) * sunSide;
+        const jitter = (heroNoise(xx * 1.3 + cx, yy * 1.3) - 0.5) * 0.32;
+        const tt = vertT * 0.42 + horizT * 0.4 + jitter - 0.10;
+        const c = tt > 0.36 ? warm : (tt > 0.02 ? mid : shadow);
+        px(xx, yy, c, 255);
+      }
+    }
+  }
+  const bushSpots = [[0.225, 5.5, 0.755], [0.27, 4, 0.795], [0.335, 3.8, 0.735], [0.665, 4, 0.735], [0.725, 5, 0.795], [0.775, 3.8, 0.755]];
+  for (let bt = 0; bt < bushSpots.length; bt++) {
+    const bxFrac = bushSpots[bt][0], br = bushSpots[bt][1], byFrac = bushSpots[bt][2];
+    drawBush(bxFrac * W, byFrac * H, br, P.bush.warm, P.bush.mid, P.bush.shadow);
+  }
+
+  // ---- riverside rocks ----
+  function drawRock(cx, baseY, r, litC, midC, shadeC) {
+    const lit = heroHex(litC), mid = heroHex(midC), shade = heroHex(shadeC);
+    const sunSide = (sunX - cx) >= 0 ? 1 : -1;
+    for (let yy = Math.floor(baseY - r * 1.3); yy <= baseY; yy++) {
+      const rowT = (baseY - yy) / (r * 1.3);
+      const halfw = r * Math.sqrt(Math.max(0, 1 - Math.pow(1 - rowT, 2)));
+      for (let dx = -halfw; dx <= halfw; dx++) {
+        const x = Math.floor(cx + dx);
+        const nx = dx / (halfw || 1);
+        const jitter = (heroNoise(x * 1.4 + cx, yy * 1.4) - 0.5) * 0.3;
+        const tt = rowT * 0.35 + (nx * sunSide) * 0.5 + jitter + 0.05;
+        const c = tt > 0.42 ? lit : (tt > 0.05 ? mid : shade);
+        px(x, Math.floor(yy), c, 255);
+      }
+    }
+  }
+  drawRock(W * 0.345, H * 0.80, 3.4, P.rock.lit, P.rock.mid, P.rock.shade);
+  drawRock(W * 0.635, H * 0.795, 2.8, P.rock.lit, P.rock.mid, P.rock.shade);
+
+  // ---- river: recedes to a vanishing point at the horizon, drawn on top of
+  // the meadow so it visibly carves through it ----
+  const riverPts = [[0.50, 0.64], [0.48, 0.70], [0.535, 0.775], [0.485, 0.85], [0.52, 0.92], [0.495, 1.0]];
+  const riverWarm = heroHex(P.river.warm), riverMid = heroHex(P.river.mid), riverShadow = heroHex(P.river.shadow);
+  const riverTop = riverPts[0][1];
+  for (let y6 = Math.floor(H * riverTop); y6 < H; y6++) {
+    const yf = y6 / H;
+    let cx6 = W * 0.5;
+    for (let i2 = 0; i2 < riverPts.length - 1; i2++) {
+      const y0 = riverPts[i2][1], y1 = riverPts[i2 + 1][1];
+      if (yf >= y0 && yf <= y1) {
+        const tt = (yf - y0) / (y1 - y0 + 0.0001);
+        cx6 = heroLerp(riverPts[i2][0], riverPts[i2 + 1][0], tt) * W;
+        break;
+      }
+    }
+    const progress = Math.pow((yf - riverTop) / (1 - riverTop), 1.5);
+    const halfw = Math.max(1.5, H * (0.012 + 0.30 * progress));
+    const horizBias = 1 - Math.min(1, Math.abs(cx6 - sunX) / (W * 0.6));
+    for (let xw = -halfw; xw <= halfw; xw++) {
+      const xx6 = Math.floor(cx6 + xw);
+      const distT = Math.abs(xw) / halfw;
+      const jitter = (heroNoise(xx6 * 0.9, y6 * 0.9) - 0.5) * 0.30;
+      const tt2 = (1 - distT) * 0.60 + horizBias * 0.24 + jitter - 0.24;
+      let c6 = tt2 > 0.38 ? riverWarm : (tt2 > 0.08 ? riverMid : riverShadow);
+      if (distT > 0.86) c6 = heroMix(riverShadow, [0, 0, 0], 0.25);
+      px(xx6, y6, c6, 255);
+    }
+  }
+
+  // ---- fade the ground into the page's paper tone at the bottom edge, so
+  // the hero dissolves into the content sheet instead of cutting off ----
+  const paperC = heroHex('#ecdbb2');
+  const fadeRows = Math.floor(H * 0.20);
+  for (let yf2 = H - fadeRows; yf2 < H; yf2++) {
+    const ft = Math.pow((yf2 - (H - fadeRows)) / fadeRows, 1.3);
+    for (let xf2 = 0; xf2 < W; xf2++) {
+      const idx = (yf2 * W + xf2) * 4;
+      const cur = [data[idx], data[idx + 1], data[idx + 2]];
+      const blended = heroMix(cur, paperC, Math.min(1, ft + (heroBayer(xf2, yf2) - 0.5) * 0.18));
+      data[idx] = blended[0]; data[idx + 1] = blended[1]; data[idx + 2] = blended[2];
+    }
+  }
+
+  ctx.putImageData(img, 0, 0);
+}
+
+/* Tileable dithered "paper" texture for the scrolling content sheet's
+   background, ported from the mock's --bg-tile trick. */
+function buildPaperTile() {
+  const tile = document.createElement('canvas');
+  tile.width = 16; tile.height = 16;
+  const tctx = tile.getContext('2d');
+  const timg = tctx.createImageData(16, 16);
+  const pA = heroHex('#eeddb4'), pB = heroHex('#dfc48c');
+  for (let y = 0; y < 16; y++) {
+    for (let x = 0; x < 16; x++) {
+      const i = (y * 16 + x) * 4;
+      const c = heroBayer(x, y) > 0.5 ? pA : pB;
+      const noisy = Math.random() < 0.12 ? heroMix(c, [0, 0, 0], 0.05) : c;
+      timg.data[i] = noisy[0]; timg.data[i + 1] = noisy[1]; timg.data[i + 2] = noisy[2]; timg.data[i + 3] = 255;
+    }
+  }
+  tctx.putImageData(timg, 0, 0);
+  return tile.toDataURL();
+}
+const TRAIL_HIKER_ICON = '<svg width="12" height="14" viewBox="0 0 6 7"><rect x="2" y="0" width="2" height="2" fill="#231a13"/><rect x="1" y="2" width="4" height="2" fill="#c1502c"/><rect x="1" y="4" width="1" height="3" fill="#231a13"/><rect x="4" y="4" width="1" height="3" fill="#231a13"/></svg>';
+
 function typeInfo(id) { return TYPES.find(t => t.id === id) || TYPES[TYPES.length - 1]; }
 function colorForId(id) {
   let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
@@ -801,6 +1214,9 @@ let summitScope = 'region'; // 'region' | 'everywhere'
 let peekRegion = null; // non-null while checking a region other than your own
 
 const app = document.getElementById('app');
+const heroCanvas = document.getElementById('heroCanvas');
+if (heroCanvas) renderHeroCanvas(heroCanvas);
+document.documentElement.style.setProperty('--bg-tile', 'url(' + buildPaperTile() + ')');
 
 function toast(msg) {
   let el = document.getElementById('toastEl');
@@ -857,8 +1273,9 @@ function normalizeUser(id, data) {
 
 function renderNoDb() {
   app.innerHTML = `
-    <div class="onboard-wrap">
-      <div class="onboard-hero">${buildMountainSvg(getSeason(), 0.4)}</div>
+    <div class="hero-spacer"></div>
+    <div class="content-sheet onboard-wrap">
+      <div class="warm-wash"></div>
       <div class="onboard-body">
         <h1>Breeze</h1>
         <p>This preview needs shared storage to sync activities between friends, which isn't available in this view. Try opening the published link instead.</p>
@@ -868,8 +1285,9 @@ function renderNoDb() {
 
 function renderOnboarding() {
   app.innerHTML = `
-    <div class="onboard-wrap">
-      <div class="onboard-hero">${buildMountainSvg(getSeason(), 0.4)}</div>
+    <div class="hero-spacer"></div>
+    <div class="content-sheet onboard-wrap">
+      <div class="warm-wash"></div>
       <div class="onboard-body">
         <h1>Breeze</h1>
         <p>Log your hikes, lookouts, and trips. Rank them against each other, and see what your friends have been exploring.</p>
@@ -960,21 +1378,24 @@ function subscribeAll() {
 
 function renderShell() {
   app.innerHTML = `
-    <div class="scene-banner">${buildSceneBanner()}</div>
-    <div class="topbar">
-      <div class="brand">Breeze</div>
-      <div class="topbar-actions">
-        <button class="log-btn" id="logBtn">${ICONS.plus}Log</button>
-        <button class="avatar-btn" id="meBtn" style="background:${currentUser.color}">${escapeHtml(initials(currentUser.name))}</button>
+    <div class="hero-spacer"></div>
+    <div class="content-sheet">
+      <div class="warm-wash"></div>
+      <div class="topbar">
+        <div class="brand">Breeze</div>
+        <div class="topbar-actions">
+          <button class="log-btn" id="logBtn">${ICONS.plus}Log</button>
+          <button class="avatar-btn" id="meBtn" style="background:${currentUser.color}">${escapeHtml(initials(currentUser.name))}</button>
+        </div>
       </div>
+      <div id="screenHost" class="screen"></div>
     </div>
-    <div id="screenHost" class="screen"></div>
     <div class="bottomnav">
       <div class="bottomnav-inner">
-        <button class="navbtn" data-tab="feed">${ICONS.home}Feed</button>
-        <button class="navbtn" data-tab="rankings">${ICONS.ranks}My ranks</button>
-        <button class="navbtn" data-tab="summit">${ICONS.hike}Summit</button>
-        <button class="navbtn" data-tab="saved">${ICONS.saved}Saved</button>
+        <button class="navbtn" data-tab="feed">${NAV_PIXEL_ICONS.feed}Feed</button>
+        <button class="navbtn" data-tab="rankings">${NAV_PIXEL_ICONS.rankings}My ranks</button>
+        <button class="navbtn" data-tab="summit">${NAV_PIXEL_ICONS.summit}Summit</button>
+        <button class="navbtn" data-tab="saved">${NAV_PIXEL_ICONS.saved}Saved</button>
       </div>
     </div>
   `;
@@ -1018,12 +1439,19 @@ function updateFeedRankBadges() {
   });
 }
 
-function rankBadgeText(ownerId, actId) {
+/* Rank position within the owner's ranked list — used both for the "#N of
+   M" badge text and the trail-progress bar's fill (best rank = furthest
+   along the trail), so the two always agree. */
+function rankPosition(ownerId, actId) {
   const list = ownerId === currentUser.id ? currentUser.rankedList : (friendDocs[ownerId] ? friendDocs[ownerId].rankedList : null);
-  if (!list) return '';
+  if (!list) return null;
   const idx = list.indexOf(actId);
-  if (idx === -1) return '';
-  return '#' + (idx + 1) + ' of ' + list.length;
+  if (idx === -1) return null;
+  return { idx, total: list.length };
+}
+function rankBadgeText(ownerId, actId) {
+  const pos = rankPosition(ownerId, actId);
+  return pos ? '#' + (pos.idx + 1) + ' of ' + pos.total : '';
 }
 
 function isVisibleActivity(a) {
@@ -1051,7 +1479,7 @@ function renderFeaturedRow() {
   const lists = FEATURED_LISTS[key];
   const cards = FEATURED_CATEGORIES.filter(c => (lists[c.id] || []).length).map(c => `
     <button class="featured-card" data-featured-cat="${c.id}">
-      <span class="ft-icon">${ICONS[c.icon]}</span>
+      <span class="ft-icon">${PIXEL_ICONS[c.id] || ICONS[c.icon]}</span>
       <span class="ft-title">${escapeHtml(c.label)}</span>
       <span class="ft-sub">${lists[c.id].length} places</span>
     </button>`).join('');
@@ -1306,30 +1734,6 @@ function buildMountainSvg(season, fraction) {
   </svg>`;
 }
 
-/* The decorative masthead scene shared by the top bar and onboarding — the
-   same banded-sky, layered-ridge, treeline-and-trail composition as the
-   Summit mountain, but static (no progress tracking) with the hiker
-   standing partway up a simple winding trail. */
-function buildSceneBanner() {
-  const c = SEASONS[getSeason()];
-  return `
-  <svg viewBox="0 0 400 150" role="img" aria-label="A hiker on a mountain trail at sunset" shape-rendering="crispEdges">
-    <defs><clipPath id="bannerClip"><rect x="0" y="0" width="400" height="150"/></clipPath></defs>
-    <g clip-path="url(#bannerClip)">
-      ${skyBandRects(c)}
-      ${sunPoly(320, 42, 18, c)}
-      ${farRidgePoly(c)}
-      ${midRidgePoly(c)}
-      <rect x="141" y="82" width="9" height="9" fill="${c.snow}"/>
-      <rect x="130" y="91" width="9" height="9" fill="${c.snow}"/>
-      <rect x="152" y="91" width="9" height="9" fill="${c.snow}"/>
-      <polyline points="50,150 95,125 72,100 115,90" fill="none" stroke="${c.trail}" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="butt"/>
-      ${foregroundBand(c, 118)}
-      ${buildHikerSprite(95, 125, 0.9)}
-    </g>
-  </svg>`;
-}
-
 function renderSummit(host) {
   const region = peekRegion !== null ? peekRegion : (currentUser.region || '');
   const everywhere = summitScope === 'everywhere';
@@ -1543,9 +1947,18 @@ function activityCardHtml(a) {
   const ti = typeInfo(a.type);
   const tc = typeColor(a.type);
   const isMine = a.userId === currentUser.id;
+  const pos = rankPosition(a.userId, a.id);
   const rankTxt = rankBadgeText(a.userId, a.id);
   const saved = currentUser.bucketList.includes(a.id);
   const photo = a.photoUrl ? `<img class="card-photo" src="${escapeHtml(a.photoUrl)}" alt="">` : '';
+  const fillPct = pos ? Math.round((1 - pos.idx / Math.max(1, pos.total - 1)) * 100) : 0;
+  const trailHtml = pos ? `
+    <div class="trail-progress">
+      <div class="trail-track">
+        <div class="trail-fill" style="width:${fillPct}%"></div>
+        <div class="trail-hiker" style="left:${fillPct}%">${TRAIL_HIKER_ICON}</div>
+      </div>
+    </div>` : '';
   return `
     <div class="card">
       ${photo}
@@ -1562,6 +1975,7 @@ function activityCardHtml(a) {
         <div class="card-loc">${ICONS.pin}${escapeHtml(a.location || 'Unspecified')}</div>
         ${a.review ? `<div class="card-review">${escapeHtml(a.review)}</div>` : ''}
         <div class="card-footer">
+          ${trailHtml}
           <span class="rank-badge ${rankTxt ? '' : 'empty'}" data-rank-owner="${a.userId}" data-rank-act="${a.id}">${rankTxt || (isMine ? '' : 'Friend pick')}</span>
           <button class="save-btn ${saved?'saved':''}" data-act="${a.id}" title="Save to bucket list">${saved ? ICONS.savedFilled : ICONS.saved}</button>
         </div>
