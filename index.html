@@ -171,10 +171,18 @@ textarea.field-input { resize: none; font-size: 15px; }
   opacity: 0.6;
 }
 
-/* Featured lists row — restyled as the mock's icon-square stat cards, kept
-   horizontally scrollable since we have more than 3 categories. */
-.featured-row { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 14px; margin-bottom: 4px; scrollbar-width: none; }
-.featured-row::-webkit-scrollbar { display: none; }
+/* Featured lists row — restyled as the mock's icon-square stat cards.
+   Auto-scrolls like a conveyor belt so every category is visible without
+   the user having to swipe: the card set is duplicated back-to-back and
+   the whole track is translated by exactly one set's width on a loop, so
+   the seam is invisible. Pauses on touch/hover so a tap still lands. */
+.featured-row { overflow: hidden; padding: 2px 2px 14px; margin-bottom: 4px; -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%); }
+.featured-track { display: flex; gap: 10px; width: max-content; animation: featuredBelt 45s linear infinite; }
+.featured-track.paused, .featured-row:hover .featured-track { animation-play-state: paused; }
+@keyframes featuredBelt {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
 .featured-card {
   flex-shrink: 0; width: 130px; background: var(--surface-2); border: none; border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm); padding: 12px 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
@@ -1477,13 +1485,44 @@ function renderFeaturedRow() {
     </div>`;
   }
   const lists = FEATURED_LISTS[key];
-  const cards = FEATURED_CATEGORIES.filter(c => (lists[c.id] || []).length).map(c => `
-    <button class="featured-card" data-featured-cat="${c.id}">
-      <span class="ft-icon">${PIXEL_ICONS[c.id] || ICONS[c.icon]}</span>
+  const categories = FEATURED_CATEGORIES.filter(c => (lists[c.id] || []).length);
+  const cardHtml = (c, decorative) => {
+    const tc = typeColor(c.icon);
+    const a11y = decorative ? 'aria-hidden="true" tabindex="-1"' : '';
+    return `
+    <button class="featured-card" data-featured-cat="${c.id}" ${a11y}>
+      <span class="ft-icon" style="background:${tc.bg};color:${tc.fg}">${PIXEL_ICONS[c.id] || ICONS[c.icon]}</span>
       <span class="ft-title">${escapeHtml(c.label)}</span>
       <span class="ft-sub">${lists[c.id].length} places</span>
-    </button>`).join('');
-  return `<div class="featured-row">${cards}</div>`;
+    </button>`;
+  };
+  // With more than one card, duplicate the set back-to-back and animate the
+  // track by exactly -50% on a loop, so it conveyor-belts continuously with
+  // an invisible seam. The duplicate is aria-hidden so screen readers and
+  // tab order only ever see the real set.
+  if (categories.length <= 1) {
+    return `<div class="featured-row"><div class="featured-track">${categories.map(c => cardHtml(c, false)).join('')}</div></div>`;
+  }
+  const realSet = categories.map(c => cardHtml(c, false)).join('');
+  const decorativeSet = categories.map(c => cardHtml(c, true)).join('');
+  return `<div class="featured-row"><div class="featured-track" id="featuredTrack">${realSet}${decorativeSet}</div></div>`;
+}
+
+/* Sets the belt's animation speed to a constant pixel rate regardless of
+   how many categories are showing, and pauses it while the user is
+   touching it so a tap reliably lands on the card underneath. */
+function setupFeaturedBelt() {
+  const track = document.getElementById('featuredTrack');
+  if (!track) return;
+  const pxPerSecond = 12;
+  const halfWidth = track.scrollWidth / 2;
+  track.style.animationDuration = Math.max(14, halfWidth / pxPerSecond) + 's';
+  const pause = () => track.classList.add('paused');
+  const resume = () => track.classList.remove('paused');
+  track.addEventListener('pointerdown', pause);
+  track.addEventListener('pointerup', resume);
+  track.addEventListener('pointercancel', resume);
+  track.addEventListener('pointerleave', resume);
 }
 
 function openFeaturedListSheet(categoryId) {
@@ -1937,6 +1976,7 @@ function renderFeed(host) {
   const featuredSetRegionBtn = document.getElementById('featuredSetRegionBtn');
   if (featuredSetRegionBtn) featuredSetRegionBtn.addEventListener('click', openRegionSheet);
   host.querySelectorAll('[data-featured-cat]').forEach(b => b.addEventListener('click', () => openFeaturedListSheet(b.dataset.featuredCat)));
+  setupFeaturedBelt();
   const emptyAddFriend = document.getElementById('emptyAddFriend');
   if (emptyAddFriend) emptyAddFriend.addEventListener('click', openFriendsSheet);
   const emptyLogActivity = document.getElementById('emptyLogActivity');
