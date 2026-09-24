@@ -106,13 +106,16 @@ svg.pxicon rect { shape-rendering: crispEdges; }
   letter-spacing: -0.01em; color: var(--accent-strong); line-height: 1;
 }
 .topbar-actions { display: flex; align-items: center; gap: 10px; }
+/* No button chrome at all — the LOG_ICON sprite itself (hand-drawn rects,
+   crisp at any scale via shape-rendering: crispEdges) is the whole tap
+   target, transparent background, no border or shadow. The press state is
+   just a 2px shift down, since there's no shadow to fall into anymore. */
 .log-btn {
-  display: flex; align-items: center; gap: 6px; background: var(--accent); color: var(--on-accent);
-  border: none; padding: 10px 16px 10px 13px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px;
-  box-shadow: 0 3px 8px rgba(124, 52, 28, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; padding: 0;
 }
-.log-btn svg { font-size: 15px; }
-.log-btn:active { filter: brightness(0.92); }
+.log-btn .pxicon { width: 60px; height: 42px; flex-shrink: 0; }
+.log-btn:active { transform: translateY(2px); }
 .avatar-btn {
   width: 36px; height: 36px; border-radius: 11px; border: none; color: var(--bg);
   font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center;
@@ -498,6 +501,25 @@ const PIXEL_ICONS = {
   lookouts: '<svg class="pxicon" viewBox="0 0 8 8"><rect x="3" y="0" width="2" height="1" fill="#5a6b3f"/><rect x="2" y="1" width="4" height="1" fill="#5a6b3f"/><rect x="1" y="2" width="6" height="1" fill="#5a6b3f"/><rect x="0" y="3" width="8" height="1" fill="#5a6b3f"/><rect x="0" y="4" width="8" height="1" fill="#5a6b3f"/><rect x="1" y="5" width="6" height="1" fill="#5a6b3f"/><rect x="2" y="6" width="4" height="1" fill="#5a6b3f"/><rect x="3" y="7" width="2" height="1" fill="#5a6b3f"/><rect x="3" y="3" width="2" height="2" fill="#c1502c"/></svg>',
   camping: '<svg class="pxicon" viewBox="0 0 8 8"><rect x="3" y="0" width="2" height="1" fill="#231a13"/><rect x="2" y="1" width="4" height="1" fill="#231a13"/><rect x="1" y="2" width="6" height="1" fill="#231a13"/><rect x="0" y="3" width="8" height="1" fill="#231a13"/><rect x="3" y="4" width="2" height="4" fill="#f4b942"/><rect x="0" y="7" width="8" height="1" fill="#231a13"/></svg>',
 };
+/* Log button icon — a side-view log sprite (hand-authored rects, not a
+   procedural raster): a tan cut face with a small open ring on the left, a
+   dark-brown bark body with scattered orange/light-brown streak marks, and
+   a small branch stub at the top right, all inside a solid 1px charcoal
+   outline. Built from <rect>s like the app's other pixel icons, so it's
+   crisp at any scale — no anti-aliasing, blur, or gradients. */
+const LOG_ICON = '<svg class="pxicon" viewBox="0 0 20 14">'
+  + '<rect x="14" y="1" width="3" height="1" fill="#2b2320"/>'
+  + '<rect x="14" y="2" width="1" height="1" fill="#2b2320"/><rect x="15" y="2" width="1" height="1" fill="#4a2c1a"/><rect x="16" y="2" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="14" y="3" width="1" height="1" fill="#2b2320"/><rect x="15" y="3" width="1" height="1" fill="#4a2c1a"/><rect x="16" y="3" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="3" y="4" width="11" height="1" fill="#2b2320"/><rect x="14" y="4" width="3" height="1" fill="#4a2c1a"/><rect x="17" y="4" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="2" y="5" width="1" height="1" fill="#2b2320"/><rect x="3" y="5" width="4" height="1" fill="#e8cfa0"/><rect x="7" y="5" width="1" height="1" fill="#2b2320"/><rect x="8" y="5" width="1" height="1" fill="#c1652f"/><rect x="9" y="5" width="7" height="1" fill="#4a2c1a"/><rect x="16" y="5" width="1" height="1" fill="#8a5a34"/><rect x="17" y="5" width="1" height="1" fill="#4a2c1a"/><rect x="18" y="5" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="2" y="6" width="1" height="1" fill="#2b2320"/><rect x="3" y="6" width="1" height="1" fill="#e8cfa0"/><rect x="4" y="6" width="2" height="1" fill="#c1652f"/><rect x="6" y="6" width="1" height="1" fill="#e8cfa0"/><rect x="7" y="6" width="1" height="1" fill="#2b2320"/><rect x="8" y="6" width="10" height="1" fill="#4a2c1a"/><rect x="18" y="6" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="2" y="7" width="1" height="1" fill="#2b2320"/><rect x="3" y="7" width="1" height="1" fill="#e8cfa0"/><rect x="4" y="7" width="1" height="1" fill="#c1652f"/><rect x="5" y="7" width="2" height="1" fill="#e8cfa0"/><rect x="7" y="7" width="1" height="1" fill="#2b2320"/><rect x="8" y="7" width="5" height="1" fill="#4a2c1a"/><rect x="13" y="7" width="2" height="1" fill="#8a5a34"/><rect x="15" y="7" width="3" height="1" fill="#4a2c1a"/><rect x="18" y="7" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="2" y="8" width="1" height="1" fill="#2b2320"/><rect x="3" y="8" width="1" height="1" fill="#e8cfa0"/><rect x="4" y="8" width="2" height="1" fill="#c1652f"/><rect x="6" y="8" width="1" height="1" fill="#e8cfa0"/><rect x="7" y="8" width="1" height="1" fill="#2b2320"/><rect x="8" y="8" width="3" height="1" fill="#4a2c1a"/><rect x="11" y="8" width="1" height="1" fill="#c1652f"/><rect x="12" y="8" width="6" height="1" fill="#4a2c1a"/><rect x="18" y="8" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="2" y="9" width="1" height="1" fill="#2b2320"/><rect x="3" y="9" width="4" height="1" fill="#e8cfa0"/><rect x="7" y="9" width="1" height="1" fill="#2b2320"/><rect x="8" y="9" width="1" height="1" fill="#c1652f"/><rect x="9" y="9" width="5" height="1" fill="#4a2c1a"/><rect x="14" y="9" width="1" height="1" fill="#8a5a34"/><rect x="15" y="9" width="3" height="1" fill="#4a2c1a"/><rect x="18" y="9" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="2" y="10" width="1" height="1" fill="#2b2320"/><rect x="3" y="10" width="4" height="1" fill="#e8cfa0"/><rect x="7" y="10" width="1" height="1" fill="#2b2320"/><rect x="8" y="10" width="1" height="1" fill="#c1652f"/><rect x="9" y="10" width="9" height="1" fill="#4a2c1a"/><rect x="18" y="10" width="1" height="1" fill="#2b2320"/>'
+  + '<rect x="3" y="11" width="15" height="1" fill="#2b2320"/>'
+  + '</svg>';
 const NAV_PIXEL_ICONS = {
   feed: '<svg class="pxicon" viewBox="0 0 8 8" fill="currentColor"><rect x="3" y="1" width="2" height="1"/><rect x="2" y="2" width="4" height="1"/><rect x="1" y="3" width="6" height="1"/><rect x="1" y="4" width="6" height="3"/></svg>',
   rankings: '<svg class="pxicon" viewBox="0 0 8 8" fill="currentColor"><rect x="1" y="4" width="2" height="3"/><rect x="3" y="2" width="2" height="5"/><rect x="5" y="0" width="2" height="7"/></svg>',
@@ -1392,7 +1414,7 @@ function renderShell() {
       <div class="topbar">
         <div class="brand">Breeze</div>
         <div class="topbar-actions">
-          <button class="log-btn" id="logBtn">${ICONS.plus}Log</button>
+          <button class="log-btn" id="logBtn" aria-label="Log an activity">${LOG_ICON}</button>
           <button class="avatar-btn" id="meBtn" style="background:${currentUser.color}">${escapeHtml(initials(currentUser.name))}</button>
         </div>
       </div>
