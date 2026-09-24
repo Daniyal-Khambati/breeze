@@ -116,11 +116,16 @@ svg.pxicon rect { shape-rendering: crispEdges; }
 }
 .log-btn .pxicon { width: 60px; height: 42px; flex-shrink: 0; }
 .log-btn:active { transform: translateY(2px); }
+/* A generated pixel-art portrait (buildAvatarIcon) instead of a color +
+   initials circle — a plain square, framed with the same crisp dark pixel
+   outline as the log icon rather than a rounded corner, at the log icon's
+   own pixel scale (3px per grid unit) so the two read as the same art
+   style side by side. */
 .avatar-btn {
-  width: 36px; height: 36px; border-radius: 11px; border: none; color: var(--bg);
-  font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center;
-  letter-spacing: 0.02em;
+  width: 36px; height: 36px; border-radius: 0; border: none; padding: 0;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
+.avatar-btn svg { width: 36px; height: 36px; display: block; }
 
 /* Onboarding — reuses the same pinned-hero + content-sheet pattern as the
    main shell, with the copy and form in the sheet instead of tab screens. */
@@ -1199,6 +1204,178 @@ function colorForId(id) {
 function initials(name) {
   return (name || '?').trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('');
 }
+
+/* ---------- Procedural pixel-art hiker avatars ----------
+   Deterministic: generateAvatarTraits(seed) always returns the same trait
+   choices for the same seed (the user's id), so the same user gets the
+   same generated avatar across sessions and devices, without needing to
+   store the seed itself — only the resulting traits get persisted (see
+   normalizeUser / the onboarding flow), so a future avatar picker can
+   overwrite individual fields (e.g. just `headwear`) without touching the
+   rest. buildAvatarIcon composites each trait as its own layer — background,
+   clothing, skin, hair, face, headwear, face accessory — onto a shared
+   12x12 pixel grid (matching the Log icon's own 3px-per-unit scale at this
+   button's 36px size), then frames the whole square with the same dark
+   outline ink as the Log icon. */
+function seedFromString(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function pickFrom(rng, arr) { return arr[Math.floor(rng() * arr.length)]; }
+
+const AVATAR_OUTLINE = '#2b2320';
+const AVATAR_BG_COLORS = ['#4a6b3e', '#5a6b3f', '#8a5a2e', '#c9a06a', '#3f6d8e', '#c1652f', '#7c341c'];
+const AVATAR_SKIN_TONES = ['#f0c8a0', '#e0a878', '#c68a5c', '#9c6b42', '#6e4527', '#4a2f1c'];
+const AVATAR_HAIR_COLORS = ['#2b2320', '#4a2c1a', '#7a4a24', '#a8712f', '#e0cf9a', '#8a8a8a'];
+const AVATAR_HEADWEAR_COLORS = ['#7c341c', '#3f6d8e', '#5a6b3f', '#c1502c', '#8a4a6b', '#3d332d', '#f4b942'];
+const AVATAR_CLOTHING_COLORS = ['#7c341c', '#5a6b3f', '#3f6d8e', '#8a4a6b', '#5c4c3a', '#4a2c1a'];
+
+function generateAvatarTraits(seed) {
+  const rng = mulberry32(seedFromString(String(seed)));
+  return {
+    bgColor: pickFrom(rng, AVATAR_BG_COLORS),
+    bgStyle: pickFrom(rng, ['flat', 'flat', 'mountain']),
+    skin: pickFrom(rng, AVATAR_SKIN_TONES),
+    hair: pickFrom(rng, ['short', 'long', 'curly', 'bald']),
+    hairColor: pickFrom(rng, AVATAR_HAIR_COLORS),
+    headwear: pickFrom(rng, ['beanie', 'bucket', 'sunhat', 'cap', 'bandana', 'headlamp', 'none']),
+    headwearColor: pickFrom(rng, AVATAR_HEADWEAR_COLORS),
+    face: pickFrom(rng, ['plain', 'plain', 'sunglasses', 'glasses']),
+    beard: rng() < 0.35,
+    clothing: pickFrom(rng, ['flannel', 'puffer', 'fleece', 'tshirt']),
+    clothingColor: pickFrom(rng, AVATAR_CLOTHING_COLORS),
+    backpack: rng() < 0.4,
+  };
+}
+
+function avatarGridToRects(grid) {
+  const n = grid.length;
+  let out = '';
+  for (let y = 0; y < n; y++) {
+    let x = 0;
+    while (x < n) {
+      const color = grid[y][x];
+      let w = 1;
+      while (x + w < n && grid[y][x + w] === color) w++;
+      if (color != null) out += `<rect x="${x}" y="${y}" width="${w}" height="1" fill="${color}"/>`;
+      x += w;
+    }
+  }
+  return out;
+}
+
+function buildAvatarIcon(traits) {
+  const N = 12;
+  const grid = Array.from({ length: N }, () => new Array(N).fill(null));
+  const set = (x, y, color) => { if (x >= 0 && x < N && y >= 0 && y < N) grid[y][x] = color; };
+  const fillRect = (x0, y0, w, h, color, cutCorners) => {
+    for (let y = y0; y < y0 + h; y++) {
+      for (let x = x0; x < x0 + w; x++) {
+        if (cutCorners && (x === x0 || x === x0 + w - 1) && (y === y0 || y === y0 + h - 1)) continue;
+        set(x, y, color);
+      }
+    }
+  };
+  const mixHex = (hex, toward, amt) => {
+    const m = heroMix(heroHex(hex), toward, amt).map(v => Math.round(Math.max(0, Math.min(255, v))));
+    return '#' + m.map(v => v.toString(16).padStart(2, '0')).join('');
+  };
+
+  // 1. Background — a flat earthy color, or the same color with a simple
+  // triangular ridge silhouette across the lower half.
+  fillRect(0, 0, N, N, traits.bgColor, false);
+  if (traits.bgStyle === 'mountain') {
+    const ridge = mixHex(traits.bgColor, [0, 0, 0], 0.28);
+    for (let x = 0; x < N; x++) {
+      const ridgeTop = 9 - Math.round(Math.abs(x - 5.5) * 0.55);
+      for (let y = Math.max(0, ridgeTop); y < N; y++) set(x, y, ridge);
+    }
+  }
+
+  // 2. Clothing at the shoulders, drawn behind the head.
+  fillRect(1, 8, 10, 4, traits.clothingColor, false);
+  if (traits.clothing === 'flannel') {
+    const stripe = mixHex(traits.clothingColor, [255, 255, 255], 0.35);
+    for (let x = 1; x < 11; x += 3) fillRect(x, 8, 1, 4, stripe, false);
+  } else if (traits.clothing === 'puffer') {
+    const seam = mixHex(traits.clothingColor, [0, 0, 0], 0.3);
+    fillRect(1, 9, 10, 1, seam, false);
+  }
+  if (traits.backpack) {
+    fillRect(3, 8, 1, 4, AVATAR_OUTLINE, false);
+    fillRect(8, 8, 1, 4, AVATAR_OUTLINE, false);
+  }
+
+  // 3. Head (skin), rounded by cutting its four corner pixels.
+  fillRect(3, 2, 6, 6, traits.skin, true);
+
+  // 4. Hair, drawn before headwear so a hat can cover the top of it while
+  // longer styles still show past the hat's edges (see 'long' below).
+  if (traits.hair === 'short') {
+    fillRect(3, 2, 6, 1, traits.hairColor, false);
+    set(3, 3, traits.hairColor); set(8, 3, traits.hairColor);
+  } else if (traits.hair === 'long') {
+    fillRect(3, 2, 6, 1, traits.hairColor, false);
+    fillRect(2, 3, 1, 6, traits.hairColor, false);
+    fillRect(9, 3, 1, 6, traits.hairColor, false);
+  } else if (traits.hair === 'curly') {
+    fillRect(2, 1, 8, 3, traits.hairColor, true);
+  }
+
+  // 5. Eyes + mouth.
+  set(4, 4, AVATAR_OUTLINE); set(7, 4, AVATAR_OUTLINE);
+  fillRect(5, 6, 2, 1, mixHex(traits.skin, [0, 0, 0], 0.35), false);
+
+  // 6. Beard, over the jaw (and the mouth, as a real beard would sit).
+  if (traits.beard) fillRect(4, 6, 4, 2, traits.hairColor, false);
+
+  // 7. Headwear, on top of hair.
+  const hw = traits.headwearColor;
+  if (traits.headwear === 'beanie') {
+    fillRect(2, 0, 8, 3, hw, false);
+    fillRect(2, 3, 8, 1, mixHex(hw, [0, 0, 0], 0.25), false);
+  } else if (traits.headwear === 'bucket') {
+    fillRect(3, 0, 6, 3, hw, false);
+    fillRect(1, 3, 10, 1, hw, false);
+  } else if (traits.headwear === 'sunhat') {
+    fillRect(4, 0, 4, 2, hw, false);
+    fillRect(0, 3, 12, 1, hw, false);
+  } else if (traits.headwear === 'cap') {
+    fillRect(3, 0, 6, 3, hw, false);
+    fillRect(9, 2, 3, 1, hw, false);
+  } else if (traits.headwear === 'bandana') {
+    fillRect(3, 0, 6, 3, hw, false);
+    set(8, 1, mixHex(hw, [0, 0, 0], 0.3));
+  } else if (traits.headwear === 'headlamp') {
+    fillRect(3, 3, 6, 1, '#4a4740', false);
+    set(5, 3, '#f4e07a');
+  }
+
+  // 8. Face accessory, last among head elements so it reads over any brim.
+  if (traits.face === 'sunglasses') {
+    fillRect(4, 4, 4, 1, '#17130f', false);
+  } else if (traits.face === 'glasses') {
+    fillRect(4, 4, 4, 1, '#8fa8c2', false);
+  }
+
+  // 9. Frame the whole square with the Log icon's own outline ink, in place
+  // of the button's old rounded corner.
+  for (let i = 0; i < N; i++) {
+    set(i, 0, AVATAR_OUTLINE); set(i, N - 1, AVATAR_OUTLINE);
+    set(0, i, AVATAR_OUTLINE); set(N - 1, i, AVATAR_OUTLINE);
+  }
+
+  return '<svg viewBox="0 0 ' + N + ' ' + N + '" class="pxicon">' + avatarGridToRects(grid) + '</svg>';
+}
 function timeAgo(ts) {
   const s = Math.floor((Date.now() - ts) / 1000);
   if (s < 60) return 'just now';
@@ -1278,8 +1455,15 @@ async function init() {
   if (userId) {
     try {
       const doc = await db.doc('users/' + userId).get();
-      if (doc && doc.exists !== false && (doc.data ? doc.data() : doc)) {
-        currentUser = normalizeUser(userId, doc.data ? doc.data() : doc);
+      const raw = doc && doc.exists !== false && (doc.data ? doc.data() : doc);
+      if (raw) {
+        currentUser = normalizeUser(userId, raw);
+        // Accounts created before generated avatars existed get one derived
+        // from their id on the fly (normalizeUser above); persist it here
+        // so it's stored on the profile like any other user created since.
+        if (!raw.avatarTraits) {
+          db.doc('users/' + userId).update({ avatarTraits: currentUser.avatarTraits }).catch(() => {});
+        }
       }
     } catch (e) {}
   }
@@ -1295,6 +1479,7 @@ function normalizeUser(id, data) {
     color: data.color || colorForId(id),
     code: data.code || '',
     region: data.region || '',
+    avatarTraits: data.avatarTraits || generateAvatarTraits(id),
     rankedList: Array.isArray(data.rankedList) ? data.rankedList : [],
     bucketList: Array.isArray(data.bucketList) ? data.bucketList : [],
     friends: Array.isArray(data.friends) ? data.friends : [],
@@ -1337,7 +1522,8 @@ function renderOnboarding() {
     const id = uid();
     const color = colorForId(id);
     const code = await generateUniqueCode();
-    const data = { name, color, code, rankedList: [], bucketList: [], friends: [], createdAt: Date.now() };
+    const avatarTraits = generateAvatarTraits(id);
+    const data = { name, color, code, avatarTraits, rankedList: [], bucketList: [], friends: [], createdAt: Date.now() };
     try { await db.doc('users/' + id).set(data); } catch (e) { toast('Could not create profile — try again'); return; }
     try { localStorage.setItem('breeze_user_id', id); } catch (e) {}
     currentUser = normalizeUser(id, data);
@@ -1415,7 +1601,7 @@ function renderShell() {
         <div class="brand">Breeze</div>
         <div class="topbar-actions">
           <button class="log-btn" id="logBtn" aria-label="Log an activity">${LOG_ICON}</button>
-          <button class="avatar-btn" id="meBtn" style="background:${currentUser.color}">${escapeHtml(initials(currentUser.name))}</button>
+          <button class="avatar-btn" id="meBtn" aria-label="${escapeHtml(currentUser.name)}'s profile">${buildAvatarIcon(currentUser.avatarTraits)}</button>
         </div>
       </div>
       <div id="screenHost" class="screen"></div>
