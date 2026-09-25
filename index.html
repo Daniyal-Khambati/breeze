@@ -182,15 +182,30 @@ textarea.field-input { resize: none; font-size: 15px; }
 /* Featured lists row — restyled as the mock's icon-square stat cards.
    Auto-scrolls like a conveyor belt so every category is visible without
    the user having to swipe: the card set is duplicated back-to-back and
-   the whole track is translated by exactly one set's width on a loop, so
-   the seam is invisible. Pauses on touch/hover so a tap still lands. */
-.featured-row { overflow: hidden; padding: 2px 2px 14px; margin-bottom: 4px; -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%); }
-.featured-track { display: flex; gap: 10px; width: max-content; animation: featuredBelt 45s linear infinite; }
-.featured-track.paused, .featured-row:hover .featured-track { animation-play-state: paused; }
-@keyframes featuredBelt {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+   the row's scroll position wraps by exactly one set's width, so the seam
+   is invisible. It's a real scroll container (driven by setupFeaturedBelt)
+   rather than a CSS animation, so the arrow buttons and a swipe can move
+   it too; any interaction pauses the drift for a few seconds. */
+.featured-belt { position: relative; margin-bottom: 4px; }
+.featured-row {
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 2px 2px 14px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
 }
+.featured-row::-webkit-scrollbar { display: none; }
+.featured-track { display: flex; gap: 10px; width: max-content; }
+/* Offset up by half the row's uneven bottom padding so the arrows sit on
+   the cards' vertical center, not the row's. */
+.featured-arrow {
+  position: absolute; top: calc(50% - 6px); transform: translateY(-50%); z-index: 2;
+  width: 28px; height: 28px; padding: 0; border: none; border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--accent-strong); box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; justify-content: center;
+}
+/* Pushed out into the screen's 20px side gutter so they clear the cards' text. */
+.featured-arrow.prev { left: -15px; }
+.featured-arrow.next { right: -15px; }
+.featured-arrow .pxicon { width: 10px; height: 14px; }
+.featured-arrow:active { transform: translateY(calc(-50% + 2px)); }
 .featured-card {
   flex-shrink: 0; width: 130px; background: var(--surface-2); border: none; border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm); padding: 12px 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
@@ -525,6 +540,10 @@ const LOG_ICON = '<svg class="pxicon" viewBox="0 0 20 14">'
   + '<rect x="2" y="10" width="1" height="1" fill="#2b2320"/><rect x="3" y="10" width="4" height="1" fill="#e8cfa0"/><rect x="7" y="10" width="1" height="1" fill="#2b2320"/><rect x="8" y="10" width="1" height="1" fill="#c1652f"/><rect x="9" y="10" width="9" height="1" fill="#4a2c1a"/><rect x="18" y="10" width="1" height="1" fill="#2b2320"/>'
   + '<rect x="3" y="11" width="15" height="1" fill="#2b2320"/>'
   + '</svg>';
+/* Pixel chevrons for the featured belt's scroll arrows — a 2px-thick
+   stair-stepped stroke, drawn in currentColor like the nav icons. */
+const CHEVRON_LEFT_ICON = '<svg class="pxicon" viewBox="0 0 5 7" fill="currentColor"><rect x="3" y="0" width="2" height="1"/><rect x="2" y="1" width="2" height="1"/><rect x="1" y="2" width="2" height="1"/><rect x="0" y="3" width="2" height="1"/><rect x="1" y="4" width="2" height="1"/><rect x="2" y="5" width="2" height="1"/><rect x="3" y="6" width="2" height="1"/></svg>';
+const CHEVRON_RIGHT_ICON = '<svg class="pxicon" viewBox="0 0 5 7" fill="currentColor"><rect x="0" y="0" width="2" height="1"/><rect x="1" y="1" width="2" height="1"/><rect x="2" y="2" width="2" height="1"/><rect x="3" y="3" width="2" height="1"/><rect x="2" y="4" width="2" height="1"/><rect x="1" y="5" width="2" height="1"/><rect x="0" y="6" width="2" height="1"/></svg>';
 const NAV_PIXEL_ICONS = {
   feed: '<svg class="pxicon" viewBox="0 0 8 8" fill="currentColor"><rect x="3" y="1" width="2" height="1"/><rect x="2" y="2" width="4" height="1"/><rect x="1" y="3" width="6" height="1"/><rect x="1" y="4" width="6" height="3"/></svg>',
   rankings: '<svg class="pxicon" viewBox="0 0 8 8" fill="currentColor"><rect x="1" y="4" width="2" height="3"/><rect x="3" y="2" width="2" height="5"/><rect x="5" y="0" width="2" height="7"/></svg>',
@@ -1713,24 +1732,92 @@ function renderFeaturedRow() {
   }
   const realSet = categories.map(c => cardHtml(c, false)).join('');
   const decorativeSet = categories.map(c => cardHtml(c, true)).join('');
-  return `<div class="featured-row"><div class="featured-track" id="featuredTrack">${realSet}${decorativeSet}</div></div>`;
+  return `<div class="featured-belt" id="featuredBelt">
+    <button class="featured-arrow prev" id="featuredPrev" aria-label="Scroll featured lists left">${CHEVRON_LEFT_ICON}</button>
+    <div class="featured-row" id="featuredRow"><div class="featured-track" id="featuredTrack">${realSet}${decorativeSet}</div></div>
+    <button class="featured-arrow next" id="featuredNext" aria-label="Scroll featured lists right">${CHEVRON_RIGHT_ICON}</button>
+  </div>`;
 }
 
-/* Sets the belt's animation speed to a constant pixel rate regardless of
-   how many categories are showing, and pauses it while the user is
-   touching it so a tap reliably lands on the card underneath. */
+/* Drives the belt's scroll position by hand: a constant slow drift, eased
+   one-card glides for the arrow buttons, and native swipe/trackpad scroll.
+   `pos` is kept as an unrounded float (browsers round scrollLeft, which
+   would stall a 0.2px-per-frame drift) and always written wrapped into
+   [0, one set's width), so passing the seam in either direction is
+   invisible. It lives outside the function so the belt keeps its place
+   when the feed re-renders on every snapshot. */
+const featuredBeltState = { raf: null, pos: 0 };
 function setupFeaturedBelt() {
+  if (featuredBeltState.raf) cancelAnimationFrame(featuredBeltState.raf);
+  featuredBeltState.raf = null;
+  const belt = document.getElementById('featuredBelt');
+  const row = document.getElementById('featuredRow');
   const track = document.getElementById('featuredTrack');
-  if (!track) return;
+  if (!belt || !row || !track) return;
+
+  const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const pxPerSecond = 12;
-  const halfWidth = track.scrollWidth / 2;
-  track.style.animationDuration = Math.max(14, halfWidth / pxPerSecond) + 's';
-  const pause = () => track.classList.add('paused');
-  const resume = () => track.classList.remove('paused');
-  track.addEventListener('pointerdown', pause);
-  track.addEventListener('pointerup', resume);
-  track.addEventListener('pointercancel', resume);
-  track.addEventListener('pointerleave', resume);
+  const step = 140; // one card (130px) plus the 10px gap
+  const pauseMs = 4000;
+  const half = () => track.scrollWidth / 2;
+  const wrap = (p) => { const h = half(); return h > 0 ? ((p % h) + h) % h : 0; };
+  let hovering = false, held = false, pausedUntil = 0, glide = null, lastWritten = -1, last = performance.now();
+
+  function write() {
+    featuredBeltState.pos = wrap(featuredBeltState.pos);
+    row.scrollLeft = featuredBeltState.pos;
+    lastWritten = row.scrollLeft;
+  }
+  write();
+
+  function tick(now) {
+    if (!row.isConnected) { featuredBeltState.raf = null; return; }
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    if (glide) {
+      const t = Math.min(1, (now - glide.start) / glide.dur);
+      glide.cur = glide.from + (glide.to - glide.from) * (1 - Math.pow(1 - t, 3));
+      featuredBeltState.pos = glide.cur;
+      write();
+      if (t >= 1) glide = null;
+    } else if (!hovering && !held && !reduceMotion && now >= pausedUntil) {
+      featuredBeltState.pos += pxPerSecond * dt;
+      write();
+    }
+    featuredBeltState.raf = requestAnimationFrame(tick);
+  }
+
+  // Rapid clicks chain: each one extends the glide still in flight by
+  // another card, snapped so a card lands flush with the left edge.
+  function nudge(dir) {
+    const now = performance.now();
+    const from = featuredBeltState.pos;
+    const remaining = glide ? glide.to - glide.cur : 0;
+    const to = Math.round((from + remaining + dir * step) / step) * step;
+    glide = { from, to, cur: from, start: now, dur: reduceMotion ? 1 : 350 };
+    pausedUntil = now + pauseMs;
+  }
+  document.getElementById('featuredPrev').addEventListener('click', () => nudge(-1));
+  document.getElementById('featuredNext').addEventListener('click', () => nudge(1));
+
+  // A scroll we didn't write ourselves is the user swiping: follow it.
+  row.addEventListener('scroll', () => {
+    if (Math.abs(row.scrollLeft - lastWritten) <= 1) return;
+    glide = null;
+    featuredBeltState.pos = row.scrollLeft;
+    lastWritten = row.scrollLeft;
+    pausedUntil = performance.now() + pauseMs;
+  }, { passive: true });
+
+  // Hovering anywhere on the belt (arrows included) or pressing on it
+  // holds the drift, so a tap reliably lands on the card underneath.
+  belt.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hovering = true; });
+  belt.addEventListener('pointerleave', () => { hovering = false; held = false; });
+  belt.addEventListener('pointerdown', () => { held = true; });
+  belt.addEventListener('pointerup', () => { held = false; });
+  belt.addEventListener('pointercancel', () => { held = false; });
+
+  featuredBeltState.raf = requestAnimationFrame(tick);
 }
 
 function openFeaturedListSheet(categoryId) {
